@@ -1,36 +1,294 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ChainLens
 
-## Getting Started
+Cryptoasset graph analytics for Bitcoin and Ethereum — address and entity lookup,
+transaction-flow exploration, co-spend clustering, attribution TagPacks and an
+explainable risk score.
 
-First, run the development server:
+The concepts (address → entity → tag → link) follow the
+[GraphSense](https://graphsense.org/documentation.html) open-source analytics
+platform. ChainLens differs in where the data comes from: instead of a Cassandra +
+Spark ingest pipeline, it reads **live public block explorers** and runs the
+clustering and scoring locally over a bounded transaction window.
+
+## Stack
+
+| Layer | Choice |
+|---|---|
+| Framework | Next.js 16 (App Router, Turbopack), React 19, TypeScript |
+| Styling | Tailwind CSS v4 with semantic design tokens, light + dark |
+| Graph | Cytoscape.js + fCoSE force layout |
+| Charts | Recharts, each with a table equivalent |
+| Client data | SWR |
+| Client state | Zustand (graph canvas, local analyst tags) |
+
+## Data sources
+
+| Purpose | Source | Key required |
+|---|---|---|
+| Bitcoin chain data | [mempool.space](https://mempool.space/docs/api/rest) (Esplora API) | no |
+| Ethereum chain data | [Blockscout](https://eth.blockscout.com/api-docs) v2 REST | no |
+| Sanctions | [OFAC Sanctions List Service](https://sanctionslistservice.ofac.treas.gov) | no (User-Agent required) |
+| Actor attribution | [GraphSense TagPacks](https://github.com/graphsense/graphsense-tagpacks), [mempool mining pools](https://github.com/mempool/mining-pools) | no |
+
+No API keys, no accounts, no database. Responses are cached in-process for 45–60s
+and concurrent requests for the same key are de-duplicated, which keeps the app
+comfortably inside both providers' rate limits.
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build        # production build
+npm run lint         # eslint
+npm run sync:ofac    # refresh the OFAC sanctions snapshot
+npm run sync:labels  # rebuild actor attribution from the open feeds
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## What it does
 
-## Learn More
+### Dashboard (`/`)
+Live chain tips, spot price, mempool/throughput and fee levels for both chains,
+plus a fee-rate and transaction-count trend. Recent lookups are stored in
+`localStorage` and never leave the browser.
 
-To learn more about Next.js, take a look at the following resources:
+### Graph explorer (`/explorer`)
+Seed the canvas with an address, then expand counterparties one hop at a time
+(all, senders only, or receivers only). Node colour encodes the actor category,
+the border ring encodes risk, and size scales with the log of transaction count.
+Set a path anchor and select a second node to highlight the shortest path between
+them. Every edge on the canvas is mirrored into a sortable adjacency table, so the
+same data is available without reading the graph.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Address report (`/address/[chain]/[address]`)
+Balance and lifetime totals, the co-spending cluster, attribution tags, the full
+risk breakdown, inbound/outbound flow concentration, and the transaction list with
+the signed net effect on the address.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Tags & risk (`/tags`)
+The OFAC snapshot with its full provenance (list issue date, file hashes, counts
+by currency and programme), a filterable table of every screenable designated
+address, the curated actor TagPacks, and your own local attributions with JSON
+import/export. Local tags are persisted in `localStorage` only — the same
+guarantee the GraphSense dashboard makes about analyst annotations.
 
-## Deploy on Vercel
+## Sanctions data
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Sanctions attribution is **not hand-maintained**. It is pulled from OFAC's
+Sanctions List Service and written to an immutable local snapshot:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run sync:ofac              # fetch, validate, write the snapshot
+npm run sync:ofac -- --dry     # parse and report, write nothing
+npm run sync:ofac -- --force   # override the delta-ceiling guard
+```
+
+The script ([`scripts/sync-ofac.mts`](scripts/sync-ofac.mts)) downloads
+`SDN_ADVANCED.XML` and `CONS_ADVANCED.XML`, extracts every
+`Digital Currency Address - *` feature, and writes
+[`src/lib/tags/generated/ofac-crypto.json`](src/lib/tags/generated/ofac-crypto.json)
+with the party name, party type, list, programme tags, designation date, OFAC uid,
+each file's `DateOfIssue` and SHA-256, and the retrieval timestamp.
+
+Why this shape:
+
+* **The snapshot is committed and screening runs against it.** SLS is a file
+  distribution service with no SLA and poor latency — it must never sit on a
+  request path. A committed snapshot also means any determination is reproducible
+  against the exact list state that produced it.
+* **Reference IDs are resolved from the file, not hardcoded.** Feature types,
+  lists, programmes and scripts all come from the `ReferenceValueSets` block of
+  the same file version. OFAC adds values; a hardcoded map mislabels silently.
+* **Poison-pill guards.** The script refuses a response under 100 KB, a file
+  missing the expected sections, a total under 200 addresses, or a drop of more
+  than 20% against the previous snapshot. A silently truncated parse produces a
+  clean run with zero hits — the worst possible failure mode here.
+* **Currencies beyond BTC and ETH are stored, not discarded.** XMR, TRX, USDT,
+  SOL and the rest sit in the snapshot so adding a chain adapter needs no re-sync.
+* **Staleness is surfaced, not assumed away.** OFAC publishes on business days;
+  the tags screen warns once the snapshot passes seven days.
+  [`.github/workflows/sync-ofac.yml`](.github/workflows/sync-ofac.yml) runs the
+  sync every weekday and opens a PR when the list changed, so a designation — or
+  a **de**listing — gets reviewed rather than silently applied.
+
+Matching is exact on the address, with only the case-folding each chain actually
+permits — Ethereum hex and Bitcoin bech32 are case-insensitive, Bitcoin base58 is
+not, and folding it would risk a match OFAC never published.
+
+**What a clear result does not mean.** The file lists published addresses only. It
+does not cover addresses controlled by a designated party but never published, nor
+entities blocked derivatively under the 50 Percent Rule — OFAC does not publish
+ownership chains, so that cannot be derived here. ChainLens produces a screening
+lead, not a compliance determination.
+
+> Why this replaced the hand-written seed pack: the original bundled list asserted
+> that the Tornado Cash contracts were OFAC-designated. They were subsequently
+> delisted, and a hardcoded copy would still be reporting them as blocked. The
+> first live sync removed them automatically.
+
+## Actor attribution
+
+Who an address belongs to - exchanges, mining pools, DeFi protocols, custodians -
+comes from open-licensed label feeds, rebuilt by a script rather than typed by
+hand:
+
+```bash
+npm run sync:labels                      # standard profile (default)
+npm run sync:labels -- --profile core    # hub and service wallets only
+npm run sync:labels -- --profile full    # everything the feeds publish
+npm run sync:labels -- --dry             # parse and report, write nothing
+```
+
+[`scripts/sync-labels.mts`](scripts/sync-labels.mts) writes
+`data/actor-labels.json`. The current standard snapshot carries **250,000
+addresses across 3,794 labels and 477 named actors** - exchanges, mining pools,
+mixers, gambling, DeFi and custodial services, on both BTC and ETH.
+
+### Feeds
+
+| Feed | Licence | What it gives |
+|---|---|---|
+| [GraphSense TagPacks](https://github.com/graphsense/graphsense-tagpacks) | MIT | Exchange reserve and deposit wallets, mining pools, DeFi protocol deployments, wallet services, plus an actor registry with names, homepages and jurisdictions |
+| [mempool mining pools](https://github.com/mempool/mining-pools) | MIT | Bitcoin pool payout addresses and coinbase tags |
+
+Blockscout's own public metadata is read live per address on top of these, so
+Ethereum picks up explorer-side labels without any ingest.
+
+### Deliberately excluded
+
+[`ethereum-lists/contracts`](https://github.com/ethereum-lists/contracts) has
+around 200k contract-to-project labels and an adapter is already written for it,
+but the repository publishes **no licence**, so redistributing it in a committed
+snapshot is not something this project can do on its own authority. It stays out
+unless you pass `--allow-unlicensed` having cleared that yourself. The same logic
+excludes scraped explorer label dumps: an MIT wrapper around scraped data does
+not grant rights to the data. The tags screen names every excluded feed and why.
+
+### Design notes
+
+* **Read from disk, not imported.** At tens of megabytes, inlining the snapshot
+  into the server bundle would inflate build output and cold starts for data that
+  only ever needs a point lookup. `next.config.ts` traces the file into the
+  standalone output instead.
+* **Dictionary-compressed.** Label strings repeat tens of thousands of times
+  across a feed, so addresses point at indices into shared label and actor
+  tables. 250k addresses fit in ~12 MB rather than ~60 MB.
+* **Breadth before depth.** A single exchange publishes 350k deposit addresses.
+  Filling the budget by confidence alone let that one feed swallow the whole
+  snapshot - 146 distinct labels for 250k addresses. Packs are now filled
+  smallest-first, so every curated pack lands in full and bulk dumps take
+  whatever is left. Same budget, 3,794 labels instead of 146.
+* **Attribution is not accusation.** Actor labels never set an abuse category.
+  Abuse-tagged entries in the upstream packs are skipped outright: sanctions are
+  a legal determination and come from OFAC alone, not from third-party forensic
+  research mixed into the same score.
+* **Category specificity matters.** `organization` is the most common category in
+  the actor registry and means nothing behaviourally. A specific category always
+  outranks it, otherwise every exchange and protocol flattens into "unknown".
+* **Structural heuristics are suppressed for known services.** Fan-in and fan-out
+  is the normal shape of an exchange, pool or casino. Mixers are excluded from
+  that suppression, because there the structure is the point.
+
+[`.github/workflows/sync-labels.yml`](.github/workflows/sync-labels.yml) rebuilds
+the snapshot weekly and opens a PR, so both new and disappearing labels get
+reviewed.
+
+## Analytics
+
+### Clustering
+
+* **Bitcoin — multi-input (co-spend) heuristic.** Addresses that sign inputs of the
+  same transaction are assumed to share one controller. Only co-spends that
+  actually involve the address under analysis are merged, so an unrelated
+  co-spend in the same page cannot pull in a foreign cluster. Coinbase inputs are
+  skipped. The canonical cluster id is the lexicographically smallest member, so
+  ids are stable between runs.
+* **Ethereum — account identity.** The account model exposes no co-spend signal, so
+  one address is one entity until an analyst merges them by hand.
+
+### Risk score (0–100)
+
+1. **Direct attribution** — a tag on the address contributes its abuse weight
+   scaled by the tag's confidence. Sanctions saturate at 100.
+2. **Exposure by hop** — a tagged counterparty contributes the same weight decayed
+   by `0.55` per hop, then scaled by that counterparty's share of observed flow.
+3. **Structural heuristics** — fan-in, fan-out and non-repeating-counterparty
+   patterns lift a clean address into the medium band. They are suppressed for
+   addresses tagged as a known service, where those shapes are normal.
+4. **The maximum wins** — signals do not sum, so one strong finding cannot be
+   diluted by many weak ones.
+
+Every score is shown with the signals that produced it. See `src/lib/risk.ts`.
+
+### Bounded analysis window
+
+Explorers return a page of transactions, not full history. Anything derived from
+that page — clusters, degrees, counterparty flows, and on Ethereum the
+received/sent totals — covers the window only, and the UI says so on every report
+rather than presenting partial data as complete. Balances and Bitcoin lifetime
+totals come from the explorer and cover full history.
+
+**Treat every result as a lead to verify, not a compliance determination.**
+
+## Project layout
+
+```
+src/
+  app/
+    api/{address,graph,stats,search,tags}/   REST endpoints
+    address/[chain]/[address]/               address report (server-rendered)
+    explorer/                                graph canvas
+    tags/                                    TagPack browser + local tag manager
+  components/
+    graph/       cytoscape canvas, legend, inspector, adjacency table
+    charts/      trend chart, flow bars
+    ui/          buttons, panels, badges, data table, stat tiles
+    dashboard/   chain stat cards, recent lookups
+  lib/
+    chains/      per-chain explorer adapters behind one interface
+    tags/        OFAC snapshot, open-feed loader, curated fallback, local tags
+data/
+  actor-labels.json   generated actor attribution, read at runtime via fs
+scripts/
+  sync-ofac.mts    OFAC SLS ingest -> src/lib/tags/generated/ofac-crypto.json
+  sync-labels.mts  open label feeds -> data/actor-labels.json
+  sources.mts      feed registry: licences, category and confidence mapping
+    analysis.ts  bundle → address/entity/neighbours/graph fragment
+    risk.ts      scoring engine
+```
+
+### Adding a chain
+
+Implement `ChainAdapter` (`src/lib/chains/adapter.ts`), register it in
+`src/lib/chains/index.ts` and add its metadata plus address pattern to
+`src/lib/chains/registry.ts`. Everything above the adapter — analysis, graph,
+risk, UI — is chain-agnostic.
+
+## Design system
+
+Generated with the UI/UX Pro Max design intelligence pass and persisted in
+[`design-system/chainlens/MASTER.md`](design-system/chainlens/MASTER.md):
+Data-Dense Dashboard style, Fira Sans / Fira Code, blue data with amber
+highlights, light and dark defined together as semantic tokens in
+`src/app/globals.css`.
+
+Accessibility choices worth knowing:
+* Risk level is never carried by colour alone — each level pairs a hue with its
+  own icon shape and the numeric score.
+* Every chart ships a table alternative; the graph ships an adjacency list.
+* Touch targets are ≥44px, focus rings are visible, and `prefers-reduced-motion`
+  disables layout and chart animation.
+
+## Attribution data
+
+Both attribution layers are generated, not hand-written: sanctions with
+`npm run sync:ofac`, actor labels with `npm run sync:labels`. A small curated pack
+in `src/lib/tags/builtin.ts` remains as a fallback for the case where the label
+snapshot is missing, and is suppressed for any address a synced feed already
+knows. Add your own attribution on top through the Tags screen, or point the sync
+script at further TagPacks.

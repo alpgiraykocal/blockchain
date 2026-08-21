@@ -1,0 +1,60 @@
+name: Sync OFAC sanctions snapshot
+
+# OFAC publishes on US business days. Running every weekday morning keeps the
+# committed snapshot inside the 7-day staleness threshold the app warns at.
+on:
+  schedule:
+    - cron: "0 11 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Bypass the delta-ceiling guard (only after confirming against OFAC)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-ofac
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Fetch and validate the OFAC snapshot
+        run: npm run sync:ofac ${{ inputs.force && '-- --force' || '' }}
+
+      - name: Type-check and build against the new snapshot
+        run: |
+          npx tsc --noEmit
+          npm run build
+
+      # The snapshot is data a human should be able to review before it changes
+      # screening results, so it lands as a PR rather than a direct push.
+      - name: Open a pull request when the list changed
+        uses: peter-evans/create-pull-request@v6
+        with:
+          add-paths: src/lib/tags/generated/ofac-crypto.json
+          branch: chore/ofac-snapshot
+          commit-message: "chore(sanctions): refresh OFAC digital currency snapshot"
+          title: "chore(sanctions): refresh OFAC digital currency snapshot"
+          body: |
+            Automated refresh of `src/lib/tags/generated/ofac-crypto.json` from the
+            OFAC Sanctions List Service.
+
+            Check the diff for added and **removed** designations — a removal means
+            addresses that were blocked are no longer listed, and any downstream
+            report that cited them needs revisiting.
+          labels: sanctions, automated

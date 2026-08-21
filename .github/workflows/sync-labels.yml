@@ -1,0 +1,63 @@
+name: Sync open label feeds
+
+# Actor attribution moves far slower than sanctions - a weekly rebuild is enough
+# to pick up new exchange wallets, pools and protocol deployments.
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: "Snapshot size profile"
+        type: choice
+        options: [standard, core, full]
+        default: standard
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: sync-labels
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Rebuild the actor-label snapshot
+        run: npm run sync:labels -- --profile ${{ inputs.profile || 'standard' }}
+
+      - name: Type-check and build against the new snapshot
+        run: |
+          npx tsc --noEmit
+          npm run build
+
+      # Attribution drives what an analyst sees on a node, so a change lands as a
+      # reviewable PR rather than a silent push. Watch for labels that disappear:
+      # an address losing its exchange tag changes how a graph reads.
+      - name: Open a pull request when the labels changed
+        uses: peter-evans/create-pull-request@v6
+        with:
+          add-paths: data/actor-labels.json
+          branch: chore/actor-labels
+          commit-message: "chore(labels): rebuild actor attribution snapshot"
+          title: "chore(labels): rebuild actor attribution snapshot"
+          body: |
+            Automated rebuild of `data/actor-labels.json` from the open label feeds.
+
+            The diff is large by nature. What is worth checking in the run log:
+
+            - the per-source address counts and upstream revisions,
+            - any feed that dropped to zero (an upstream rename or a moved path),
+            - the skipped-rules summary, for packs newly hitting a profile cap.
+          labels: labels, automated
