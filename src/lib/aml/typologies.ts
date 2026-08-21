@@ -60,35 +60,72 @@ function sanctionsExposure(input: TypologyInput): TypologyFinding {
   for (const tag of direct) {
     evidence.push(attribution("Subject is listed", `${tag.label}. ${tag.notes ?? ""}`.trim()));
   }
+
+  // Direction is the whole finding here. Value moving *to* a listed party is a
+  // potential prohibited transaction; value arriving *from* one is exposure the
+  // subject may have had no part in, and at negligible amounts is more often
+  // dusting - a listed address spraying tiny sums to taint recipients.
+  const outbound = exposed.filter((row) => row.direction === "out");
+  const inbound = exposed.filter((row) => row.direction === "in");
+  const inboundOnlyDust = inbound.every((row) => row.link.value.usd !== null && row.link.value.usd < 1);
+
   for (const row of exposed.slice(0, 5)) {
     const tag = row.node.tags.find((t) => t.abuse === "sanctions")!;
+    const amount = `${formatCoin(row.link.value, input.chain)} across ${row.link.txCount} transaction(s)`;
     evidence.push(
       attribution(
-        `Direct counterparty is listed: ${tag.label}`,
-        `${formatCoin(row.link.value, input.chain)} across ${row.link.txCount} transaction(s), ${
-          row.direction === "in" ? "received from" : "sent to"
-        } the subject.`,
+        row.direction === "out"
+          ? `Subject sent value to a listed party: ${tag.label}`
+          : `Subject received value from a listed party: ${tag.label}`,
+        row.direction === "out"
+          ? `${amount} sent by the subject to that address.`
+          : `${amount} received by the subject from that address.`,
       ),
     );
   }
 
   const matched = direct.length > 0 || exposed.length > 0;
+
+  const weight = direct.length
+    ? 100
+    : outbound.length
+      ? 85
+      : inbound.length
+        ? inboundOnlyDust
+          ? 35
+          : 65
+        : 0;
+
   return {
     id: "sanctions-exposure",
     title: "Sanctions exposure",
     family: "Prohibited counterparty",
     stage: "unclear",
     matched,
-    strength: direct.length ? "indicative" : exposed.length ? "indicative" : "weak",
-    weight: direct.length ? 100 : exposed.length ? 85 : 0,
+    strength: direct.length || outbound.length ? "indicative" : matched ? "supporting" : "weak",
+    weight,
     summary: direct.length
       ? "The subject address itself appears on an OFAC sanctions list. This is a list match on a published identifier, not a behavioural inference."
-      : exposed.length
-        ? `${exposed.length} direct counterparty match(es) on an OFAC sanctions list.`
-        : "No direct or one-hop match against the loaded OFAC snapshot.",
+      : outbound.length
+        ? `The subject sent value to ${outbound.length} address(es) on an OFAC sanctions list. Value moving to a listed party is a potential prohibited transaction and is treated as the more serious direction.`
+        : inbound.length
+          ? inboundOnlyDust
+            ? `The subject received a negligible amount from ${inbound.length} listed address(es). Amounts this small are characteristic of dusting, where a listed address sprays tiny sums at unrelated recipients, and the subject may have had no part in it.`
+            : `The subject received value from ${inbound.length} address(es) on an OFAC sanctions list.`
+          : "No direct or one-hop match against the loaded OFAC snapshot.",
     evidence,
     counterIndicators: matched
       ? [
+          ...(inbound.length && !outbound.length && !direct.length
+            ? [
+                "Inbound value cannot be refused on a public blockchain. Receiving from a listed address is not itself an act by the subject.",
+                ...(inboundOnlyDust
+                  ? [
+                      "The amount received is negligible, which is the signature of a dusting campaign rather than a funds transfer.",
+                    ]
+                  : []),
+              ]
+            : []),
           "A list match is an identifier match on a published address. It does not by itself establish the subject's knowledge or intent.",
           "Sanctions screening covers published addresses only. It cannot see addresses a designated party controls but has never had published, nor entities blocked derivatively under the 50 Percent Rule.",
         ]
