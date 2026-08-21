@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { RATE_LIMITS, enforceRateLimit } from "@/lib/rate-limit";
 import { assessAddress } from "@/lib/aml/assess";
 import { getAdapter } from "@/lib/chains";
 import {
@@ -17,6 +18,9 @@ export const runtime = "nodejs";
  *  metric set, a triage disposition and a draft case narrative. It is not a
  *  suspicious activity determination. */
 export async function GET(request: NextRequest) {
+  const limited = enforceRateLimit(request, RATE_LIMITS.expensive, "aml");
+  if (limited) return limited;
+
   const params = request.nextUrl.searchParams;
   const chain = parseChain(params.get("chain"));
   if (!chain) return jsonError("Unknown or missing `chain`. Use btc or eth.", 400);

@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { RATE_LIMITS, enforceRateLimit } from "@/lib/rate-limit";
 import { analyzeAddress, toGraphFragment } from "@/lib/analysis";
 import { getAdapter } from "@/lib/chains";
 import {
@@ -15,6 +16,9 @@ export const runtime = "nodejs";
 /** Returns the node/edge fragment for one expansion step. The client merges
  *  fragments into its own graph state, so expansion stays incremental. */
 export async function GET(request: NextRequest) {
+  const limited = enforceRateLimit(request, RATE_LIMITS.expensive, "graph");
+  if (limited) return limited;
+
   const params = request.nextUrl.searchParams;
   const chain = parseChain(params.get("chain"));
   if (!chain) return jsonError("Unknown or missing `chain`. Use btc or eth.", 400);

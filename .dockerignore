@@ -1,0 +1,10 @@
+.git
+.github
+node_modules
+.next
+design-system
+README.md
+Dockerfile
+.dockerignore
+*.md
+!data/actor-labels.summary.md

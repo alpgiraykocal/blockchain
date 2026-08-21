@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { RATE_LIMITS, enforceRateLimit } from "@/lib/rate-limit";
 import { getAdapter } from "@/lib/chains";
 import { CHAIN_IDS, detectChain, isValidAddress } from "@/lib/chains/registry";
 import { builtinTagsFor } from "@/lib/tags";
@@ -16,6 +17,9 @@ export interface SearchHit {
 }
 
 export async function GET(request: NextRequest) {
+  const limited = enforceRateLimit(request, RATE_LIMITS.lookup, "search");
+  if (limited) return limited;
+
   const query = request.nextUrl.searchParams.get("q")?.trim();
   if (!query) return jsonError("Missing `q` parameter.", 400);
 

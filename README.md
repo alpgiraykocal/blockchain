@@ -256,6 +256,61 @@ Both sync workflows can write to this repository, so their actions are pinned to
 full commit SHAs rather than mutable tags, and Dependabot raises those pins from
 the version comment beside each one.
 
+## Deployment
+
+The app is server-rendered with Node-runtime API routes; there is no static
+export. `next.config.ts` builds a `standalone` bundle, which is the shape this
+workload wants: one long-lived process parses the 10 MB label snapshot once and
+shares the upstream cache across requests, where a serverless runtime pays both
+costs per instance and per-instance rate limiting counts separately.
+
+```bash
+docker compose up -d --build      # or: npm run build && node .next/standalone/server.js
+curl localhost:3000/api/health
+```
+
+`GET /api/health` returns `ok`, or `207 degraded` when the sanctions snapshot is
+stale or the label snapshot is missing - the app still serves, but a screening
+result produced against stale data is worth surfacing to whoever runs it.
+
+### Behind Cloudflare
+
+Point a tunnel at the container and the origin never needs a public port:
+
+```bash
+cloudflared tunnel create blockchain-analysis
+cloudflared tunnel route dns blockchain-analysis blockchain.alpgiraykocal.com
+cloudflared tunnel run --url http://127.0.0.1:3000 blockchain-analysis
+```
+
+The rate limiter reads `cf-connecting-ip` first, so limits apply per visitor
+rather than to the tunnel. API responses carry `s-maxage`, so Cloudflare absorbs
+repeat traffic instead of passing it to the explorers.
+
+**Cloudflare Workers and Pages are not a drop-in target.** The label snapshot is
+read from disk with `node:fs` and parses to roughly 55 MB of heap, against a
+128 MB isolate limit shared with the framework. Running there means moving the
+snapshot behind a static-asset fetch or KV and looking addresses up without
+holding the whole map in memory - a data-layer change, not a config flag.
+
+### What publishing turns on
+
+* **Rate limiting** on every API route: 20/min for assessment and graph
+  expansion, 60/min for lookups, 120/min for cached data. Every route here
+  proxies a free public explorer, and without a limit all of that traffic reaches
+  mempool.space and Blockscout from one address - a courtesy problem before it is
+  an availability one. The counter is in-process: exact on one instance,
+  proportionally looser if you run several.
+* **A strict Content-Security-Policy** with a per-request nonce, set in
+  `src/middleware.ts`. Next emits inline hydration scripts, so `script-src 'self'`
+  alone ships a site that renders and then does nothing; `'unsafe-inline'` would
+  make the directive decorative. The nonce is why the pages render per request
+  rather than being prerendered - Next cannot stamp one onto HTML built at
+  compile time.
+* **`robots.txt` excluding `/api/`, `/address/` and `/investigate/`.** Those are
+  one route per address, an unbounded crawl surface where every hit becomes an
+  upstream request.
+
 ## Analytics
 
 ### Clustering

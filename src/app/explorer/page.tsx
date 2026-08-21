@@ -9,6 +9,14 @@ export const metadata: Metadata = {
     "Expand address and entity counterparties one hop at a time and trace transaction flow across Bitcoin and Ethereum.",
 };
 
+/* Rendered per request rather than prerendered: the CSP carries a per-request
+ * nonce, and Next cannot stamp one onto HTML built at compile time - a
+ * prerendered page under this policy would render and never hydrate. The cost is
+ * small because these pages fetch their data client-side; the expensive work
+ * sits in the API routes and their caches.
+ */
+export const dynamic = "force-dynamic";
+
 export default function ExplorerPage() {
   return (
     <Suspense fallback={<ExplorerSkeleton />}>
