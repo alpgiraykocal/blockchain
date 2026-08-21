@@ -265,9 +265,13 @@ shares the upstream cache across requests, where a serverless runtime pays both
 costs per instance and per-instance rate limiting counts separately.
 
 ```bash
-docker compose up -d --build      # or: npm run build && node .next/standalone/server.js
+npm run build && npm start        # or: docker compose up -d --build
 curl localhost:3000/api/health
 ```
+
+`postbuild` copies the static assets beside the standalone server and `start`
+runs it with node, because `next start` does not serve a standalone build. That
+matters for hosting platforms, which run exactly `npm run build && npm start`.
 
 `GET /api/health` returns `ok`, or `207 degraded` when the sanctions snapshot is
 stale or the label snapshot is missing - the app still serves, but a screening

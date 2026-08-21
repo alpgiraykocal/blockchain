@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "postbuild": "cp -r public .next/standalone/ 2>/dev/null || true; cp -r .next/static .next/standalone/.next/ 2>/dev/null || true",
+    "start": "node .next/standalone/server.js",
     "lint": "eslint",
     "sync:ofac": "node scripts/sync-ofac.mts",
     "sync:labels": "node scripts/sync-labels.mts"
