@@ -198,6 +198,10 @@ not grant rights to the data. The tags screen names every excluded feed and why.
 the snapshot weekly and opens a PR, so both new and disappearing labels get
 reviewed.
 
+Both sync workflows can write to this repository, so their actions are pinned to
+full commit SHAs rather than mutable tags, and Dependabot raises those pins from
+the version comment beside each one.
+
 ## Analytics
 
 ### Clustering

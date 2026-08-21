@@ -1,0 +1,40 @@
+version: 2
+
+updates:
+  # Workflow actions are pinned to full commit SHAs, which is the right supply
+  # chain posture but freezes them: a pinned action never picks up its own
+  # security fixes. Dependabot reads the `# vX.Y.Z` comment next to each pin and
+  # raises the SHA when a new release lands, which is what keeps pinning honest
+  # rather than merely stale.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+    commit-message:
+      prefix: "chore(ci)"
+    labels:
+      - dependencies
+      - automated
+
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+    labels:
+      - dependencies
+      - automated
+    groups:
+      # Next, React and the type packages move together; separate PRs for each
+      # produce a broken intermediate state and three failing CI runs.
+      next-react:
+        patterns:
+          - "next"
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+          - "eslint-config-next"
