@@ -94,6 +94,8 @@ interface SnapshotLabel {
 interface Snapshot {
   schema: 1;
   profile: Profile;
+  /** When this exact snapshot content was first built. It deliberately does not
+   *  move on a rebuild that produces identical data. */
   generatedAt: string;
   sources: {
     id: string;
@@ -650,6 +652,14 @@ async function main() {
     .then((raw) => JSON.parse(raw) as Snapshot)
     .catch(() => null);
 
+  // A build timestamp that ticks every run makes the file byte-different even
+  // when no label moved, which would open a weekly "rebuild" pull request with
+  // no substantive diff. Compare the data, ignore the clock.
+  const unchanged =
+    previous !== null &&
+    JSON.stringify({ ...previous, generatedAt: "" }) ===
+      JSON.stringify({ ...snapshot, generatedAt: "" });
+
   console.log(
     `\n${snapshot.counts.total} addresses / ${snapshot.labels.length} distinct labels / ${snapshot.actors.length} actors`,
   );
@@ -678,6 +688,11 @@ async function main() {
       console.log(`  ${entry.pack}: ${entry.dropped} - ${entry.reason}`);
     }
     if (skipped.length > 12) console.log(`  ... and ${skipped.length - 12} more`);
+  }
+
+  if (unchanged) {
+    console.log("\nLabels are identical to the committed snapshot. Leaving it untouched.");
+    return;
   }
 
   if (dryRun) {

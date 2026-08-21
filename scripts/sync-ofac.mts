@@ -72,6 +72,8 @@ interface FileMeta {
 interface Snapshot {
   schema: 1;
   source: string;
+  /** When this exact snapshot content was first retrieved. It deliberately does
+   *  not move on a re-sync that finds identical data - see `isUnchanged`. */
   retrievedAt: string;
   files: FileMeta[];
   counts: {
@@ -373,6 +375,12 @@ async function main() {
     }
   }
 
+  /** A timestamp that ticks on every run would make every file byte-different,
+   *  so an unchanged sanctions list would still open a "refresh" pull request
+   *  with no substantive diff. Compare the data, ignore the clock. */
+  const isUnchanged = (a: Snapshot, b: Snapshot) =>
+    JSON.stringify({ ...a, retrievedAt: "" }) === JSON.stringify({ ...b, retrievedAt: "" });
+
   const snapshot: Snapshot = {
     schema: 1,
     source: "OFAC Sanctions List Service",
@@ -398,6 +406,15 @@ async function main() {
         delta >= 0 ? "+" : ""
       }${delta})`,
     );
+  }
+
+  if (previous && isUnchanged(previous, snapshot)) {
+    console.log(
+      `\nList is byte-identical to the committed snapshot (issued ${
+        previous.files[0]?.dateOfIssue ?? "?"
+      }). Leaving it untouched.`,
+    );
+    return;
   }
 
   if (dryRun) {
