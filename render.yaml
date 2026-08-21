@@ -1,0 +1,23 @@
+# Render blueprint. Import the repo and Render reads this instead of guessing.
+services:
+  - type: web
+    name: blockchain-analysis
+    runtime: node
+    plan: starter
+    region: frankfurt
+    branch: main
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    # One instance on purpose: the rate limiter counts in-process, so each extra
+    # instance would get its own allowance and multiply the ceiling that keeps
+    # traffic off the public block explorers.
+    numInstances: 1
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: NEXT_TELEMETRY_DISABLED
+        value: "1"
+      - key: NEXT_PUBLIC_SITE_URL
+        value: https://blockchain.alpgiraykocal.com
