@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useTheme } from "@/components/theme-provider";
 import { SearchBar } from "@/components/search-bar";
+import { useHeaderSearchVisible } from "@/components/primary-search";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -22,9 +23,9 @@ function isActive(pathname: string, href: string) {
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  // The dashboard leads with its own full-width search; a second one in the
-  // header on the same screen is duplication, not redundancy.
-  const showHeaderSearch = pathname !== "/";
+  // A page that owns a primary search field claims the slot; the header defers
+  // rather than stacking a second identical input a few pixels away.
+  const showHeaderSearch = useHeaderSearchVisible();
 
   return (
     <div className="flex min-h-dvh flex-col">

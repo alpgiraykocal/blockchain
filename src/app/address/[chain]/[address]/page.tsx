@@ -3,10 +3,9 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   Boxes,
-  ExternalLink,
   Info,
   Layers,
-  Network,
+  ScanSearch,
   Wallet,
 } from "lucide-react";
 import type { Metadata } from "next";
@@ -28,9 +27,9 @@ import { UpstreamError } from "@/lib/http";
 import type { ChainId } from "@/lib/types";
 import { FlowBars } from "@/components/charts/flow-bars";
 import { TransactionsTable } from "@/components/transactions-table";
+import { SubjectTabs } from "@/components/subject-tabs";
 import { TrackVisit } from "@/components/track-visit";
 import { AddressLink } from "@/components/ui/address-link";
-import { CopyButton } from "@/components/ui/copy-button";
 import { RiskBadge } from "@/components/ui/risk-badge";
 import { TagChip } from "@/components/ui/tag-chip";
 import { StatTile } from "@/components/ui/stat-tile";
@@ -100,6 +99,8 @@ export default async function AddressPage({ params }: PageProps) {
     <div className="space-y-4">
       <TrackVisit chain={chain} address={address.address} />
 
+      <SubjectTabs chain={chain} address={address.address} active="report" />
+
       <header className="rounded-lg border border-border bg-surface px-4 py-3.5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
@@ -114,12 +115,6 @@ export default async function AddressPage({ params }: PageProps) {
               <span className="sm:hidden">
                 <RiskBadge level={address.risk.level} score={address.risk.score} size="sm" />
               </span>
-            </div>
-            <div className="mt-1 flex min-w-0 items-center gap-1">
-              <p className="min-w-0 break-all font-mono text-xs text-foreground-muted">
-                {address.address}
-              </p>
-              <CopyButton value={address.address} label="Copy address" />
             </div>
             {address.tags.length ? (
               <div className="mt-2 flex flex-wrap gap-1.5">
@@ -136,21 +131,12 @@ export default async function AddressPage({ params }: PageProps) {
             </span>
             <div className="flex flex-wrap gap-1.5 sm:justify-end">
               <Link
-                href={`/explorer?chain=${chain}&address=${address.address}`}
+                href={`/investigate/${chain}/${address.address}`}
                 className="inline-flex h-9 min-h-9 cursor-pointer items-center gap-1.5 rounded-md bg-primary px-2.5 text-xs font-medium text-on-primary transition-[filter] duration-200 hover:brightness-110"
               >
-                <Network className="size-3.5" aria-hidden="true" />
-                Open in graph
+                <ScanSearch className="size-3.5" aria-hidden="true" />
+                Open investigation
               </Link>
-              <a
-                href={meta.explorerAddressUrl(address.address)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex h-9 min-h-9 cursor-pointer items-center gap-1.5 rounded-md border border-border-strong px-2.5 text-xs font-medium text-foreground transition-colors duration-200 hover:bg-surface-2"
-              >
-                {meta.explorerName}
-                <ExternalLink className="size-3" aria-hidden="true" />
-              </a>
             </div>
           </div>
         </div>
@@ -217,29 +203,45 @@ export default async function AddressPage({ params }: PageProps) {
 
       <div className="grid gap-4 [&>*]:min-w-0 xl:grid-cols-3">
         <Panel
-          title="Risk assessment"
+          title="Risk summary"
           description={`${address.risk.signals.length} signal${
             address.risk.signals.length === 1 ? "" : "s"
           } · exposure depth ${address.risk.hops} hop${address.risk.hops === 1 ? "" : "s"}`}
         >
-          <ul className="space-y-2">
-            {address.risk.signals.map((signal) => (
-              <li
-                key={`${signal.code}-${signal.label}`}
-                className="rounded border border-border bg-surface-2/50 px-2.5 py-2"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <span className="text-xs font-medium text-foreground">{signal.label}</span>
-                  <span className="tnum shrink-0 text-[11px] text-foreground-muted">
-                    +{signal.weight}
-                  </span>
-                </div>
-                <p className="mt-1 text-[11px] leading-relaxed text-foreground-muted">
-                  {signal.detail}
-                </p>
-              </li>
-            ))}
-          </ul>
+          {/* The headline signal only. Reading the evidence, the arguments
+              against it and what to do next is the investigation's job; listing
+              it twice invites the two pages to drift apart. */}
+          <div className="rounded border border-border bg-surface-2/50 px-2.5 py-2">
+            <div className="flex items-start justify-between gap-2">
+              <span className="text-xs font-medium text-foreground">
+                {address.risk.signals[0]?.label ?? "No signal"}
+              </span>
+              {address.risk.signals[0]?.weight ? (
+                <span className="tnum shrink-0 text-[11px] text-foreground-muted">
+                  +{address.risk.signals[0].weight}
+                </span>
+              ) : null}
+            </div>
+            <p className="mt-1 text-[11px] leading-relaxed text-foreground-muted">
+              {address.risk.signals[0]?.detail ??
+                "No tag matched and no structural heuristic fired in the analysed window."}
+            </p>
+          </div>
+
+          {address.risk.signals.length > 1 ? (
+            <p className="mt-2 text-[11px] text-foreground-muted">
+              {address.risk.signals.length - 1} further signal
+              {address.risk.signals.length === 2 ? "" : "s"} contributed to this score.
+            </p>
+          ) : null}
+
+          <p className="mt-3 text-[11px] leading-relaxed text-foreground-muted">
+            <InlineLink href={`/investigate/${chain}/${address.address}`}>
+              Open the investigation
+            </InlineLink>{" "}
+            for the typology findings behind this score, the arguments against each one,
+            and a recommended disposition.
+          </p>
         </Panel>
 
         <Panel

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { detectChain, isValidAddress } from "@/lib/chains/registry";
 import { storageEvent, storageKey } from "@/lib/storage";
+import { useClaimPrimarySearch } from "@/components/primary-search";
 import { truncateAddress } from "@/lib/format";
 import type { ChainId } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -43,14 +44,18 @@ export function SearchBar({
   className,
   autoFocus,
   compact = false,
+  primary = false,
   placeholder = "Search a BTC or ETH address, or an ENS name",
 }: {
   className?: string;
   autoFocus?: boolean;
   /** Header usage: the placeholder shortens rather than being cut mid-word. */
   compact?: boolean;
+  /** This field is the page's call to action, so the header one stands down. */
+  primary?: boolean;
   placeholder?: string;
 }) {
+  useClaimPrimarySearch(primary);
   const [narrow, setNarrow] = useState(false);
 
   useEffect(() => {

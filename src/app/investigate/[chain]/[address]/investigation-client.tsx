@@ -5,21 +5,19 @@ import {
   AlertOctagon,
   ArrowDownLeft,
   ArrowUpRight,
-  Eye,
   Gauge,
   Network,
   ShieldCheck,
   Timer,
   Users,
 } from "lucide-react";
-import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import useSWR from "swr";
 import { CaseFile } from "@/components/aml/case-file";
 import { FindingCard } from "@/components/aml/finding-card";
 import { RadialGraph } from "@/components/aml/radial-graph";
+import { SubjectTabs } from "@/components/subject-tabs";
 import { AddressLink } from "@/components/ui/address-link";
-import { CopyButton } from "@/components/ui/copy-button";
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { Badge, Button, ErrorState, Panel } from "@/components/ui/primitives";
 import { RiskBadge } from "@/components/ui/risk-badge";
@@ -77,19 +75,34 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
 
   if (error && !data) {
     return (
-      <Panel>
+      <div className="space-y-4">
+        <SubjectTabs chain={chain} address={address} active="investigation" />
+        <h1 className="text-lg font-semibold tracking-tight text-heading">
+          Investigation · {truncateAddress(address, 10, 8)}
+        </h1>
+        <Panel>
         <ErrorState
           title="Could not run the assessment"
           detail={error instanceof Error ? error.message : String(error)}
           onRetry={() => void mutate()}
         />
-      </Panel>
+        </Panel>
+      </div>
     );
   }
 
   if (!data) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4" aria-busy="true">
+        <SubjectTabs chain={chain} address={address} active="investigation" />
+        {/* The page must carry a heading before the data lands, or a screen
+            reader meets an untitled document for the length of the fetch. */}
+        <h1 className="text-lg font-semibold tracking-tight text-heading">
+          Investigation · {truncateAddress(address, 10, 8)}
+        </h1>
+        <p className="text-xs text-foreground-muted">
+          Extracting the ego network and running the typology set…
+        </p>
         <div className="skeleton h-24 rounded-lg" />
         <div className="grid gap-4 xl:grid-cols-[minmax(0,380px)_minmax(0,1fr)]">
           <div className="skeleton h-96 rounded-lg" />
@@ -110,6 +123,8 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
 
   return (
     <div className="space-y-4">
+      <SubjectTabs chain={chain} address={subject.address} active="investigation" />
+
       {/* ---------------------------------------------------------- header */}
       <header className="rounded-lg border border-border bg-surface px-4 py-3.5">
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -121,12 +136,6 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
                 {subject.label ? displayName(subject.label) : "Untagged address"}
               </h1>
             </div>
-            <p className="mt-1 flex min-w-0 items-center gap-1">
-              <span className="min-w-0 break-all font-mono text-xs text-foreground-muted">
-                {subject.address}
-              </span>
-              <CopyButton value={subject.address} label="Copy address" />
-            </p>
             {subject.tags.length ? (
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {subject.tags.map((tag) => (
@@ -142,22 +151,6 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
                 {DISPOSITION_LABEL[disposition.action]}
               </Badge>
               <RiskBadge level={disposition.level} score={disposition.priority} />
-            </div>
-            <div className="flex flex-wrap gap-1.5 sm:justify-end">
-              <Link
-                href={`/address/${chain}/${subject.address}`}
-                className="inline-flex h-9 min-h-9 cursor-pointer items-center gap-1.5 rounded-md border border-border-strong px-2.5 text-xs font-medium text-foreground transition-colors duration-200 hover:bg-surface-2"
-              >
-                <Eye className="size-3.5" aria-hidden="true" />
-                Address report
-              </Link>
-              <Link
-                href={`/explorer?chain=${chain}&address=${subject.address}`}
-                className="inline-flex h-9 min-h-9 cursor-pointer items-center gap-1.5 rounded-md border border-border-strong px-2.5 text-xs font-medium text-foreground transition-colors duration-200 hover:bg-surface-2"
-              >
-                <Network className="size-3.5" aria-hidden="true" />
-                Free-form graph
-              </Link>
             </div>
           </div>
         </div>

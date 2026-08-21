@@ -16,6 +16,7 @@ import { AdjacencyTable } from "@/components/graph/adjacency-table";
 import { NodeInspector } from "@/components/graph/node-inspector";
 import { Badge, Button, Panel } from "@/components/ui/primitives";
 import { SearchBar } from "@/components/search-bar";
+import { SubjectTabs } from "@/components/subject-tabs";
 import { isChainId } from "@/lib/chains/registry";
 import { shortestPath, useGraphStore } from "@/lib/graph-store";
 import { truncateAddress } from "@/lib/format";
@@ -123,7 +124,7 @@ export function ExplorerClient() {
 
             {/* No autoFocus: focusing on load popped the suggestion list open before
                 the user had asked for anything. */}
-            <SearchBar className="mx-auto mt-4 w-full max-w-lg" compact />
+            <SearchBar className="mx-auto mt-4 w-full max-w-lg" compact primary />
 
             <div className="mt-6">
               <p className="text-[11px] font-medium uppercase tracking-wide text-foreground-muted">
@@ -164,6 +165,10 @@ export function ExplorerClient() {
   return (
     <div className="space-y-4">
       <PageHeading />
+
+      {chainParam && addressParam && isChainId(chainParam) ? (
+        <SubjectTabs chain={chainParam} address={addressParam} active="graph" />
+      ) : null}
 
       {error ? (
         <div

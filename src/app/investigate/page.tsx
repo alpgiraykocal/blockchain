@@ -59,7 +59,7 @@ export default function InvestigateLanding() {
             block explorer will serve, and says so wherever it draws a conclusion.
           </p>
 
-          <SearchBar className="mx-auto mt-4 w-full max-w-lg" compact />
+          <SearchBar className="mx-auto mt-4 w-full max-w-lg" compact primary />
 
           <div className="mt-6">
             <p className="text-[11px] font-medium uppercase tracking-wide text-foreground-muted">
