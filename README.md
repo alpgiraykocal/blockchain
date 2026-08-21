@@ -1,4 +1,4 @@
-# ChainLens
+# Blockchain Analysis
 
 Cryptoasset graph analytics for Bitcoin and Ethereum — address and entity lookup,
 transaction-flow exploration, co-spend clustering, attribution TagPacks and an
@@ -6,7 +6,7 @@ explainable risk score.
 
 The concepts (address → entity → tag → link) follow the
 [GraphSense](https://graphsense.org/documentation.html) open-source analytics
-platform. ChainLens differs in where the data comes from: instead of a Cassandra +
+platform. This app differs in where the data comes from: instead of a Cassandra +
 Spark ingest pipeline, it reads **live public block explorers** and runs the
 clustering and scoring locally over a bounded transaction window.
 
@@ -162,7 +162,7 @@ not, and folding it would risk a match OFAC never published.
 **What a clear result does not mean.** The file lists published addresses only. It
 does not cover addresses controlled by a designated party but never published, nor
 entities blocked derivatively under the 50 Percent Rule — OFAC does not publish
-ownership chains, so that cannot be derived here. ChainLens produces a screening
+ownership chains, so that cannot be derived here. It produces a screening
 lead, not a compliance determination.
 
 > Why this replaced the hand-written seed pack: the original bundled list asserted
@@ -332,7 +332,7 @@ risk, UI — is chain-agnostic.
 ## Design system
 
 Generated with the UI/UX Pro Max design intelligence pass and persisted in
-[`design-system/chainlens/MASTER.md`](design-system/chainlens/MASTER.md):
+[`design-system/blockchain-analysis/MASTER.md`](design-system/blockchain-analysis/MASTER.md):
 Data-Dense Dashboard style, Fira Sans / Fira Code, blue data with amber
 highlights, light and dark defined together as semantic tokens in
 `src/app/globals.css`.

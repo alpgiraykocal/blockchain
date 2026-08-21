@@ -56,7 +56,7 @@ export default function TagsPage() {
       <div>
         <h1 className="text-lg font-semibold tracking-tight text-heading">Tags & risk</h1>
         <p className="mt-0.5 max-w-2xl text-xs leading-relaxed text-foreground-muted">
-          Attribution is what turns an anonymous address into an actor. ChainLens ships
+          Attribution is what turns an anonymous address into an actor. Blockchain Analysis ships
           with public TagPacks and lets you layer your own tags on top — both feed the
           same risk model.
         </p>
@@ -258,7 +258,7 @@ export default function TagsPage() {
                         }
                         title={
                           currency === "XBT" || currency === "ETH"
-                            ? "Screened by ChainLens"
+                            ? "Screened by Blockchain Analysis"
                             : "Stored in the snapshot; no adapter for this chain yet"
                         }
                       >

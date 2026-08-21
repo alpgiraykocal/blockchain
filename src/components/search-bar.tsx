@@ -4,11 +4,13 @@ import { Loader2, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { detectChain, isValidAddress } from "@/lib/chains/registry";
+import { storageEvent, storageKey } from "@/lib/storage";
 import { truncateAddress } from "@/lib/format";
 import type { ChainId } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
-const RECENT_KEY = "chainlens.recent";
+const RECENT_KEY = storageKey("recent");
+const RECENT_EVENT = storageEvent("recent");
 const MAX_RECENT = 6;
 
 export interface RecentEntry {
@@ -34,7 +36,7 @@ export function pushRecent(entry: Omit<RecentEntry, "at">) {
   );
   const next = [{ ...entry, at: new Date().toISOString() }, ...existing].slice(0, MAX_RECENT);
   window.localStorage.setItem(RECENT_KEY, JSON.stringify(next));
-  window.dispatchEvent(new Event("chainlens:recent"));
+  window.dispatchEvent(new Event(RECENT_EVENT));
 }
 
 export function SearchBar({
@@ -71,8 +73,8 @@ export function SearchBar({
   useEffect(() => {
     const sync = () => setRecent(readRecent());
     sync();
-    window.addEventListener("chainlens:recent", sync);
-    return () => window.removeEventListener("chainlens:recent", sync);
+    window.addEventListener(RECENT_EVENT, sync);
+    return () => window.removeEventListener(RECENT_EVENT, sync);
   }, []);
 
   useEffect(() => {

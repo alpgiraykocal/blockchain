@@ -41,7 +41,7 @@ const OUT_PATH = join(HERE, "..", "data", "actor-labels.json.gz");
 /** A small readable companion, so a pull request that carries a binary payload
  *  still shows a reviewer what actually moved. */
 const SUMMARY_PATH = join(HERE, "..", "data", "actor-labels.summary.md");
-const USER_AGENT = "ChainLens/0.1 (open label ingest)";
+const USER_AGENT = "BlockchainAnalysis/0.1 (open label ingest)";
 
 type Profile = "core" | "standard" | "full";
 
@@ -147,7 +147,7 @@ async function fetchTarball(
     throw new Error(`${owner}/${repo}: download failed with ${response.status}`);
   }
 
-  const dir = await mkdtemp(join(tmpdir(), "chainlens-labels-"));
+  const dir = await mkdtemp(join(tmpdir(), "blockchain-analysis-labels-"));
   const archive = join(dir, "repo.tar.gz");
   await pipeline(
     Readable.fromWeb(response.body as Parameters<typeof Readable.fromWeb>[0]),

@@ -43,7 +43,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           >
             <Logo />
             <span className="hidden text-sm font-semibold tracking-tight text-heading sm:inline">
-              ChainLens
+              Blockchain Analysis
             </span>
           </Link>
 

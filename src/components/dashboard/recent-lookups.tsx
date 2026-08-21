@@ -6,6 +6,7 @@ import { readRecent, type RecentEntry } from "@/components/search-bar";
 import { AddressLink } from "@/components/ui/address-link";
 import { Badge, EmptyState } from "@/components/ui/primitives";
 import { formatRelative } from "@/lib/format";
+import { storageEvent } from "@/lib/storage";
 
 export function RecentLookups() {
   const [recent, setRecent] = useState<RecentEntry[] | null>(null);
@@ -13,8 +14,8 @@ export function RecentLookups() {
   useEffect(() => {
     const sync = () => setRecent(readRecent());
     sync();
-    window.addEventListener("chainlens:recent", sync);
-    return () => window.removeEventListener("chainlens:recent", sync);
+    window.addEventListener(storageEvent("recent"), sync);
+    return () => window.removeEventListener(storageEvent("recent"), sync);
   }, []);
 
   // null means "not read yet" — avoids flashing the empty state during hydration.

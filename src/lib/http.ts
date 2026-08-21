@@ -27,7 +27,7 @@ export async function fetchJson<T>(url: string, options: FetchOptions = {}): Pro
     try {
       const response = await fetch(url, {
         signal: controller.signal,
-        headers: { accept: "application/json", "user-agent": "ChainLens/0.1" },
+        headers: { accept: "application/json", "user-agent": "BlockchainAnalysis/0.1" },
         cache: "no-store",
       });
 

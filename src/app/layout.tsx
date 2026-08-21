@@ -20,8 +20,8 @@ const firaCode = Fira_Code({
 
 export const metadata: Metadata = {
   title: {
-    default: "ChainLens — cryptoasset graph analytics",
-    template: "%s · ChainLens",
+    default: "Blockchain Analysis — cryptoasset graph analytics",
+    template: "%s · Blockchain Analysis",
   },
   description:
     "Interactive address, entity and transaction-flow analysis for Bitcoin and Ethereum, built on public block explorer data.",

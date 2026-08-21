@@ -102,7 +102,7 @@ export const SOURCES: Record<SourceId, SourceDefinition> = {
   },
 };
 
-/** GraphSense taxonomy → the actor categories ChainLens renders. */
+/** GraphSense taxonomy → the actor categories this app renders. */
 export const CATEGORY_MAP: Record<string, string> = {
   exchange: "exchange",
   decentralized_exchange: "defi",

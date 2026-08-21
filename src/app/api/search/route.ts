@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       hits,
       hint: hits.length
         ? null
-        : "No chain recognised this string. ChainLens accepts BTC addresses (1…, 3…, bc1…), ETH addresses (0x…) and ENS names.",
+        : "No chain recognised this string. Blockchain Analysis accepts BTC addresses (1…, 3…, bc1…), ETH addresses (0x…) and ENS names.",
     });
   } catch (error) {
     return handleRouteError(error);

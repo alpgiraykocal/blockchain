@@ -24,7 +24,7 @@ export function UserTagsPanel() {
   const exportUrl = useMemo(() => {
     if (typeof window === "undefined") return null;
     const payload = {
-      title: "ChainLens local analyst tags",
+      title: "Blockchain Analysis local analyst tags",
       creator: "local",
       lastmod: new Date().toISOString().slice(0, 10),
       tags,
@@ -138,7 +138,7 @@ export function UserTagsPanel() {
             {exportUrl && tags.length ? (
               <a
                 href={exportUrl}
-                download="chainlens-tags.json"
+                download="blockchain-analysis-tags.json"
                 className="inline-flex h-9 min-h-9 cursor-pointer items-center gap-1.5 rounded-md border border-border-strong px-2.5 text-xs font-medium text-foreground transition-colors duration-200 hover:bg-surface-2"
               >
                 <Download className="size-3.5" aria-hidden="true" />

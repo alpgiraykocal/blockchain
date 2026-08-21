@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* ChainLens design tokens — Data-Dense Dashboard.
+/* Blockchain Analysis design tokens — Data-Dense Dashboard.
  *
  * Every token carries both its light and dark value through `light-dark()`, and
  * `color-scheme` decides which one applies. That means the OS preference is

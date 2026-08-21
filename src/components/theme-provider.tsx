@@ -1,5 +1,6 @@
 "use client";
 
+import { storageEvent, storageKey } from "@/lib/storage";
 import {
   createContext,
   useCallback,
@@ -18,8 +19,8 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
-const STORAGE_KEY = "chainlens.theme";
-const EVENT = "chainlens:theme";
+const STORAGE_KEY = storageKey("theme");
+const EVENT = storageEvent("theme");
 
 /* The stored preference and the OS preference are two external stores; reading
  * them with useSyncExternalStore keeps hydration correct without a state-setting

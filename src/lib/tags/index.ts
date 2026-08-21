@@ -129,7 +129,7 @@ export function packStats(): PackSummary[] {
       creator: "US Treasury, via the OFAC Sanctions List Service",
       description: `Every digital-currency address published on OFAC's sanctions lists, pulled straight from the source files. ${OFAC_SNAPSHOT.counts.total} addresses across ${
         Object.keys(OFAC_SNAPSHOT.counts.byCurrency).length
-      } currencies; ${screenable} are on a chain ChainLens can screen.`,
+      } currencies; ${screenable} are on a chain Blockchain Analysis can screen.`,
       lastmod: issued ?? OFAC_SNAPSHOT.retrievedAt.slice(0, 10),
       tagCount: screenable,
       chains: Object.keys(OFAC_SNAPSHOT.counts.byChain) as ChainId[],

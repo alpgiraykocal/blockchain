@@ -23,7 +23,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const BASE = "https://sanctionslistservice.ofac.treas.gov";
-const USER_AGENT = "ChainLens/0.1 (cryptoasset sanctions screening)";
+const USER_AGENT = "BlockchainAnalysis/0.1 (cryptoasset sanctions screening)";
 
 const SOURCES = [
   { file: "SDN_ADVANCED.XML", label: "SDN" },
@@ -42,7 +42,7 @@ const MIN_TOTAL = 200;
 const HERE = dirname(fileURLToPath(import.meta.url));
 const OUT_PATH = join(HERE, "..", "src", "lib", "tags", "generated", "ofac-crypto.json");
 
-/** OFAC currency codes mapped onto the chains ChainLens can actually screen.
+/** OFAC currency codes mapped onto the chains this app can actually screen.
  *  Unmapped currencies are still stored, so adding a chain needs no re-sync. */
 const CURRENCY_TO_CHAIN: Record<string, string> = {
   XBT: "btc",

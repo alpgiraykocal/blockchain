@@ -2,6 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { storageKey } from "../storage";
 import type { AbuseType, ActorCategory, ChainId, Tag } from "../types";
 
 export interface UserTagDraft {
@@ -51,7 +52,7 @@ export const useUserTags = create<UserTagState>()(
       replaceAll: (tags) => set({ tags }),
       clear: () => set({ tags: [] }),
     }),
-    { name: "chainlens.user-tags" },
+    { name: storageKey("user-tags") },
   ),
 );
 

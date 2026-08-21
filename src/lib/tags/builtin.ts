@@ -17,7 +17,7 @@ export const BUILTIN_PACKS: TagPack[] = [
   {
     id: "public-exchanges",
     title: "Public exchange hot wallets",
-    creator: "ChainLens seed",
+    creator: "Blockchain Analysis seed",
     description:
       "Widely published custodial hot-wallet addresses. Useful as flow termination points — funds reaching them leave the transparent graph.",
     lastmod: now,
@@ -75,7 +75,7 @@ export const BUILTIN_PACKS: TagPack[] = [
   {
     id: "known-services",
     title: "Known services and protocols",
-    creator: "ChainLens seed",
+    creator: "Blockchain Analysis seed",
     description: "Bridges, DeFi routers and mining pools that commonly appear as graph hubs.",
     lastmod: now,
     tags: [
