@@ -1,26 +1,250 @@
 @import "tailwindcss";
 
+/* ChainLens design tokens — Data-Dense Dashboard.
+ *
+ * Every token carries both its light and dark value through `light-dark()`, and
+ * `color-scheme` decides which one applies. That means the OS preference is
+ * honoured with no JavaScript and no theme-boot script: there is nothing to
+ * flash, because the correct palette is already in the first paint. The `.light`
+ * and `.dark` classes only exist to let an explicit user choice override the OS.
+ *
+ * Never use a raw hex in a component — always a semantic token. */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light dark;
+
+  --background: light-dark(#f8fafc, #070d1a);
+  --surface: light-dark(#ffffff, #0f172a);
+  --surface-2: light-dark(#f1f5f9, #16203a);
+  --foreground: light-dark(#0f172a, #e2e8f0);
+  --foreground-muted: light-dark(#475569, #94a3b8);
+  --heading: light-dark(#1e3a8a, #bfdbfe);
+
+  --primary: light-dark(#1e40af, #3b82f6);
+  --on-primary: light-dark(#ffffff, #04101f);
+  --secondary: light-dark(#3b82f6, #60a5fa);
+  --accent: light-dark(#b45309, #f59e0b);
+  --ring: light-dark(#1e40af, #60a5fa);
+
+  --border: light-dark(#cbd5e1, #1e293b);
+  --border-strong: light-dark(#94a3b8, #334155);
+  --muted: light-dark(#e9eef6, #16203a);
+
+  --success: light-dark(#15803d, #4ade80);
+  --warning: light-dark(#b45309, #fbbf24);
+  --destructive: light-dark(#dc2626, #f87171);
+  --info: light-dark(#1d4ed8, #60a5fa);
+
+  /* Graph node categories — categorical, each paired with an icon or shape in UI
+     so colour is never the only carrier of meaning. */
+  --node-address: light-dark(#2563eb, #60a5fa);
+  --node-entity: light-dark(#7c3aed, #a78bfa);
+  --node-exchange: light-dark(#15803d, #4ade80);
+  --node-mixer: light-dark(#dc2626, #f87171);
+  --node-service: light-dark(#0891b2, #22d3ee);
+  --node-unknown: light-dark(#64748b, #94a3b8);
+  --edge: light-dark(#94a3b8, #475569);
+  --edge-highlight: light-dark(#b45309, #fbbf24);
+
+  --scrim: light-dark(rgb(15 23 42 / 0.5), rgb(2 6 16 / 0.65));
+
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 10px;
+}
+
+/* Safety net for engines without `light-dark()` (pre-2024 browsers): fall back
+   to the complete light palette rather than to unstyled colours. A partial
+   fallback would look broken; this one just skips dark mode. */
+@supports not (color: light-dark(#000, #fff)) {
+  :root {
+    --background: #f8fafc;
+    --surface: #ffffff;
+    --surface-2: #f1f5f9;
+    --foreground: #0f172a;
+    --foreground-muted: #475569;
+    --heading: #1e3a8a;
+    --primary: #1e40af;
+    --on-primary: #ffffff;
+    --secondary: #3b82f6;
+    --accent: #b45309;
+    --ring: #1e40af;
+    --border: #cbd5e1;
+    --border-strong: #94a3b8;
+    --muted: #e9eef6;
+    --success: #15803d;
+    --warning: #b45309;
+    --destructive: #dc2626;
+    --info: #1d4ed8;
+    --node-address: #2563eb;
+    --node-entity: #7c3aed;
+    --node-exchange: #15803d;
+    --node-mixer: #dc2626;
+    --node-service: #0891b2;
+    --node-unknown: #64748b;
+    --edge: #94a3b8;
+    --edge-highlight: #b45309;
+    --scrim: rgb(15 23 42 / 0.5);
+  }
+}
+
+/* Explicit user choice wins over the OS preference. */
+:root.light {
+  color-scheme: light;
+}
+
+:root.dark {
+  color-scheme: dark;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-heading: var(--heading);
+
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-ring: var(--ring);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-muted: var(--muted);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-destructive: var(--destructive);
+  --color-info: var(--info);
+
+  --color-node-address: var(--node-address);
+  --color-node-entity: var(--node-entity);
+  --color-node-exchange: var(--node-exchange);
+  --color-node-mixer: var(--node-mixer);
+  --color-node-service: var(--node-service);
+  --color-node-unknown: var(--node-unknown);
+
+  --font-sans: var(--font-fira-sans);
+  --font-mono: var(--font-fira-code);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius-lg);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--border);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-fira-sans), ui-sans-serif, system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Density is right for a mouse, too tight for a finger. Coarse pointers get
+   taller rows and a padded hit area on inline links without changing the
+   desktop layout. */
+@media (pointer: coarse) {
+  /* Padding rather than a min-height on the link itself: forcing 44px onto the
+     anchor would make only the rows that contain one taller, and a table with
+     uneven row heights reads as broken. */
+  td {
+    padding-top: 0.78rem;
+    padding-bottom: 0.78rem;
+  }
+  th button {
+    display: inline-flex;
+    min-height: 2.5rem;
+    align-items: center;
+  }
+}
+
+/* Scroll shadows for horizontally scrollable regions (wide data tables). The
+   cover gradients are attached to the content and the shadows to the viewport,
+   so each shadow only appears while there is more table in that direction - no
+   JavaScript, and no shadow when the table already fits. */
+.scroll-x {
+  overflow-x: auto;
+  background:
+    linear-gradient(to right, var(--surface) 30%, transparent) left center / 28px 100% no-repeat,
+    linear-gradient(to left, var(--surface) 30%, transparent) right center / 28px 100% no-repeat,
+    radial-gradient(farthest-side at 0 50%, rgb(15 23 42 / 0.16), transparent) left center / 14px
+      100% no-repeat,
+    radial-gradient(farthest-side at 100% 50%, rgb(15 23 42 / 0.16), transparent) right center /
+      14px 100% no-repeat;
+  background-attachment: local, local, scroll, scroll;
+}
+
+/* Tabular figures everywhere numbers are compared in columns. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+::selection {
+  background: var(--secondary);
+  color: var(--on-primary);
+}
+
+/* Scrollbars tuned for dense tables without hiding the affordance. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 999px;
+  border: 3px solid transparent;
+  background-clip: content-box;
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--muted);
+  border-radius: var(--radius-sm);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgb(148 163 184 / 0.18), transparent);
+  animation: shimmer 1.4s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .skeleton::after {
+    animation: none;
+  }
 }

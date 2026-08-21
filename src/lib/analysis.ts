@@ -1,0 +1,253 @@
+import { getAdapter } from "./chains";
+import type { NeighborAgg } from "./chains/adapter";
+import { makeValue } from "./format";
+import { assessRisk, nodeKindFor } from "./risk";
+import { builtinTagsFor } from "./tags";
+import type {
+  AddressSummary,
+  ChainId,
+  EntitySummary,
+  GraphEdge,
+  GraphNode,
+  Link,
+  Tag,
+  Transaction,
+} from "./types";
+
+export interface NeighborRow {
+  node: GraphNode;
+  link: Link;
+  direction: "in" | "out";
+}
+
+export interface AddressAnalysis {
+  address: AddressSummary;
+  entity: EntitySummary;
+  transactions: Transaction[];
+  neighbors: NeighborRow[];
+  priceUsd: number | null;
+  /** Analysis window metadata so the UI never presents partial data as complete. */
+  window: {
+    txsAnalysed: number;
+    txsTotal: number;
+    totalsWindowed: boolean;
+    clusterPartial: boolean;
+    /** Non-null when the explorer could not serve the transaction list. */
+    txsUnavailable: string | null;
+  };
+}
+
+/** Attribution attached to an explorer-supplied public label, so Blockscout's own
+ *  metadata (e.g. "Binance 14") shows up next to TagPack entries. */
+function explorerTag(chain: ChainId, subject: string, label: string): Tag {
+  return {
+    id: `explorer:${chain}:${subject.toLowerCase()}`,
+    chain,
+    subject,
+    label,
+    category: "unknown",
+    abuse: "none",
+    confidence: 0.6,
+    source: "tagpack",
+    pack: "explorer-metadata",
+    createdAt: new Date().toISOString(),
+    notes: "Public label supplied by the block explorer.",
+  };
+}
+
+function tagsFor(
+  chain: ChainId,
+  address: string,
+  explorerLabel: string | null,
+): Tag[] {
+  const tags = [...builtinTagsFor(chain, address)];
+  if (explorerLabel && !tags.some((tag) => tag.label === explorerLabel)) {
+    tags.push(explorerTag(chain, address, explorerLabel));
+  }
+  return tags;
+}
+
+function bestLabel(tags: Tag[]): string | null {
+  if (!tags.length) return null;
+  return [...tags].sort((a, b) => b.confidence - a.confidence)[0].label;
+}
+
+export async function analyzeAddress(
+  chain: ChainId,
+  address: string,
+  limit = 50,
+): Promise<AddressAnalysis> {
+  const adapter = getAdapter(chain);
+  const [{ usd: priceUsd }, bundle] = await Promise.all([
+    adapter.getPrice(),
+    adapter.getAddressBundle(address, limit),
+  ]);
+
+  const ownTags = tagsFor(chain, bundle.address, bundle.label);
+  for (const member of bundle.cluster.addresses) {
+    if (member === bundle.address) continue;
+    for (const tag of builtinTagsFor(chain, member)) ownTags.push(tag);
+  }
+
+  const totalNeighborValue = bundle.neighbors.reduce(
+    (sum, neighbor) => sum + neighbor.valueRaw,
+    0n,
+  );
+
+  const neighbors: NeighborRow[] = bundle.neighbors.map((neighbor) =>
+    toNeighborRow(chain, bundle.address, neighbor, totalNeighborValue, priceUsd),
+  );
+
+  const inDegree = neighbors.filter((row) => row.direction === "in").length;
+  const outDegree = neighbors.filter((row) => row.direction === "out").length;
+  const oneShot = neighbors.filter((row) => row.link.txCount === 1).length;
+
+  const risk = assessRisk({
+    ownTags,
+    neighborTags: neighbors
+      .filter((row) => row.node.tags.length > 0)
+      .map((row) => ({
+        tags: row.node.tags,
+        hops: 1,
+        shareOfValue:
+          totalNeighborValue === 0n
+            ? 0
+            : Number((BigInt(row.link.value.raw) * 10_000n) / totalNeighborValue) / 10_000,
+      })),
+    txCount: bundle.txCount,
+    inDegree,
+    outDegree,
+    oneShotRatio: neighbors.length ? oneShot / neighbors.length : undefined,
+  });
+
+  const addressSummary: AddressSummary = {
+    chain,
+    address: bundle.address,
+    entityId: bundle.cluster.id,
+    balance: makeValue(bundle.balanceRaw, chain, priceUsd),
+    totalReceived: makeValue(bundle.receivedRaw, chain, priceUsd),
+    totalSent: makeValue(bundle.sentRaw, chain, priceUsd),
+    txCount: bundle.txCount,
+    inDegree,
+    outDegree,
+    firstSeen: bundle.firstSeen,
+    lastSeen: bundle.lastSeen,
+    isContract: bundle.isContract,
+    tags: ownTags,
+    risk,
+  };
+
+  const entity: EntitySummary = {
+    chain,
+    entityId: bundle.cluster.id,
+    label: bestLabel(ownTags),
+    addressCount: bundle.cluster.addresses.length,
+    addresses: bundle.cluster.addresses,
+    balance: addressSummary.balance,
+    totalReceived: addressSummary.totalReceived,
+    totalSent: addressSummary.totalSent,
+    tags: ownTags,
+    risk,
+    method: bundle.cluster.method,
+  };
+
+  return {
+    address: addressSummary,
+    entity,
+    transactions: bundle.txs,
+    neighbors,
+    priceUsd,
+    window: {
+      txsAnalysed: bundle.windowSize,
+      txsTotal: bundle.txCount,
+      totalsWindowed: bundle.totalsWindowed,
+      clusterPartial: bundle.cluster.partial,
+      txsUnavailable: bundle.txsUnavailable,
+    },
+  };
+}
+
+function toNeighborRow(
+  chain: ChainId,
+  origin: string,
+  neighbor: NeighborAgg,
+  totalValue: bigint,
+  priceUsd: number | null,
+): NeighborRow {
+  const tags = tagsFor(chain, neighbor.address, neighbor.label);
+  const value = makeValue(neighbor.valueRaw, chain, priceUsd);
+
+  const risk = assessRisk({
+    ownTags: tags,
+    neighborTags: [],
+    txCount: neighbor.txCount,
+    inDegree: neighbor.direction === "in" ? 1 : 0,
+    outDegree: neighbor.direction === "out" ? 1 : 0,
+  });
+
+  const node: GraphNode = {
+    id: nodeId(chain, neighbor.address),
+    chain,
+    kind: nodeKindFor(tags, false),
+    address: neighbor.address,
+    label: bestLabel(tags),
+    balance: makeValue(0n, chain, priceUsd),
+    txCount: neighbor.txCount,
+    riskScore: risk.score,
+    tags,
+    expandedFrom: nodeId(chain, origin),
+  };
+
+  const link: Link = {
+    source: neighbor.direction === "out" ? origin : neighbor.address,
+    target: neighbor.direction === "out" ? neighbor.address : origin,
+    txCount: neighbor.txCount,
+    value,
+    firstSeen: neighbor.firstSeen,
+    lastSeen: neighbor.lastSeen,
+  };
+
+  void totalValue;
+  return { node, link, direction: neighbor.direction };
+}
+
+export function nodeId(chain: ChainId, address: string): string {
+  return `${chain}:${address.toLowerCase()}`;
+}
+
+/** Converts an analysis into the node/edge pair the graph canvas consumes. */
+export function toGraphFragment(analysis: AddressAnalysis): {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+} {
+  const root: GraphNode = {
+    id: nodeId(analysis.address.chain, analysis.address.address),
+    chain: analysis.address.chain,
+    kind: nodeKindFor(analysis.address.tags, analysis.entity.addressCount > 1),
+    address: analysis.address.address,
+    label: analysis.entity.label,
+    balance: analysis.address.balance,
+    txCount: analysis.address.txCount,
+    riskScore: analysis.address.risk.score,
+    tags: analysis.address.tags,
+  };
+
+  const nodes: GraphNode[] = [root];
+  const edges: GraphEdge[] = [];
+
+  for (const row of analysis.neighbors) {
+    nodes.push(row.node);
+    const source = nodeId(row.node.chain, row.link.source);
+    const target = nodeId(row.node.chain, row.link.target);
+    edges.push({
+      id: `${source}->${target}`,
+      source,
+      target,
+      value: row.link.value,
+      txCount: row.link.txCount,
+      direction: row.direction,
+    });
+  }
+
+  return { nodes, edges };
+}
