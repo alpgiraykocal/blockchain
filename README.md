@@ -70,6 +70,45 @@ Balance and lifetime totals, the co-spending cluster, attribution tags, the full
 risk breakdown, inbound/outbound flow concentration, and the transaction list with
 the signed net effect on the address.
 
+### Investigate (`/investigate/[chain]/[address]`)
+The AML/CTF workspace. It extracts the ego network around one subject, tests the
+activity against named money-laundering typologies, recommends a triage
+disposition, and drafts a case file with an audit block.
+
+* **Ego network, not the whole graph.** One subject at the centre, direct
+  counterparties in ring one, an opt-in second hop in ring two. Reduction runs in
+  a fixed order - time window, minimum value, direction, service-hub damping,
+  top-K - and every step it took is printed under the canvas. A graph that
+  silently dropped half its edges is worse than no graph.
+* **Deterministic radial layout.** Positions are computed, not simulated. A
+  force-directed layout puts the same network somewhere different every run,
+  which is unusable when two analysts discuss one picture or a screenshot goes
+  into a case file.
+* **Explainable metrics only.** Degree, in/out volume, retention, median dwell,
+  burst, concentration, one-shot ratio. Every figure is a count, a ratio or a
+  median an analyst can re-derive by hand. Nothing is fitted or learned.
+* **Every finding carries its own rebuttal.** A typology match lists the facts
+  that support it and the ordinary explanations that fit just as well. Findings
+  are tagged `observed`, `derived` or `attribution` so inference never blurs into
+  observation.
+* **Known services are de-weighted, not hidden.** Fan-in, fan-out and rapid
+  turnover are what an exchange looks like. Where the subject is an attributed
+  service, structural findings stay visible but lose their weight and say why.
+* **Audit block on every assessment.** Subject, filters, window, reduction
+  applied, engine and layout version, and the exact sanctions publication and
+  label-snapshot revisions it ran against - so a conclusion can be reproduced or
+  challenged later. Exports as Markdown or JSON.
+
+Typologies tested: sanctions exposure, mixing-service exposure, peel chain, rapid
+pass-through, funnel aggregation, dispersal, uniform-amount layering, dormancy
+then burst, round-tripping, and off-graph continuation (which is a tracing limit,
+not a red flag).
+
+**What it is not.** Priority scores order a queue. Typology matches are
+"consistent with" findings. Nothing in the output establishes that anyone
+committed an offence, and filing decisions and customer action remain with a
+qualified compliance professional.
+
 ### Tags & risk (`/tags`)
 The OFAC snapshot with its full provenance (list issue date, file hashes, counts
 by currency and programme), a filterable table of every screenable designated
@@ -269,6 +308,7 @@ src/
     ui/          buttons, panels, badges, data table, stat tiles
     dashboard/   chain stat cards, recent lookups
   lib/
+    aml/         ego-network extraction, metrics, typologies, disposition, narrative
     chains/      per-chain explorer adapters behind one interface
     tags/        OFAC snapshot, open-feed loader, curated fallback, local tags
 data/

@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard, Monitor, Moon, Network, Sun, Tags } from "lucide-react";
+import { LayoutDashboard, Monitor, Moon, Network, ScanSearch, Sun, Tags } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/investigate", label: "Investigate", icon: ScanSearch },
   { href: "/explorer", label: "Explorer", icon: Network },
   { href: "/tags", label: "Tags & risk", icon: Tags },
 ] as const;
