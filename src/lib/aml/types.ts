@@ -227,6 +227,16 @@ export interface AmlAssessment {
   disposition: Disposition;
   narrative: CaseNarrative;
   audit: AuditRecord;
+  /** Structured state of the underlying data, so the UI can explain a thin or
+   *  empty result instead of rendering one that merely looks broken. */
+  dataHealth: {
+    txsAnalysed: number;
+    txsTotal: number;
+    /** Non-null when the explorer could not serve the transaction list at all. */
+    txsUnavailable: string | null;
+    clusterPartial: boolean;
+    totalsWindowed: boolean;
+  };
   /** Limits of the underlying data, restated where the conclusion is drawn. */
   limitations: string[];
 }

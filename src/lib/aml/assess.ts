@@ -187,6 +187,13 @@ export async function assessAddress(
         network,
         options.analyst ?? null,
       ),
+      dataHealth: {
+        txsAnalysed: analysis.window.txsAnalysed,
+        txsTotal: analysis.window.txsTotal,
+        txsUnavailable: analysis.window.txsUnavailable,
+        clusterPartial: analysis.window.clusterPartial,
+        totalsWindowed: analysis.window.totalsWindowed,
+      },
       limitations,
     },
     network,

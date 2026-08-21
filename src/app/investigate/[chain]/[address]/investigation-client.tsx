@@ -163,6 +163,33 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
         </div>
       </header>
 
+      {/* An assessment with no transaction data still renders a subject, a
+          disposition and an empty ring. Without this banner that reads as a
+          broken graph rather than as an upstream failure. */}
+      {assessment.dataHealth.txsUnavailable ? (
+        <div
+          role="alert"
+          className="flex items-start gap-2 rounded-lg border border-destructive/50 bg-destructive/8 px-4 py-3"
+        >
+          <AlertOctagon className="mt-0.5 size-4 shrink-0 text-destructive" aria-hidden="true" />
+          <div className="min-w-0 text-[11px] leading-relaxed text-foreground-muted">
+            <p className="text-xs font-medium text-foreground">
+              No transaction data — the assessment below is incomplete
+            </p>
+            <p className="mt-0.5 break-words">
+              {meta.explorerName} could not serve this address&apos;s transactions (
+              {assessment.dataHealth.txsUnavailable}). Balance and attribution are still
+              accurate; the ego network, every metric and every behavioural detector had
+              nothing to run against, so an absent finding here means absent data, not a
+              clear result.
+            </p>
+            <Button size="sm" variant="secondary" className="mt-2" onClick={() => void mutate()}>
+              Retry
+            </Button>
+          </div>
+        </div>
+      ) : null}
+
       {/* ------------------------------------------------------ disposition */}
       <section
         className={cn(
@@ -336,13 +363,34 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
           >
             <div className="flex h-full min-h-[460px] flex-col">
               <div className="relative min-h-0 flex-1 bg-surface-2/30">
-                <RadialGraph
-                  nodes={network.nodes}
-                  edges={network.edges}
-                  selectedId={selectedId}
-                  onSelect={setSelectedId}
-                  onExpand={onExpand}
-                />
+                {network.nodes.length <= 1 ? (
+                  <div className="flex h-full items-center justify-center p-6">
+                    <div className="max-w-sm text-center">
+                      <Network
+                        className="mx-auto size-6 text-foreground-muted"
+                        aria-hidden="true"
+                      />
+                      <p className="mt-2 text-sm font-medium text-foreground">
+                        No counterparties to draw
+                      </p>
+                      <p className="mt-1 text-[11px] leading-relaxed text-foreground-muted">
+                        {assessment.dataHealth.txsUnavailable
+                          ? `${meta.explorerName} could not serve the transaction list, so there are no counterparties to place around the subject. Retry above.`
+                          : direction !== "both"
+                            ? `No ${direction === "in" ? "sending" : "receiving"} counterparties in the analysed window. Switch the direction filter back to Both.`
+                            : `The subject has no counterparties in the ${assessment.dataHealth.txsAnalysed} transaction(s) the explorer returned. This is an empty window, not a cleared address.`}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <RadialGraph
+                    nodes={network.nodes}
+                    edges={network.edges}
+                    selectedId={selectedId}
+                    onSelect={setSelectedId}
+                    onExpand={onExpand}
+                  />
+                )}
                 {isLoading ? (
                   <p className="pointer-events-none absolute left-3 top-3 rounded border border-border bg-surface/90 px-2 py-1 text-[11px] text-foreground-muted">
                     Re-running…
