@@ -13,6 +13,11 @@ services:
     envVars:
       - key: NODE_VERSION
         value: "24"
+      # Next's standalone server binds to whatever HOSTNAME says, and unset it
+      # takes the container's own hostname - which the platform's proxy cannot
+      # reach, so the service answers 502 while looking healthy in its own logs.
+      - key: HOSTNAME
+        value: "0.0.0.0"
       # A 512 MB free instance. Node otherwise grows its heap toward the host's
       # memory, not the container's, and gets OOM-killed rather than collecting.
       # This leaves headroom for the parts of RSS that are not V8 heap.
