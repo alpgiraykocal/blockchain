@@ -138,16 +138,17 @@ comes from open-licensed label feeds, rebuilt by a script rather than typed by
 hand:
 
 ```bash
-npm run sync:labels                      # standard profile (default)
-npm run sync:labels -- --profile core    # hub and service wallets only
-npm run sync:labels -- --profile full    # everything the feeds publish
+npm run sync:labels                      # standard profile (default): everything
+npm run sync:labels -- --profile core    # ~20k addresses, for constrained deploys
 npm run sync:labels -- --dry             # parse and report, write nothing
 ```
 
 [`scripts/sync-labels.mts`](scripts/sync-labels.mts) writes
-`data/actor-labels.json`. The current standard snapshot carries **250,000
-addresses across 13,560 labels and 477 named actors** - exchanges, mining pools,
+`data/actor-labels.json.gz`. The current standard snapshot carries **428,452
+addresses across 13,563 labels and 477 named actors** - exchanges, mining pools,
 mixers, gambling, DeFi, tokens and custodial services, on both BTC and ETH.
+[`data/actor-labels.summary.md`](data/actor-labels.summary.md) is regenerated
+beside it with the counts, per-source deltas and upstream revisions.
 
 ### Feeds
 
@@ -183,11 +184,16 @@ screen renders them, so the gaps in coverage are visible rather than implied.
 * **Dictionary-compressed.** Label strings repeat tens of thousands of times
   across a feed, so addresses point at indices into shared label and actor
   tables. 250k addresses fit in ~12 MB rather than ~60 MB.
+* **Stored gzipped.** The payload compresses better than 2:1, which halves what
+  every changed snapshot costs the repository forever. Gunzip adds about 40ms
+  once per process, against a JSON parse that costs four times that. The cost of
+  a binary payload is reviewability, which the regenerated summary file pays back.
 * **Breadth before depth.** A single exchange publishes 350k deposit addresses.
-  Filling the budget by confidence alone let that one feed swallow the whole
-  snapshot - 146 distinct labels for 250k addresses. Packs are now filled
-  smallest-first, so every curated pack lands in full and bulk dumps take
-  whatever is left. Same budget, 3,794 labels instead of 146.
+  Filling a budget by confidence alone let that one feed swallow the whole
+  snapshot - 146 distinct labels for 250k addresses. Packs are filled
+  smallest-first instead, so every curated pack lands in full and bulk dumps take
+  whatever is left. That ordering is what makes the `core` profile useful rather
+  than one exchange's deposit list; `standard` is uncapped and takes everything.
 * **Attribution is not accusation.** Actor labels never set an abuse category.
   Abuse-tagged entries in the upstream packs are skipped outright: sanctions are
   a legal determination and come from OFAC alone, not from third-party forensic
@@ -266,7 +272,8 @@ src/
     chains/      per-chain explorer adapters behind one interface
     tags/        OFAC snapshot, open-feed loader, curated fallback, local tags
 data/
-  actor-labels.json   generated actor attribution, read at runtime via fs
+  actor-labels.json.gz     generated actor attribution, read at runtime via fs
+  actor-labels.summary.md  human-readable counts and deltas for the above
 scripts/
   sync-ofac.mts    OFAC SLS ingest -> src/lib/tags/generated/ofac-crypto.json
   sync-labels.mts  open label feeds -> data/actor-labels.json

@@ -67,6 +67,22 @@ function tagsFor(
   return tags;
 }
 
+/** A cluster of 40 co-spending addresses that all carry the same exchange label
+ *  produced 40 identical chips in the header. Collapse by what a reader can
+ *  actually distinguish - the label, its category and where it came from -
+ *  keeping the highest-confidence copy of each. */
+function dedupeTags(tags: Tag[]): void {
+  const best = new Map<string, Tag>();
+  for (const tag of tags) {
+    const key = `${tag.label}|${tag.category}|${tag.abuse}|${tag.pack}`;
+    const existing = best.get(key);
+    if (!existing || tag.confidence > existing.confidence) best.set(key, tag);
+  }
+  const kept = [...best.values()];
+  tags.length = 0;
+  tags.push(...kept);
+}
+
 function bestLabel(tags: Tag[]): string | null {
   if (!tags.length) return null;
   return [...tags].sort((a, b) => b.confidence - a.confidence)[0].label;
@@ -88,6 +104,7 @@ export async function analyzeAddress(
     if (member === bundle.address) continue;
     for (const tag of builtinTagsFor(chain, member)) ownTags.push(tag);
   }
+  dedupeTags(ownTags);
 
   const totalNeighborValue = bundle.neighbors.reduce(
     (sum, neighbor) => sum + neighbor.valueRaw,

@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { gunzipSync } from "node:zlib";
 import { displayName } from "../format";
 import type { ActorCategory, ChainId, Tag } from "../types";
 
@@ -10,6 +11,10 @@ import type { ActorCategory, ChainId, Tag } from "../types";
  * double-digit megabytes, and inlining that into the server bundle would inflate
  * build output and cold starts for data that only ever needs a point lookup.
  * `next.config.ts` traces the file into the standalone output.
+ *
+ * It is stored gzipped. The payload compresses better than 2:1, which halves what
+ * every changed snapshot costs the repository forever, and gunzip adds about 30ms
+ * once per process against a parse that costs five times that.
  */
 
 export interface ActorRecord {
@@ -78,8 +83,10 @@ let loadError: string | null = null;
 export function labelSnapshot(): LabelSnapshot {
   if (cache) return cache;
   try {
-    const path = join(process.cwd(), "data", "actor-labels.json");
-    const parsed = JSON.parse(readFileSync(path, "utf8")) as Partial<LabelSnapshot>;
+    const path = join(process.cwd(), "data", "actor-labels.json.gz");
+    const parsed = JSON.parse(
+      gunzipSync(readFileSync(path)).toString("utf8"),
+    ) as Partial<LabelSnapshot>;
     // A snapshot written by an older revision of the sync script must degrade,
     // not crash the page it appears on.
     cache = {

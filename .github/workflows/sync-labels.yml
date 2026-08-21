@@ -51,16 +51,23 @@ jobs:
       - name: Open a pull request when the labels changed
         uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
-          add-paths: data/actor-labels.json
+          add-paths: |
+            data/actor-labels.json.gz
+            data/actor-labels.summary.md
           branch: chore/actor-labels
           commit-message: "chore(labels): rebuild actor attribution snapshot"
           title: "chore(labels): rebuild actor attribution snapshot"
           body: |
-            Automated rebuild of `data/actor-labels.json` from the open label feeds.
+            Automated rebuild of the actor attribution snapshot from the open
+            label feeds.
 
-            The diff is large by nature. What is worth checking in the run log:
+            The payload is gzipped, so GitHub cannot render its diff. Read
+            `data/actor-labels.summary.md` in this PR instead - it carries the
+            counts, the per-source deltas and the upstream revisions.
 
-            - the per-source address counts and upstream revisions,
+            Worth checking:
+
             - any feed that dropped to zero (an upstream rename or a moved path),
-            - the skipped-rules summary, for packs newly hitting a profile cap.
+            - a large negative delta on a source, which means labels disappeared,
+            - the skipped-rules summary in the run log.
           labels: labels, automated
