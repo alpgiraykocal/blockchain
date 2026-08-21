@@ -277,6 +277,25 @@ matters for hosting platforms, which run exactly `npm run build && npm start`.
 stale or the label snapshot is missing - the app still serves, but a screening
 result produced against stale data is worth surfacing to whoever runs it.
 
+### Memory
+
+The label snapshot is held in memory: 428k addresses parse to roughly 55 MB of
+heap and stay resident for the life of the process. On a 512 MB instance that
+leaves usable but not generous headroom, so `NODE_OPTIONS` caps the old space -
+without it Node sizes its heap against the host rather than the container and
+gets OOM-killed instead of collecting.
+
+If an instance that small does start restarting under load, the fix is to build
+the snapshot with the smaller profile rather than to add instances:
+
+```bash
+npm run sync:labels -- --profile core   # ~20k addresses instead of 428k
+```
+
+Adding instances would not help anyway: the rate limiter counts in-process, so
+each one carries its own allowance and multiplies the ceiling that keeps traffic
+off the public block explorers.
+
 ### Behind Cloudflare
 
 Point a tunnel at the container and the origin never needs a public port:

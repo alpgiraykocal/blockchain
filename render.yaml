@@ -3,20 +3,21 @@ services:
   - type: web
     name: blockchain-analysis
     runtime: node
-    plan: starter
+    plan: free
     region: frankfurt
     branch: main
     buildCommand: npm ci && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
-    # One instance on purpose: the rate limiter counts in-process, so each extra
-    # instance would get its own allowance and multiply the ceiling that keeps
-    # traffic off the public block explorers.
-    numInstances: 1
     autoDeploy: true
     envVars:
       - key: NODE_VERSION
         value: "24"
+      # A 512 MB free instance. Node otherwise grows its heap toward the host's
+      # memory, not the container's, and gets OOM-killed rather than collecting.
+      # This leaves headroom for the parts of RSS that are not V8 heap.
+      - key: NODE_OPTIONS
+        value: "--max-old-space-size=400"
       - key: NEXT_TELEMETRY_DISABLED
         value: "1"
       - key: NEXT_PUBLIC_SITE_URL
