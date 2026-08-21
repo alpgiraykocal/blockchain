@@ -10,7 +10,12 @@
 export type SourceId =
   | "graphsense-tagpacks"
   | "mempool-mining-pools"
-  | "ethereum-lists-contracts";
+  | "ethereum-lists-tokens"
+  | "trustwallet-assets"
+  | "safe-deployments"
+  | "ethereum-lists-contracts"
+  | "dune-spellbook"
+  | "open-labels-initiative";
 
 export interface SourceDefinition {
   id: SourceId;
@@ -41,6 +46,30 @@ export const SOURCES: Record<SourceId, SourceDefinition> = {
     attribution: "© btc.com and mempool.space contributors, MIT licence",
     redistributable: true,
   },
+  "ethereum-lists-tokens": {
+    id: "ethereum-lists-tokens",
+    title: "ethereum-lists token registry",
+    homepage: "https://github.com/ethereum-lists/tokens",
+    licence: "MIT",
+    attribution: "ethereum-lists contributors, MIT licence",
+    redistributable: true,
+  },
+  "trustwallet-assets": {
+    id: "trustwallet-assets",
+    title: "Trust Wallet asset registry",
+    homepage: "https://github.com/trustwallet/assets",
+    licence: "MIT",
+    attribution: "Trust Wallet contributors, MIT licence",
+    redistributable: true,
+  },
+  "safe-deployments": {
+    id: "safe-deployments",
+    title: "Safe canonical deployments",
+    homepage: "https://github.com/safe-global/safe-deployments",
+    licence: "MIT",
+    attribution: "Safe Ecosystem Foundation, MIT licence",
+    redistributable: true,
+  },
   "ethereum-lists-contracts": {
     id: "ethereum-lists-contracts",
     title: "ethereum-lists contract registry",
@@ -50,6 +79,26 @@ export const SOURCES: Record<SourceId, SourceDefinition> = {
     redistributable: false,
     note:
       "Roughly 200k contract-to-project labels, but the repository ships no LICENSE file and the README states none, so redistribution rights are not granted. Enable with --allow-unlicensed only if you have cleared this yourself.",
+  },
+  "dune-spellbook": {
+    id: "dune-spellbook",
+    title: "Dune Spellbook labels",
+    homepage: "https://github.com/duneanalytics/spellbook",
+    licence: "BUSL-1.1",
+    attribution: "Dune Analytics AS",
+    redistributable: false,
+    note:
+      "Large curated CEX, contract and entity label sets, but the Business Source License is source-available rather than open source and restricts production use. Not redistributable in a committed snapshot.",
+  },
+  "open-labels-initiative": {
+    id: "open-labels-initiative",
+    title: "Open Labels Initiative",
+    homepage: "https://github.com/openlabelsinitiative/OLI",
+    licence: "MIT",
+    attribution: "Open Labels Initiative contributors, MIT licence",
+    redistributable: false,
+    note:
+      "MIT and purpose-built for address labelling, but bulk access now runs through public BigQuery tables rather than a downloadable export, which would put credentials on the ingest path. Its own docs also describe the raw label pool as untrusted until the planned trust layer ships. Worth revisiting when either changes.",
   },
 };
 
@@ -101,6 +150,9 @@ export const CATEGORY_MAP: Record<string, string> = {
   marketplace: "merchant",
   perpetuals: "defi",
   cold_wallet: "wallet-service",
+  token: "token",
+  erc20: "token",
+  stablecoin: "token",
   // Deliberately non-specific: these say an actor exists, not what it does, and
   // must never outrank a real category on the same actor.
   organization: "unknown",

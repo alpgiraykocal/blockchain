@@ -1,4 +1,13 @@
-import { Building2, Landmark, Pickaxe, ShieldAlert, Shuffle, Tag as TagIcon, Waypoints } from "lucide-react";
+import {
+  Building2,
+  Circle,
+  Landmark,
+  Pickaxe,
+  ShieldAlert,
+  Shuffle,
+  Tag as TagIcon,
+  Waypoints,
+} from "lucide-react";
 import type { ActorCategory, Tag } from "@/lib/types";
 import { Badge } from "./primitives";
 
@@ -11,6 +20,7 @@ const CATEGORY_ICON: Record<ActorCategory, typeof TagIcon> = {
   bridge: Waypoints,
   merchant: Building2,
   "wallet-service": Building2,
+  token: Circle,
   individual: TagIcon,
   unknown: TagIcon,
 };

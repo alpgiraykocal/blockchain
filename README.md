@@ -146,8 +146,8 @@ npm run sync:labels -- --dry             # parse and report, write nothing
 
 [`scripts/sync-labels.mts`](scripts/sync-labels.mts) writes
 `data/actor-labels.json`. The current standard snapshot carries **250,000
-addresses across 3,794 labels and 477 named actors** - exchanges, mining pools,
-mixers, gambling, DeFi and custodial services, on both BTC and ETH.
+addresses across 13,560 labels and 477 named actors** - exchanges, mining pools,
+mixers, gambling, DeFi, tokens and custodial services, on both BTC and ETH.
 
 ### Feeds
 
@@ -155,19 +155,24 @@ mixers, gambling, DeFi and custodial services, on both BTC and ETH.
 |---|---|---|
 | [GraphSense TagPacks](https://github.com/graphsense/graphsense-tagpacks) | MIT | Exchange reserve and deposit wallets, mining pools, DeFi protocol deployments, wallet services, plus an actor registry with names, homepages and jurisdictions |
 | [mempool mining pools](https://github.com/mempool/mining-pools) | MIT | Bitcoin pool payout addresses and coinbase tags |
+| [ethereum-lists tokens](https://github.com/ethereum-lists/tokens) | MIT | ERC-20 contracts with project names and homepages |
+| [Trust Wallet assets](https://github.com/trustwallet/assets) | MIT | Curated list of the major Ethereum tokens; higher trust than the long tail, so it wins address collisions |
+| [Safe deployments](https://github.com/safe-global/safe-deployments) | MIT | Canonical Safe singletons and proxy factories, published by the protocol team and verifiable on chain |
 
 Blockscout's own public metadata is read live per address on top of these, so
 Ethereum picks up explorer-side labels without any ingest.
 
-### Deliberately excluded
+### Evaluated and excluded
 
-[`ethereum-lists/contracts`](https://github.com/ethereum-lists/contracts) has
-around 200k contract-to-project labels and an adapter is already written for it,
-but the repository publishes **no licence**, so redistributing it in a committed
-snapshot is not something this project can do on its own authority. It stays out
-unless you pass `--allow-unlicensed` having cleared that yourself. The same logic
-excludes scraped explorer label dumps: an MIT wrapper around scraped data does
-not grant rights to the data. The tags screen names every excluded feed and why.
+Every excluded feed is recorded in the snapshot with its reason, and the tags
+screen renders them, so the gaps in coverage are visible rather than implied.
+
+| Feed | Why not |
+|---|---|
+| [ethereum-lists/contracts](https://github.com/ethereum-lists/contracts) | ~200k contract-to-project labels and the adapter is written, but the repository publishes **no licence**. Redistributing it in a committed snapshot is not a call this project can make. Pass `--allow-unlicensed` if you have cleared it yourself. |
+| [Dune Spellbook](https://github.com/duneanalytics/spellbook) | Large curated CEX and entity label sets, but the Business Source License is source-available rather than open source and restricts production use. |
+| [Open Labels Initiative](https://github.com/openlabelsinitiative/OLI) | MIT and purpose-built for exactly this, but bulk access moved from a downloadable export to public BigQuery tables, which would put credentials on the ingest path. Its own docs also call the raw label pool untrusted until the planned trust layer ships. Worth revisiting. |
+| Scraped explorer label dumps | An MIT wrapper around scraped data does not grant rights to the data. |
 
 ### Design notes
 
@@ -190,6 +195,10 @@ not grant rights to the data. The tags screen names every excluded feed and why.
 * **Category specificity matters.** `organization` is the most common category in
   the actor registry and means nothing behaviourally. A specific category always
   outranks it, otherwise every exchange and protocol flattens into "unknown".
+* **A missing category is not a missing label.** Requiring a mappable category
+  silently dropped 8,453 Ethereum labels from one pack that carried names but no
+  category. A label still answers "who is this", which is the question the graph
+  asks, so those now land as `unknown` and keep their name.
 * **Structural heuristics are suppressed for known services.** Fan-in and fan-out
   is the normal shape of an exchange, pool or casino. Mixers are excluded from
   that suppression, because there the structure is the point.

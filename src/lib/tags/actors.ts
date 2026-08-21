@@ -126,6 +126,7 @@ const CATEGORIES = new Set<ActorCategory>([
   "bridge",
   "merchant",
   "wallet-service",
+  "token",
   "individual",
   "unknown",
 ]);

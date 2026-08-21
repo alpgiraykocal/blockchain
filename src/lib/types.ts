@@ -154,6 +154,7 @@ export type ActorCategory =
   | "bridge"
   | "merchant"
   | "wallet-service"
+  | "token"
   | "individual"
   | "unknown";
 

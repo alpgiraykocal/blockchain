@@ -64,6 +64,7 @@ export const ACTOR_CATEGORIES: ActorCategory[] = [
   "bridge",
   "merchant",
   "wallet-service",
+  "token",
   "individual",
   "unknown",
 ];

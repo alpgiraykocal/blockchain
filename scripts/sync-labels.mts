@@ -281,9 +281,15 @@ async function loadGraphSense(
         continue;
       }
 
+      // A pack that declares no category still answers "who is this", which is
+      // the question the graph asks. Dropping those cost 8,453 Ethereum labels
+      // from a single pack; they now land as "unknown" and keep their label.
       const rawCategory = tag.category ?? packCategory;
-      const category = rawCategory ? CATEGORY_MAP[rawCategory] : undefined;
-      if (!category) continue;
+      const category = (rawCategory ? CATEGORY_MAP[rawCategory] : undefined) ?? "unknown";
+
+      // A tag with neither a category nor a label carries no information.
+      const labelText = (tag.label ?? pack.label ?? tag.actor ?? pack.actor ?? "").toString().trim();
+      if (!labelText) continue;
 
       if (taken >= limit) {
         dropped += 1;
@@ -293,7 +299,7 @@ async function loadGraphSense(
       labels.push({
         chain,
         address,
-        label: (tag.label ?? pack.label ?? tag.actor ?? pack.actor ?? "Unnamed actor").toString(),
+        label: labelText,
         category,
         actorId: (tag.actor ?? pack.actor ?? null)?.toString() ?? null,
         confidence: CONFIDENCE_MAP[tag.confidence ?? ""] ?? packConfidence,
@@ -356,6 +362,134 @@ async function loadMiningPools(): Promise<{ labels: RawLabel[]; version: string 
         pack: "pools-v2",
         reference: pool.link ?? null,
       });
+    }
+  }
+
+  await rm(dir, { recursive: true, force: true });
+  return { labels, version };
+}
+
+/* ------------------------------------------------------ token registries */
+
+/** Token contracts are among the most common counterparties in an Ethereum
+ *  graph. Labelling one as "Tether USD" rather than leaving it untagged is the
+ *  difference between a readable trace and a wall of hex. */
+async function loadEthereumListsTokens(): Promise<{
+  labels: RawLabel[];
+  version: string | null;
+}> {
+  const { dir, root, version } = await fetchTarball("ethereum-lists", "tokens", "master");
+
+  const labels: RawLabel[] = [];
+  const tokenDir = join(root, "tokens", "eth");
+  for (const file of await readdir(tokenDir).catch(() => [] as string[])) {
+    if (!file.endsWith(".json")) continue;
+    const body = JSON.parse(await readFile(join(tokenDir, file), "utf8")) as {
+      address?: string;
+      name?: string;
+      symbol?: string;
+      website?: string;
+    };
+    const address = body.address ?? file.replace(/\.json$/, "");
+    if (!address) continue;
+    const name = body.name ?? body.symbol;
+    if (!name) continue;
+    labels.push({
+      chain: "eth",
+      address,
+      label: body.symbol && body.name && body.symbol !== body.name ? `${body.name} (${body.symbol})` : name,
+      category: "token",
+      actorId: null,
+      // Community-maintained registry with per-token review, but no on-chain
+      // proof that the entry matches the deployed contract.
+      confidence: 0.75,
+      source: "ethereum-lists-tokens",
+      pack: "tokens/eth",
+      reference: body.website || null,
+    });
+  }
+
+  await rm(dir, { recursive: true, force: true });
+  return { labels, version };
+}
+
+/** A single curated list of the majors, published as one file. Higher trust than
+ *  the long tail, so it wins collisions against the broader registry. */
+async function loadTrustWalletTokens(): Promise<{ labels: RawLabel[]; version: string | null }> {
+  const url =
+    "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/tokenlist.json";
+  const response = await fetch(url, { headers: { "user-agent": USER_AGENT } });
+  if (!response.ok) throw new Error(`trustwallet tokenlist: ${response.status}`);
+  const body = (await response.json()) as {
+    version?: { major?: number; minor?: number; patch?: number };
+    tokens?: { chainId?: number; address?: string; name?: string; symbol?: string }[];
+  };
+
+  const labels: RawLabel[] = [];
+  for (const token of body.tokens ?? []) {
+    // The file is already scoped to Ethereum, and 250 of its 289 entries omit
+    // chainId entirely - requiring chainId === 1 silently dropped nearly all of
+    // them. Trust the file's scope, but insist the address is a mainnet hex.
+    if (token.chainId != null && token.chainId !== 1) continue;
+    if (!token.address || !token.name) continue;
+    if (!/^0x[0-9a-fA-F]{40}$/.test(token.address)) continue;
+    labels.push({
+      chain: "eth",
+      address: token.address,
+      label: token.symbol && token.symbol !== token.name ? `${token.name} (${token.symbol})` : token.name,
+      category: "token",
+      actorId: null,
+      confidence: 0.85,
+      source: "trustwallet-assets",
+      pack: "ethereum/tokenlist",
+      reference: "https://github.com/trustwallet/assets",
+    });
+  }
+
+  const v = body.version;
+  return {
+    labels,
+    version: v ? `${v.major ?? 0}.${v.minor ?? 0}.${v.patch ?? 0}` : null,
+  };
+}
+
+/* ------------------------------------------------------ safe deployments */
+
+/** Every Safe proxy on Ethereum is created by these factories and delegates to
+ *  these singletons, so they turn up constantly as counterparties. */
+async function loadSafeDeployments(): Promise<{ labels: RawLabel[]; version: string | null }> {
+  const { dir, root, version } = await fetchTarball("safe-global", "safe-deployments", "main");
+
+  const labels: RawLabel[] = [];
+  const assets = join(root, "src", "assets");
+  for (const release of await readdir(assets).catch(() => [] as string[])) {
+    for (const file of await readdir(join(assets, release)).catch(() => [] as string[])) {
+      if (!file.endsWith(".json")) continue;
+      const body = JSON.parse(await readFile(join(assets, release, file), "utf8")) as {
+        contractName?: string;
+        version?: string;
+        networkAddresses?: Record<string, string | string[]>;
+        deployments?: Record<string, { address?: string }>;
+      };
+      const mainnet = body.networkAddresses?.["1"];
+      if (!mainnet || !body.contractName) continue;
+
+      for (const key of Array.isArray(mainnet) ? mainnet : [mainnet]) {
+        const address = body.deployments?.[key]?.address;
+        if (!address) continue;
+        labels.push({
+          chain: "eth",
+          address,
+          label: `Safe ${body.contractName} ${body.version ?? release}`,
+          category: "wallet-service",
+          actorId: "safe-global",
+          // Published by the protocol team and verifiable on chain.
+          confidence: 0.98,
+          source: "safe-deployments",
+          pack: `assets/${release}`,
+          reference: "https://github.com/safe-global/safe-deployments",
+        });
+      }
     }
   }
 
@@ -623,6 +757,24 @@ async function main() {
   collect(labels, pools.labels);
   versions.set("mempool-mining-pools", pools.version);
   console.log(`${pools.labels.length} labels @ ${pools.version ?? "?"}`);
+
+  process.stdout.write("- ethereum-lists tokens ... ");
+  const elTokens = await loadEthereumListsTokens();
+  collect(labels, elTokens.labels);
+  versions.set("ethereum-lists-tokens", elTokens.version);
+  console.log(`${elTokens.labels.length} labels @ ${elTokens.version ?? "?"}`);
+
+  process.stdout.write("- Trust Wallet token list ... ");
+  const twTokens = await loadTrustWalletTokens();
+  collect(labels, twTokens.labels);
+  versions.set("trustwallet-assets", twTokens.version);
+  console.log(`${twTokens.labels.length} labels @ ${twTokens.version ?? "?"}`);
+
+  process.stdout.write("- Safe deployments ... ");
+  const safe = await loadSafeDeployments();
+  collect(labels, safe.labels);
+  versions.set("safe-deployments", safe.version);
+  console.log(`${safe.labels.length} labels @ ${safe.version ?? "?"}`);
 
   if (allowUnlicensed) {
     process.stdout.write("- ethereum-lists contracts (unlicensed, opt-in) ... ");

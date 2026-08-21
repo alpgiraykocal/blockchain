@@ -107,9 +107,16 @@ export function assessRisk(input: RiskInput): RiskAssessment {
       tag.confidence >= 0.7 &&
       // Mixers are deliberately absent: high fan-in and fan-out is the whole
       // point of one, so structure stays informative there.
-      ["exchange", "mining-pool", "defi", "bridge", "wallet-service", "gambling", "merchant"].includes(
-        tag.category,
-      ),
+      [
+        "exchange",
+        "mining-pool",
+        "defi",
+        "bridge",
+        "wallet-service",
+        "gambling",
+        "merchant",
+        "token",
+      ].includes(tag.category),
   );
   const degree = input.inDegree + input.outDegree;
   if (!isKnownService && input.outDegree >= 25 && input.inDegree <= 3) {
@@ -172,7 +179,7 @@ export function nodeKindFor(tags: Tag[], isEntity: boolean): NodeKind {
   if (tags.some((tag) => tag.category === "exchange")) return "exchange";
   if (
     tags.some((tag) =>
-      ["defi", "bridge", "mining-pool", "gambling", "wallet-service", "merchant"].includes(
+      ["defi", "bridge", "mining-pool", "gambling", "wallet-service", "merchant", "token"].includes(
         tag.category,
       ),
     )
