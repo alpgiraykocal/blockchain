@@ -6,13 +6,15 @@ import type { Dictionary } from "./types";
 const DICTIONARIES: Record<Locale, Dictionary> = { en, tr };
 
 /**
- * Both dictionaries are imported statically rather than loaded on demand.
+ * Server-side dictionary lookup. Both locales are imported statically, which is
+ * right here: this runs in a single long-lived Node process, so holding a few
+ * tens of kilobytes of copy costs nothing a dynamic import would recover, and it
+ * keeps a promise off the render path of every page.
  *
- * They are copy, not data - tens of kilobytes - and this runs in a single
- * long-lived Node process, so a dynamic import would trade a fixed, trivial
- * memory cost for a promise on the render path of every page. Only the active
- * locale ever reaches the browser: the server layout reads one and hands it to
- * the client provider as a prop, so neither dictionary is in the client bundle.
+ * This module is server-only in practice. Importing it from a client component
+ * defeats the split in `locale-provider.tsx` and puts every locale's copy in
+ * that route's bundle - which is what it used to do. Client code takes its copy
+ * from `useT()`.
  */
 export function getDictionary(locale: Locale): Dictionary {
   return DICTIONARIES[locale];

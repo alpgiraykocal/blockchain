@@ -39,7 +39,11 @@ function buildAudit(
   const generatedAt = new Date().toISOString();
 
   // Deterministic id over the inputs that define the assessment, so the same
-  // question asked the same way is traceable to the same reference.
+  // question asked the same way is traceable to the same reference. The wall
+  // clock is deliberately not one of them: including `generatedAt` gave every
+  // repeat of an identical query a fresh id, which is the opposite of what an
+  // audit trail needs. When the id has to change, it is because a filter, the
+  // window or a data snapshot changed - and each of those is hashed here.
   const assessmentId = createHash("sha256")
     .update(
       [
@@ -49,7 +53,6 @@ function buildAudit(
         JSON.stringify(network.window),
         OFAC_SNAPSHOT.retrievedAt,
         labels.generatedAt,
-        generatedAt,
       ].join("|"),
     )
     .digest("hex")

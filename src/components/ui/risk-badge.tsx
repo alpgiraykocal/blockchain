@@ -1,5 +1,7 @@
+"use client";
+
 import { AlertOctagon, AlertTriangle, CircleAlert, ShieldCheck, ShieldQuestion } from "lucide-react";
-import { RISK_LEVEL_LABEL } from "@/lib/risk";
+import { useT } from "@/lib/i18n/context";
 import type { RiskLevel } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -24,6 +26,8 @@ export function RiskBadge({
   size?: "sm" | "md";
   className?: string;
 }) {
+  const t = useT().ui.common;
+  const label = t.riskLevels[level];
   const { className: tone, Icon } = LEVEL_STYLE[level];
   return (
     <span
@@ -33,10 +37,10 @@ export function RiskBadge({
         tone,
         className,
       )}
-      title={`Risk ${RISK_LEVEL_LABEL[level]} — score ${score}/100`}
+      title={t.riskBadgeTitle(label, score)}
     >
       <Icon className={size === "sm" ? "size-3" : "size-3.5"} aria-hidden="true" />
-      <span>{RISK_LEVEL_LABEL[level]}</span>
+      <span>{label}</span>
       <span className="tnum opacity-70">{score}</span>
     </span>
   );

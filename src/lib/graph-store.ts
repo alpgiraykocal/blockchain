@@ -1,6 +1,4 @@
 "use client";
-import { getDictionary } from "./i18n";
-import { clientLocale } from "./i18n/config";
 
 import { create } from "zustand";
 import type { ChainId, GraphEdge, GraphNode } from "./types";
@@ -31,19 +29,42 @@ interface GraphState {
   expand: (
     chain: ChainId,
     address: string,
-    options?: { direction?: ExpandDirection; maxNeighbors?: number; select?: boolean },
+    options?: {
+      direction?: ExpandDirection;
+      maxNeighbors?: number;
+      select?: boolean;
+      /** Shown when the request fails without a message of its own. Supplied by
+       *  the caller, which has the active dictionary; importing it here would
+       *  pull every locale's copy into this client module. */
+      fallbackError?: string;
+    },
   ) => Promise<void>;
   clearError: () => void;
 }
 
+/**
+ * Merges one expansion's nodes into the canvas.
+ *
+ * A fragment carries two kinds of node. Its root was fetched in its own right
+ * and knows its real balance, lifetime transaction count and attribution; every
+ * other node in it is a counterparty stub, whose balance is a placeholder zero
+ * and whose `txCount` is only the edge's. Which one wins has to depend on that,
+ * not on which arrived first: letting the existing copy always win meant a node
+ * first seen as someone else's counterparty kept the stub's zeroes even after
+ * the analyst expanded it, so the inspector reported 0 BTC on a live wallet.
+ */
 function mergeFragment(state: GraphState, fragment: GraphFragment) {
   const nodes = { ...state.nodes };
   for (const node of fragment.nodes) {
-    // Never let a neighbour stub overwrite a fully expanded node's own data.
     const existing = nodes[node.id];
-    nodes[node.id] = existing
-      ? { ...node, ...existing, tags: existing.tags.length ? existing.tags : node.tags }
-      : node;
+    if (!existing) {
+      nodes[node.id] = node;
+      continue;
+    }
+    nodes[node.id] =
+      node.id === fragment.root
+        ? { ...existing, ...node, tags: node.tags.length ? node.tags : existing.tags }
+        : { ...node, ...existing, tags: existing.tags.length ? existing.tags : node.tags };
   }
 
   const edges = { ...state.edges };
@@ -136,7 +157,10 @@ export const useGraphStore = create<GraphState>((set, get) => ({
         loading.delete(id);
         return {
           loadingIds: loading,
-          error: error instanceof Error ? error.message : getDictionary(clientLocale()).ui.graph.expansionFailed,
+          error:
+            (error instanceof Error ? error.message : null) ??
+            options.fallbackError ??
+            "Expansion failed.",
         };
       });
     }

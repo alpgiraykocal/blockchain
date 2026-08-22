@@ -1,3 +1,4 @@
+import type { Dictionary } from "../i18n/types";
 import type { ChainId, Tag, TagPack } from "../types";
 import { BUILTIN_PACKS } from "./builtin";
 import {
@@ -111,12 +112,20 @@ function chainsBySourceFor(labels: LabelSnapshot): Map<number, Set<ChainId>> {
   return value;
 }
 
-export function packStats(): PackSummary[] {
+/**
+ * One row per attribution source, for the tags screen and `/api/tags`.
+ *
+ * `copy` supplies the prose this app writes about its own packs. The names the
+ * upstreams publish under - "OFAC SDN", "GraphSense public TagPacks", their
+ * licence lines - are passed through untouched in every language, because a
+ * translated source name is no longer a citation.
+ */
+export function packStats(copy: Dictionary["ui"]["packs"]): PackSummary[] {
   const curated = BUILTIN_PACKS.map((pack) => ({
     id: pack.id,
-    title: pack.title,
+    title: copy.curated[pack.id]?.title ?? pack.title,
     creator: pack.creator,
-    description: pack.description,
+    description: copy.curated[pack.id]?.description ?? pack.description,
     lastmod: pack.lastmod,
     tagCount: pack.tags.length,
     chains: [...new Set(pack.tags.map((tag) => tag.chain))],
@@ -133,9 +142,7 @@ export function packStats(): PackSummary[] {
     id: source.id,
     title: source.title,
     creator: source.attribution,
-    description: `Actor attribution rebuilt from the upstream repository at revision ${
-      source.version ?? "unknown"
-    }.`,
+    description: copy.generatedDescription(source.version ?? copy.unknownRevision),
     homepage: source.homepage,
     lastmod: labels.generatedAt.slice(0, 10),
     tagCount: source.addresses,
@@ -149,9 +156,11 @@ export function packStats(): PackSummary[] {
       id: "ofac-sls",
       title: "OFAC SDN — digital currency addresses",
       creator: "US Treasury, via the OFAC Sanctions List Service",
-      description: `Every digital-currency address published on OFAC's sanctions lists, pulled straight from the source files. ${OFAC_SNAPSHOT.counts.total} addresses across ${
-        Object.keys(OFAC_SNAPSHOT.counts.byCurrency).length
-      } currencies; ${screenable} are on a chain Blockchain Analysis can screen.`,
+      description: copy.ofacDescription(
+        OFAC_SNAPSHOT.counts.total,
+        Object.keys(OFAC_SNAPSHOT.counts.byCurrency).length,
+        screenable,
+      ),
       lastmod: issued ?? OFAC_SNAPSHOT.retrievedAt.slice(0, 10),
       tagCount: screenable,
       chains: Object.keys(OFAC_SNAPSHOT.counts.byChain) as ChainId[],

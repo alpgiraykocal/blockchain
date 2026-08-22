@@ -56,6 +56,40 @@ export const ui = {
   },
 
   common: {
+    /** Reduction rules and actor categories are stable slugs in the data and in
+     *  the audit record; these are the reader-facing names for them. An unmapped
+     *  slug falls back to itself rather than disappearing. */
+    reductionRules: {
+      "time-window": "time window",
+      "min-value": "minimum value",
+      direction: "direction",
+      "service-hub-suppression": "service hubs suppressed",
+      "top-k": "top-K",
+      "hop-2-expansion-cap": "second-hop cap",
+      "hard-cap": "hard cap",
+      "source-window": "source window",
+    } as Record<string, string>,
+    actorCategories: {
+      exchange: "exchange",
+      "mining-pool": "mining pool",
+      gambling: "gambling",
+      mixer: "mixer",
+      defi: "DeFi",
+      bridge: "bridge",
+      merchant: "merchant",
+      "wallet-service": "wallet service",
+      token: "token",
+      individual: "individual",
+      unknown: "unknown",
+    } as Record<string, string>,
+    riskLevels: {
+      clear: "Clear",
+      low: "Low",
+      medium: "Medium",
+      high: "High",
+      severe: "Severe",
+    },
+    riskBadgeTitle: (level: string, score: number) => `Risk ${level} — score ${score}/100`,
     retry: "Retry",
     couldNotLoad: "Could not load data",
     loading: "Loading…",
@@ -282,6 +316,8 @@ export const ui = {
     badgeService: "service",
     badgeIn: "in",
     badgeOut: "out",
+    badgeBoth: "both ways",
+    badgeSelf: "subject",
     tableCaption: "Counterparties in the extracted ego network",
   },
 
@@ -466,6 +502,27 @@ export const ui = {
     legendMixer: "Mixer / sanctioned",
     legendService: "Service / DeFi",
     expansionFailed: "Expansion failed.",
+
+    seedTitle: "Seed the graph with an address",
+    seedBody:
+      "Place a first node on the canvas, then expand its counterparties one hop at a time and follow the flow.",
+    orStartFromExample: "Or start from an example",
+    fanOut: "Fan-out",
+    fit: "Fit",
+    relayout: "Re-layout",
+    clear: "Clear",
+    expanding: (count: number) => `Expanding ${count} node${count > 1 ? "s" : ""}\u2026`,
+    anchor: (address: string) => `Anchor: ${address}`,
+    pathFound: (hops: number) => ` \u00b7 path found (${hops} hop${hops > 1 ? "s" : ""})`,
+    noPathInGraph: " \u00b7 no path in current graph",
+    selectSecondNode: " \u00b7 select a second node",
+    truncatedNodes: (count: number) =>
+      `${count} node${count > 1 ? "s" : ""} truncated to top counterparties`,
+    attribution: "Attribution",
+    noTagMatch: "No TagPack entry matched this address.",
+    riskSignals: "Risk signals",
+    openFullReport: "Open full address report",
+    viewOn: (explorer: string) => `View on ${explorer}`,
   },
 
   transactions: {
@@ -497,6 +554,28 @@ export const ui = {
   chart: {
     noSeries: "No series data",
     noSeriesBody: "The upstream explorer did not return a history for this metric.",
+  },
+
+  packs: {
+    /** Titles and descriptions the app writes about its own packs. The source
+     *  names above them - "OFAC SDN", "GraphSense public TagPacks" - are what the
+     *  publishers call themselves and stay as published in every language. */
+    ofacDescription: (addresses: number, currencies: number, screenable: number) =>
+      `Every digital-currency address published on OFAC's sanctions lists, pulled straight from the source files. ${addresses} addresses across ${currencies} currencies; ${screenable} are on a chain Blockchain Analysis can screen.`,
+    generatedDescription: (revision: string) =>
+      `Actor attribution rebuilt from the upstream repository at revision ${revision}.`,
+    unknownRevision: "unknown",
+    curated: {
+      "public-exchanges": {
+        title: "Public exchange hot wallets",
+        description:
+          "Widely published custodial hot-wallet addresses. Useful as flow termination points — funds reaching one of these have left self-custody.",
+      },
+      "known-services": {
+        title: "Known services and protocols",
+        description: "Bridges, DeFi routers and mining pools that commonly appear as graph hubs.",
+      },
+    } as Record<string, { title: string; description: string }>,
   },
 
   errors: {

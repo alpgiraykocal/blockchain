@@ -63,7 +63,7 @@ export function UserTagsPanel() {
         tag.abuse === "none" ? (
           <span className="text-foreground-muted">—</span>
         ) : (
-          <Badge tone="danger">{tag.abuse}</Badge>
+          <Badge tone="danger">{dict.aml.risk.abuse[tag.abuse]}</Badge>
         ),
       sortValue: (tag) => tag.abuse,
     },
@@ -103,7 +103,7 @@ export function UserTagsPanel() {
 
   const importFile = async (file: File) => {
     try {
-      const parsed = parseTagExport(JSON.parse(await file.text()));
+      const parsed = parseTagExport(JSON.parse(await file.text()), dict.ui.errors.notJsonObject);
       replaceAll(parsed);
       setNotice({ tone: "ok", message: t.imported(parsed.length) });
     } catch (error) {

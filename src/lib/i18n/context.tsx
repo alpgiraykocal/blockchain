@@ -1,22 +1,23 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo } from "react";
+import { createContext, useContext, useMemo } from "react";
 import { type Locale, localePath } from "./config";
-import { getDictionary } from "./index";
 import type { Dictionary } from "./types";
 
 /**
  * Locale and copy for client components.
  *
- * The provider looks the dictionary up from the locale rather than receiving it
- * as a prop. Interpolated copy is written as functions so each language can put
- * its values where its own grammar needs them, and functions cannot cross the
- * server/client boundary - React refuses to serialise them. Passing the string
- * `"tr"` and resolving it here sidesteps that entirely.
+ * The dictionary arrives as a prop rather than being looked up here. The lookup
+ * version imported the map of every locale, and because a bundler cannot narrow
+ * a runtime key, that put both dictionaries - a little over 100 KB of source -
+ * into the client bundle of every route, to use one of them.
  *
- * The cost is that both dictionaries are in the client bundle. They are copy,
- * not data, and gzip to a few kilobytes each - far less than the render-blocking
- * chart library that used to sit on this path.
+ * Interpolated copy is written as functions so each language can put its values
+ * where its own grammar needs them, and functions cannot cross the server/client
+ * boundary - React refuses to serialise them. So the prop is not passed from the
+ * server layout either: `<LocaleProvider>` resolves the locale to a small client
+ * module that imports exactly one dictionary, and only that module's chunk is
+ * ever sent.
  */
 
 interface I18nValue {
@@ -30,16 +31,16 @@ const I18nContext = createContext<I18nValue | null>(null);
 
 export function I18nProvider({
   locale,
+  dictionary,
   children,
 }: {
   locale: Locale;
+  dictionary: Dictionary;
   children: React.ReactNode;
 }) {
-  const href = useCallback((path: string) => localePath(locale, path), [locale]);
-
   const value = useMemo<I18nValue>(
-    () => ({ locale, t: getDictionary(locale), href }),
-    [locale, href],
+    () => ({ locale, t: dictionary, href: (path: string) => localePath(locale, path) }),
+    [locale, dictionary],
   );
 
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;

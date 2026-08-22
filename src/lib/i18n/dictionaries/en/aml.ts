@@ -225,6 +225,28 @@ export const aml = {
 
   explorerLabelNote: "Public label supplied by the block explorer.",
 
+  /** Why the drawn network is smaller than the measured one. Reduction shapes
+   *  what is rendered and every step it takes is reported, so these are read by
+   *  an analyst and travel in the assessment payload. */
+  reduction: {
+    timeWindow: (start: string | null, end: string | null) =>
+      `Counterparties with no activity between ${start ?? "the start of the window"} and ${end ?? "now"}.`,
+    minValue: (amount: number, ticker: string) =>
+      `Counterparties below ${amount} ${ticker} of observed flow.`,
+    direction: (direction: "in" | "out") =>
+      `Showing ${direction === "in" ? "senders" : "receivers"} only.`,
+    serviceHubs:
+      "Attributed services are hubs by construction. The three largest by value are kept; the rest are collapsed out of the view but remain in the metrics.",
+    topK: (kept: number, total: number) =>
+      `Ring 1 limited to the ${kept} highest-priority counterparties of ${total}.`,
+    hopTwoCap: (expanded: number, total: number) =>
+      `Second hop expanded ${expanded} of ${total} ring-1 nodes. Each expansion is one explorer request, and attributed services are not expanded because their neighbourhoods are unbounded.`,
+    hardCap: (maxNodes: number, maxEdges: number) =>
+      `Extraction stopped at the ${maxNodes}-node / ${maxEdges}-edge ceiling.`,
+    sourceWindow: (analysed: number, total: number) =>
+      `Counterparties derive from ${analysed} of ${total} transactions - the explorer's page, not full history.`,
+  },
+
   limitations: {
     window: (analysed: number, total: number, explorer: string) =>
       `Counterparties and timing derive from ${analysed} of ${total} transactions supplied by ${explorer}. A pattern outside that window cannot fire a detector.`,

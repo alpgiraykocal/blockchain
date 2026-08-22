@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { AppShell } from "@/components/app-shell";
 import { PrimarySearchProvider } from "@/components/primary-search";
 import { ThemeProvider } from "@/components/theme-provider";
-import { I18nProvider } from "@/lib/i18n/context";
+import { LocaleProvider } from "@/lib/i18n/locale-provider";
 import { getDictionary } from "@/lib/i18n";
 import { LOCALES, LOCALE_HTML_LANG, isLocale, localePath } from "@/lib/i18n/config";
 import "../globals.css";
@@ -89,13 +89,13 @@ export default async function LocaleLayout({
   return (
     <html lang={LOCALE_HTML_LANG[locale]} suppressHydrationWarning>
       <body className={`${firaSans.variable} ${firaCode.variable} antialiased`}>
-        <I18nProvider locale={locale}>
+        <LocaleProvider locale={locale}>
           <ThemeProvider>
             <PrimarySearchProvider>
               <AppShell>{children}</AppShell>
             </PrimarySearchProvider>
           </ThemeProvider>
-        </I18nProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

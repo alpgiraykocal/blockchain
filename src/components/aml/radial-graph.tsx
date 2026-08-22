@@ -222,6 +222,7 @@ export function RadialGraph({
     cy.elements().remove();
     cy.add(elements);
     // Positions are already final; only the viewport needs fitting.
+    cy.stop();
     cy.resize();
     cy.fit(cy.elements(), 60);
     if (cy.zoom() > 1.1) {
@@ -246,6 +247,7 @@ export function RadialGraph({
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
         if (!container.clientWidth || !container.clientHeight) return;
+        cy.stop();
         cy.resize();
         if (cy.elements().length) cy.fit(cy.elements(), 60);
       });

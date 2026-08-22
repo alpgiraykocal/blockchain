@@ -54,6 +54,40 @@ export const ui: Dictionary["ui"] = {
   },
 
   common: {
+    /** İndirgeme kuralları ve aktör kategorileri veride ve denetim kaydında sabit
+     *  birer slug; bunlar onların okunabilir karşılıkları. Eşleşmeyen bir slug
+     *  kaybolmak yerine kendisi olarak görünür. */
+    reductionRules: {
+      "time-window": "zaman penceresi",
+      "min-value": "asgari değer",
+      direction: "yön",
+      "service-hub-suppression": "hizmet merkezleri bastırıldı",
+      "top-k": "ilk-K",
+      "hop-2-expansion-cap": "ikinci adım sınırı",
+      "hard-cap": "kesin tavan",
+      "source-window": "kaynak penceresi",
+    } as Record<string, string>,
+    actorCategories: {
+      exchange: "borsa",
+      "mining-pool": "madencilik havuzu",
+      gambling: "kumar",
+      mixer: "karıştırıcı",
+      defi: "DeFi",
+      bridge: "köprü",
+      merchant: "satıcı",
+      "wallet-service": "cüzdan hizmeti",
+      token: "token",
+      individual: "birey",
+      unknown: "bilinmiyor",
+    } as Record<string, string>,
+    riskLevels: {
+      clear: "Temiz",
+      low: "Düşük",
+      medium: "Orta",
+      high: "Yüksek",
+      severe: "Ağır",
+    },
+    riskBadgeTitle: (level: string, score: number) => `Risk ${level} — skor ${score}/100`,
     retry: "Tekrar dene",
     couldNotLoad: "Veri yüklenemedi",
     loading: "Yükleniyor…",
@@ -277,6 +311,8 @@ export const ui: Dictionary["ui"] = {
     badgeService: "hizmet",
     badgeIn: "gelen",
     badgeOut: "giden",
+    badgeBoth: "iki yönlü",
+    badgeSelf: "konu",
     tableCaption: "Çıkarılan ego ağındaki karşı taraflar",
   },
 
@@ -461,6 +497,26 @@ export const ui: Dictionary["ui"] = {
     legendMixer: "Karıştırıcı / yaptırımlı",
     legendService: "Hizmet / DeFi",
     expansionFailed: "Genişletme başarısız.",
+
+    seedTitle: "Grafiği bir adresle başlat",
+    seedBody:
+      "Tuvale ilk düğümü koy, sonra karşı taraflarını adım adım genişletip akışı izle.",
+    orStartFromExample: "Ya da bir örnekten başla",
+    fanOut: "Dağılım",
+    fit: "Sığdır",
+    relayout: "Yeniden diz",
+    clear: "Temizle",
+    expanding: (count: number) => `${count} düğüm genişletiliyor\u2026`,
+    anchor: (address: string) => `Çıpa: ${address}`,
+    pathFound: (hops: number) => ` \u00b7 yol bulundu (${hops} adım)`,
+    noPathInGraph: " \u00b7 mevcut grafikte yol yok",
+    selectSecondNode: " \u00b7 ikinci bir düğüm seç",
+    truncatedNodes: (count: number) => `${count} düğüm en büyük karşı taraflara kırpıldı`,
+    attribution: "Atıf",
+    noTagMatch: "Bu adresle eşleşen bir TagPack kaydı yok.",
+    riskSignals: "Risk sinyalleri",
+    openFullReport: "Tam adres raporunu aç",
+    viewOn: (explorer: string) => `${explorer} üzerinde gör`,
   },
 
   transactions: {
@@ -492,6 +548,28 @@ export const ui: Dictionary["ui"] = {
   chart: {
     noSeries: "Seri verisi yok",
     noSeriesBody: "Üst kaynak gezgin bu metrik için bir geçmiş döndürmedi.",
+  },
+
+  packs: {
+    /** Uygulamanın kendi paketleri hakkında yazdığı başlık ve açıklamalar.
+     *  Üstlerindeki kaynak adları - "OFAC SDN", "GraphSense public TagPacks" -
+     *  yayıncıların kendilerine verdiği addır ve her dilde yayınlandığı gibi kalır. */
+    ofacDescription: (addresses: number, currencies: number, screenable: number) =>
+      `OFAC'ın yaptırım listelerinde yayımlanan her dijital para adresi, doğrudan kaynak dosyalardan alınmıştır. ${currencies} para biriminde ${addresses} adres; bunların ${screenable} tanesi Blockchain Analysis'in tarayabildiği bir zincirde.`,
+    generatedDescription: (revision: string) =>
+      `Aktör atfı, kaynak deponun ${revision} sürümünden yeniden derlendi.`,
+    unknownRevision: "bilinmeyen",
+    curated: {
+      "public-exchanges": {
+        title: "Halka açık borsa sıcak cüzdanları",
+        description:
+          "Yaygın olarak yayımlanmış saklamalı sıcak cüzdan adresleri. Akışın bittiği nokta olarak işe yarar — buralara ulaşan fonlar kendi saklamasından çıkmıştır.",
+      },
+      "known-services": {
+        title: "Bilinen hizmetler ve protokoller",
+        description: "Grafikte sıkça merkez olarak beliren köprüler, DeFi yönlendiricileri ve madencilik havuzları.",
+      },
+    } as Record<string, { title: string; description: string }>,
   },
 
   errors: {

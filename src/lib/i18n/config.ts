@@ -96,17 +96,3 @@ export function localePath(locale: Locale, path: string): string {
   if (!path.startsWith("/")) return `/${locale}/${path}`;
   return path === "/" ? `/${locale}` : `/${locale}${path}`;
 }
-
-/**
- * The active locale, read from the document.
- *
- * For client-side modules that are not React components - the graph and tag
- * stores - and therefore cannot use the context. The layout stamps `lang` on
- * `<html>` from the same route segment the provider reads, so the two can never
- * disagree.
- */
-export function clientLocale(): Locale {
-  if (typeof document === "undefined") return DEFAULT_LOCALE;
-  const lang = document.documentElement.lang;
-  return isLocale(lang) ? lang : DEFAULT_LOCALE;
-}

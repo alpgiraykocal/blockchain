@@ -36,8 +36,14 @@ const nextConfig: NextConfig = {
     return [
       { source: "/:path*", headers: securityHeaders },
       {
-        // The API proxies rate-limited third parties; keep it off shared caches
-        // that would serve one visitor's lookup to another origin.
+        // Only `Vary` here, and deliberately so. A `Cache-Control` at this level
+        // *replaces* whatever the route handler set rather than acting as a
+        // default under it, so putting a blanket `no-store` here silently undid
+        // the CDN caching that /api/stats, /api/address and /api/tags each ask
+        // for. Cache policy stays with the route that knows its own data.
+        //
+        // The header this does carry is not a privacy control either: `Vary`
+        // only tells a shared cache which request headers to key on.
         source: "/api/:path*",
         headers: [{ key: "Vary", value: "Accept-Encoding" }],
       },

@@ -1,14 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { RATE_LIMITS, enforceRateLimit } from "@/lib/rate-limit";
 import { analyzeAddress } from "@/lib/analysis";
-import { getAdapter } from "@/lib/chains";
 import {
   handleRouteError,
   jsonError,
   parseChain,
   parseLimit,
-  validateAddressParam,
   parseLocale,
+  resolveSubject,
 } from "@/lib/api-helpers";
 import { getDictionary } from "@/lib/i18n";
 
@@ -26,13 +25,12 @@ export async function GET(request: NextRequest) {
   const limit = parseLimit(params.get("limit"), 50);
 
   try {
-    const resolved = raw ? await getAdapter(chain).resolve(raw) : null;
-    const invalid = validateAddressParam(chain, resolved);
-    if (invalid) return jsonError(invalid, 400);
+    const { address, error: unresolved } = await resolveSubject(chain, raw);
+    if (unresolved) return unresolved;
 
     const analysis = await analyzeAddress(
       chain,
-      resolved!,
+      address,
       limit,
       getDictionary(parseLocale(params.get("locale"))).aml,
     );

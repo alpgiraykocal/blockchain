@@ -47,8 +47,9 @@ export const dynamic = "force-dynamic";
 export default async function TagsPage({ params }: PageProps) {
   const { locale: raw } = await params;
   const locale: Locale = isLocale(raw) ? raw : "en";
-  const t = getDictionary(locale).ui.tags;
-  const packs = packStats();
+  const ui = getDictionary(locale).ui;
+  const t = ui.tags;
+  const packs = packStats(ui.packs);
   const totalTags = packs.reduce((sum, pack) => sum + pack.tagCount, 0);
   const stale = isSnapshotStale();
   const issued = snapshotIssuedAt();

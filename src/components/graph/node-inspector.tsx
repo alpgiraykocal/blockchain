@@ -149,7 +149,7 @@ export function NodeInspector({
             <Divider className="my-3" />
 
             <p className="mb-1.5 text-[11px] font-medium uppercase tracking-wide text-foreground-muted">
-              Attribution
+              {t.attribution}
             </p>
             {data.address.tags.length ? (
               <div className="flex flex-wrap gap-1.5">
@@ -158,15 +158,13 @@ export function NodeInspector({
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-foreground-muted">
-                No TagPack entry matched this address.
-              </p>
+              <p className="text-xs text-foreground-muted">{t.noTagMatch}</p>
             )}
 
             <Divider className="my-3" />
 
             <p className="mb-1.5 text-[11px] font-medium uppercase tracking-wide text-foreground-muted">
-              Risk signals
+              {t.riskSignals}
             </p>
             <ul className="space-y-1.5">
               {data.address.risk.signals.slice(0, 5).map((signal) => (
@@ -191,11 +189,11 @@ export function NodeInspector({
 
             <div className="flex flex-col gap-1.5 text-xs">
               <InlineLink href={href(`/address/${node.chain}/${node.address}`)}>
-                Open full address report
+                {t.openFullReport}
               </InlineLink>
               <InlineLink href={meta.explorerAddressUrl(node.address)} external>
                 <span className="inline-flex items-center gap-1">
-                  View on {meta.explorerName}
+                  {t.viewOn(meta.explorerName)}
                   <ExternalLink className="size-3" aria-hidden="true" />
                 </span>
               </InlineLink>

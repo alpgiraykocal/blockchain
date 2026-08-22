@@ -1,14 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { RATE_LIMITS, enforceRateLimit } from "@/lib/rate-limit";
 import { assessAddress } from "@/lib/aml/assess";
-import { getAdapter } from "@/lib/chains";
 import {
   handleRouteError,
   jsonError,
   parseChain,
   parseLimit,
   parseLocale,
-  validateAddressParam,
+  resolveSubject,
 } from "@/lib/api-helpers";
 import { getDictionary } from "@/lib/i18n";
 
@@ -35,11 +34,10 @@ export async function GET(request: NextRequest) {
   const locale = parseLocale(params.get("locale"));
 
   try {
-    const resolved = raw ? await getAdapter(chain).resolve(raw) : null;
-    const invalid = validateAddressParam(chain, resolved);
-    if (invalid) return jsonError(invalid, 400);
+    const { address, error: unresolved } = await resolveSubject(chain, raw);
+    if (unresolved) return unresolved;
 
-    const { assessment, network } = await assessAddress(chain, resolved!, {
+    const { assessment, network } = await assessAddress(chain, address, {
       hopDepth: hop as 1 | 2,
       topK,
       direction: direction === "in" || direction === "out" ? direction : "both",

@@ -226,6 +226,28 @@ export const aml: Dictionary["aml"] = {
 
   explorerLabelNote: "Blok gezgininin sağladığı açık etiket.",
 
+  /** Çizilen ağın ölçülen ağdan neden küçük olduğu. İndirgeme neyin çizildiğini
+   *  belirler ve attığı her adım raporlanır; bunlar analist tarafından okunur ve
+   *  değerlendirme yanıtında taşınır. */
+  reduction: {
+    timeWindow: (start: string | null, end: string | null) =>
+      `${start ?? "pencerenin başlangıcı"} ile ${end ?? "şimdi"} arasında etkinliği olmayan karşı taraflar.`,
+    minValue: (amount: number, ticker: string) =>
+      `Gözlenen akışı ${amount} ${ticker} altında kalan karşı taraflar.`,
+    direction: (direction: "in" | "out") =>
+      `Yalnızca ${direction === "in" ? "gönderenler" : "alıcılar"} gösteriliyor.`,
+    serviceHubs:
+      "Atfı yapılmış hizmetler yapıları gereği merkezdir. Değerce en büyük üçü tutulur; kalanı görünümden çıkarılır ama metriklerde kalır.",
+    topK: (kept: number, total: number) =>
+      `Halka 1, ${total} karşı taraftan önceliği en yüksek ${kept} tanesiyle sınırlandı.`,
+    hopTwoCap: (expanded: number, total: number) =>
+      `İkinci adım, ${total} halka-1 düğümünün ${expanded} tanesini genişletti. Her genişletme bir gezgin isteğidir ve atfı yapılmış hizmetler, komşulukları sınırsız olduğu için genişletilmez.`,
+    hardCap: (maxNodes: number, maxEdges: number) =>
+      `Çıkarım ${maxNodes} düğüm / ${maxEdges} kenar tavanında durdu.`,
+    sourceWindow: (analysed: number, total: number) =>
+      `Karşı taraflar ${total} işlemin ${analysed} tanesinden türetilir - gezginin sayfası, tüm geçmiş değil.`,
+  },
+
   limitations: {
     window: (analysed: number, total: number, explorer: string) =>
       `Karşı taraflar ve zamanlama, ${explorer} tarafından sağlanan ${total} işlemin ${analysed} tanesinden türetilmiştir. Bu pencerenin dışındaki bir örüntü hiçbir dedektörü tetikleyemez.`,

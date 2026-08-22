@@ -197,7 +197,12 @@ function aggregateNeighbors(
     }
   }
 
-  return [...byKey.values()].sort((a, b) => (b.valueRaw > a.valueRaw ? 1 : -1));
+  // Ties must compare equal. Returning -1 for them made this an inconsistent
+  // comparator, which leaves the order of equal-value counterparties up to the
+  // sort's internals rather than stable between two identical requests.
+  return [...byKey.values()].sort((a, b) =>
+    b.valueRaw > a.valueRaw ? 1 : b.valueRaw < a.valueRaw ? -1 : 0,
+  );
 }
 
 export const btcAdapter: ChainAdapter = {

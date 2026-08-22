@@ -11,6 +11,9 @@ import type {
 
 const API = "https://eth.blockscout.com/api/v2";
 
+/** Mirrors `ETH_ENS` in the registry: what the address grammar accepts as a name. */
+const ETH_NAME = /^[a-z0-9-]+(\.[a-z0-9-]+)*\.eth$/i;
+
 interface BsAddressRef {
   hash: string;
   name: string | null;
@@ -155,7 +158,12 @@ function aggregateNeighbors(txs: BsTx[], address: string): NeighborAgg[] {
     });
   }
 
-  return [...byKey.values()].sort((a, b) => (b.valueRaw > a.valueRaw ? 1 : -1));
+  // Ties must compare equal. Returning -1 for them made this an inconsistent
+  // comparator, which leaves the order of equal-value counterparties up to the
+  // sort's internals rather than stable between two identical requests.
+  return [...byKey.values()].sort((a, b) =>
+    b.valueRaw > a.valueRaw ? 1 : b.valueRaw < a.valueRaw ? -1 : 0,
+  );
 }
 
 export const ethAdapter: ChainAdapter = {
@@ -174,6 +182,10 @@ export const ethAdapter: ChainAdapter = {
   async resolve(query: string) {
     const value = query.trim();
     if (/^0x[0-9a-fA-F]{40}$/.test(value)) return value;
+    // Only a name-shaped query goes to the search index. Blockscout answers a
+    // malformed one - `0xZZZ`, a truncated paste - with its closest fuzzy match,
+    // and returning that would report confidently on a stranger's address.
+    if (!ETH_NAME.test(value)) return null;
     // ENS names are resolved through Blockscout's search index.
     const result = await fetchJson<{ items?: { address_hash?: string; address?: string }[] }>(
       `${API}/search?q=${encodeURIComponent(value)}`,

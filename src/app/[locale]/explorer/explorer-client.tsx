@@ -10,7 +10,10 @@ import {
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { GraphCanvas, type GraphCanvasHandle } from "@/components/graph/graph-canvas";
+import {
+  GraphCanvasLazy,
+  type GraphCanvasHandle,
+} from "@/components/graph/graph-canvas-lazy";
 import { GraphLegend } from "@/components/graph/graph-legend";
 import { AdjacencyTable } from "@/components/graph/adjacency-table";
 import { NodeInspector } from "@/components/graph/node-inspector";
@@ -81,7 +84,7 @@ export function ExplorerClient() {
     if (seededRef.current === seedKey) return;
     seededRef.current = seedKey;
     reset();
-    void expand(chainParam, addressParam, { maxNeighbors });
+    void expand(chainParam, addressParam, { maxNeighbors, fallbackError: t.expansionFailed });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seedKey]);
 
@@ -101,9 +104,13 @@ export function ExplorerClient() {
 
   const handleExpand = useCallback(
     (node: GraphNode, direction: "both" | "in" | "out" = "both") => {
-      void expand(node.chain, node.address, { direction, maxNeighbors });
+      void expand(node.chain, node.address, {
+        direction,
+        maxNeighbors,
+        fallbackError: t.expansionFailed,
+      });
     },
-    [expand, maxNeighbors],
+    [expand, maxNeighbors, t.expansionFailed],
   );
 
   if (!nodeList.length && !loadingIds.size) {
@@ -117,12 +124,9 @@ export function ExplorerClient() {
             <span className="mx-auto inline-flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Layers className="size-6" aria-hidden="true" />
             </span>
-            <h2 className="mt-3 text-base font-semibold text-foreground">
-              Seed the graph with an address
-            </h2>
+            <h2 className="mt-3 text-base font-semibold text-foreground">{t.seedTitle}</h2>
             <p className="mx-auto mt-1 max-w-md text-xs leading-relaxed text-foreground-muted">
-              Place a first node on the canvas, then expand its counterparties one hop at
-              a time and follow the flow.
+              {t.seedBody}
             </p>
 
             {/* No autoFocus: focusing on load popped the suggestion list open before
@@ -131,7 +135,7 @@ export function ExplorerClient() {
 
             <div className="mt-6">
               <p className="text-[11px] font-medium uppercase tracking-wide text-foreground-muted">
-                Or start from an example
+                {t.orStartFromExample}
               </p>
               <ul className="mt-2 grid gap-2 sm:grid-cols-3">
                 {EXAMPLES.map((example) => (
@@ -194,7 +198,7 @@ export function ExplorerClient() {
           actions={
             <div className="flex items-center gap-1.5">
               <label className="hidden items-center gap-1.5 text-[11px] text-foreground-muted sm:flex">
-                Fan-out
+                {t.fanOut}
                 <select
                   value={maxNeighbors}
                   onChange={(event) => setMaxNeighbors(Number(event.target.value))}
@@ -209,11 +213,11 @@ export function ExplorerClient() {
               </label>
               <Button size="sm" variant="ghost" onClick={() => handleRef.current?.fit()}>
                 <Crosshair className="size-3.5" aria-hidden="true" />
-                Fit
+                {t.fit}
               </Button>
               <Button size="sm" variant="ghost" onClick={() => handleRef.current?.relayout()}>
                 <RefreshCw className="size-3.5" aria-hidden="true" />
-                Re-layout
+                {t.relayout}
               </Button>
               <Button
                 size="sm"
@@ -226,7 +230,7 @@ export function ExplorerClient() {
                 }}
               >
                 <Trash2 className="size-3.5" aria-hidden="true" />
-                Clear
+                {t.clear}
               </Button>
             </div>
           }
@@ -234,7 +238,7 @@ export function ExplorerClient() {
         >
           <div className="flex h-full min-h-[440px] flex-col">
             <div className="relative min-h-0 flex-1 bg-surface-2/30">
-              <GraphCanvas
+              <GraphCanvasLazy
                 nodes={nodeList}
                 edges={edgeList}
                 selectedId={selectedId}
@@ -249,18 +253,18 @@ export function ExplorerClient() {
               />
               {loadingIds.size ? (
                 <p className="pointer-events-none absolute left-3 top-3 rounded border border-border bg-surface/90 px-2 py-1 text-[11px] text-foreground-muted">
-                  Expanding {loadingIds.size} node{loadingIds.size > 1 ? "s" : ""}…
+                  {t.expanding(loadingIds.size)}
                 </p>
               ) : null}
               {pathAnchor ? (
                 <p className="pointer-events-none absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded border border-accent/50 bg-accent/10 px-2 py-1 text-[11px] text-accent">
                   <Route className="size-3" aria-hidden="true" />
-                  Anchor: {truncateAddress(pathAnchor.address, 6, 4)}
+                  {t.anchor(truncateAddress(pathAnchor.address, 6, 4))}
                   {highlightPath
-                    ? ` · path found (${highlightPath.length - 1} hops)`
+                    ? t.pathFound(highlightPath.length - 1)
                     : selectedId && selectedId !== pathAnchor.id
-                      ? " · no path in current graph"
-                      : " · select a second node"}
+                      ? t.noPathInGraph
+                      : t.selectSecondNode}
                 </p>
               ) : null}
             </div>
@@ -296,7 +300,7 @@ export function ExplorerClient() {
           truncatedIds.size ? (
             <span className="inline-flex items-center gap-1 text-[11px] text-warning">
               <AlertTriangle className="size-3" aria-hidden="true" />
-              {truncatedIds.size} node{truncatedIds.size > 1 ? "s" : ""} truncated to top counterparties
+              {t.truncatedNodes(truncatedIds.size)}
             </span>
           ) : null
         }

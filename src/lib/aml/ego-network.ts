@@ -1,5 +1,6 @@
 import { analyzeAddress, nodeId, type AddressAnalysis, type NeighborRow } from "../analysis";
 import { CHAINS } from "../chains/registry";
+import { en } from "../i18n/dictionaries/en";
 import { makeValue } from "../format";
 import { levelFor } from "../risk";
 import type { ChainId, RiskLevel } from "../types";
@@ -155,6 +156,10 @@ export async function extractEgoNetwork(
   const filters: EgoFilters = { ...DEFAULT_FILTERS, ...options };
   const reduction: ReductionStep[] = [];
   const now = Date.now();
+  // Reduction detail is prose that reaches the analyst and the assessment
+  // payload, so it follows the requested language like everything else there.
+  // Callers with no locale in hand - internal expansion - get English.
+  const copy = (options.copy ?? en.aml).reduction;
 
   const analysis = options.seed ?? (await analyzeAddress(chain, address, 50, options.copy));
   const centreId = nodeId(chain, analysis.address.address);
@@ -174,14 +179,13 @@ export async function extractEgoNetwork(
   /* --- reduction, in the order the pattern prescribes --------------------- */
 
   let rows = analysis.neighbors;
-  const initialCount = rows.length;
 
   const afterWindow = rows.filter((row) => withinWindow(row, windowMs));
   if (afterWindow.length !== rows.length) {
     reduction.push({
       rule: "time-window",
       removed: rows.length - afterWindow.length,
-      detail: `Counterparties with no activity between ${window.start ?? "the start of the window"} and ${window.end ?? "now"}.`,
+      detail: copy.timeWindow(window.start, window.end),
     });
   }
   rows = afterWindow;
@@ -192,7 +196,7 @@ export async function extractEgoNetwork(
       reduction.push({
         rule: "min-value",
         removed: rows.length - kept.length,
-        detail: `Counterparties below ${filters.minValueCoin} ${CHAINS[chain].ticker} of observed flow.`,
+        detail: copy.minValue(filters.minValueCoin, CHAINS[chain].ticker),
       });
     }
     rows = kept;
@@ -204,7 +208,7 @@ export async function extractEgoNetwork(
       reduction.push({
         rule: "direction",
         removed: rows.length - kept.length,
-        detail: `Showing ${filters.direction === "in" ? "senders" : "receivers"} only.`,
+        detail: copy.direction(filters.direction as "in" | "out"),
       });
     }
     rows = kept;
@@ -223,8 +227,7 @@ export async function extractEgoNetwork(
       reduction.push({
         rule: "service-hub-suppression",
         removed: rows.length - kept.length,
-        detail:
-          "Attributed services are hubs by construction. The three largest by value are kept; the rest are collapsed out of the view but remain in the metrics.",
+        detail: copy.serviceHubs,
       });
       rows = kept;
     }
@@ -247,7 +250,7 @@ export async function extractEgoNetwork(
     reduction.push({
       rule: "top-k",
       removed: ranked.length - ringOne.length,
-      detail: `Ring 1 limited to the ${filters.topK} highest-priority counterparties of ${ranked.length}.`,
+      detail: copy.topK(filters.topK, ranked.length),
     });
   }
 
@@ -336,7 +339,7 @@ export async function extractEgoNetwork(
       reduction.push({
         rule: "hop-2-expansion-cap",
         removed: uniqueRingOne.length - expandTargets.length,
-        detail: `Second hop expanded ${expandTargets.length} of ${uniqueRingOne.length} ring-1 nodes. Each expansion is one explorer request, and attributed services are not expanded because their neighbourhoods are unbounded.`,
+        detail: copy.hopTwoCap(expandTargets.length, uniqueRingOne.length),
       });
     }
 
@@ -404,7 +407,7 @@ export async function extractEgoNetwork(
     reduction.push({
       rule: "hard-cap",
       removed: 0,
-      detail: `Extraction stopped at the ${filters.maxNodes}-node / ${filters.maxEdges}-edge ceiling.`,
+      detail: copy.hardCap(filters.maxNodes, filters.maxEdges),
     });
   }
 
@@ -419,11 +422,15 @@ export async function extractEgoNetwork(
     totalSentRaw: BigInt(analysis.address.totalSent.raw),
   });
 
-  if (initialCount !== analysis.neighbors.length) {
+  // The explorer serves one page of history, so the counterparty set is a slice
+  // whenever the subject has more transactions than the page carried. This used
+  // to compare `initialCount` against the list it was copied from, which is the
+  // same number by construction, so the caveat never reached the report.
+  if (analysis.window.txsAnalysed < analysis.window.txsTotal) {
     reduction.push({
       rule: "source-window",
       removed: 0,
-      detail: "Counterparties derive from the explorer's transaction page, not full history.",
+      detail: copy.sourceWindow(analysis.window.txsAnalysed, analysis.window.txsTotal),
     });
   }
 

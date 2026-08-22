@@ -175,11 +175,3 @@ export function nodeKindFor(tags: Tag[], isEntity: boolean): NodeKind {
   if (tags.length) return isEntity ? "entity" : "address";
   return isEntity ? "entity" : "unknown";
 }
-
-export const RISK_LEVEL_LABEL: Record<RiskLevel, string> = {
-  clear: "Clear",
-  low: "Low",
-  medium: "Medium",
-  high: "High",
-  severe: "Severe",
-};

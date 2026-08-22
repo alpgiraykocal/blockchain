@@ -13,6 +13,10 @@ import {
 /**
  * Per-request CSP nonce, and locale resolution.
  *
+ * Named `proxy` and living in `src/proxy.ts`: Next 16 renamed this file
+ * convention, and the old `middleware` name builds with a deprecation warning
+ * rather than silently continuing to work forever.
+ *
  * Next emits inline bootstrap and flight-data scripts on every page, so a policy
  * of `script-src 'self'` blocks the app's own hydration and ships a site that
  * renders and then does nothing. The two ways out are `'unsafe-inline'`, which
@@ -43,7 +47,7 @@ function detectLocale(request: NextRequest): Locale {
   return matchLocale(request.headers.get("accept-language")) ?? DEFAULT_LOCALE;
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (!isLocaleExempt(pathname)) {
@@ -65,6 +69,12 @@ export function middleware(request: NextRequest) {
 
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
 
+  // React's development build uses `eval` to rebuild stack traces across the
+  // server/client boundary, so a dev page under the production policy fills the
+  // console with CSP violations. This is scoped to `next dev` and never widens
+  // what is served to a visitor - `NODE_ENV` is `production` in every build.
+  const scriptExtras = process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : "";
+
   const csp = [
     "default-src 'self'",
     "base-uri 'self'",
@@ -79,7 +89,7 @@ export function middleware(request: NextRequest) {
     // through this app's own API routes.
     "connect-src 'self'",
     "worker-src 'self' blob:",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${scriptExtras}`,
     "upgrade-insecure-requests",
   ].join("; ");
 

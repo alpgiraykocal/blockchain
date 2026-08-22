@@ -106,7 +106,7 @@ export function OfacPanel({ rows }: { rows: OfacRow[] }) {
       <div className="flex h-11 min-h-11 items-center gap-2 rounded-md border border-border bg-surface px-3 transition-colors duration-150 focus-within:border-ring">
         <Search className="size-4 shrink-0 text-foreground-muted" aria-hidden="true" />
         <label htmlFor="ofac-filter" className="sr-only">
-          Filter sanctioned addresses
+          {t.ofacFilter}
         </label>
         <input
           id="ofac-filter"

@@ -392,15 +392,31 @@ function runLayout(cy: Core, initial = true) {
 function fitViewport(cy: Core, animate: boolean) {
   if (!cy.elements().length) return;
 
+  // Stop any viewport animation already in flight. A running `cy.animate` keeps
+  // writing zoom and pan for its full duration and finishes on the target it was
+  // given, so it silently undid the correction the resize observer had just
+  // applied - which is how the canvas kept opening with half the graph off the
+  // left edge until the analyst pressed Fit.
+  cy.stop();
+  // Measure against the box as it is now, not as it was when cytoscape last
+  // cached it. The container is often still settling when the first fragment
+  // lands, and a stale width puts the centring calculation somewhere else.
+  cy.resize();
+
   const bounds = cy.elements().boundingBox();
   // A phone-width canvas cannot spare 60px of margin on each side; spending it
   // there is what pushed the fit zoom below the label threshold.
   const padding = cy.width() < 520 ? 24 : 60;
-  const zoom = Math.min(
-    1.2,
+  // Clamped to what cytoscape will actually apply: pan is derived from the zoom,
+  // so computing it from a value the viewport then clamps offsets the whole graph.
+  const zoom = Math.max(
+    cy.minZoom(),
     Math.min(
-      (cy.width() - padding * 2) / Math.max(1, bounds.w),
-      (cy.height() - padding * 2) / Math.max(1, bounds.h),
+      1.2,
+      Math.min(
+        (cy.width() - padding * 2) / Math.max(1, bounds.w),
+        (cy.height() - padding * 2) / Math.max(1, bounds.h),
+      ),
     ),
   );
   const center = {

@@ -26,7 +26,7 @@ export default async function DashboardPage({
   const locale: Locale = isLocale(raw) ? raw : "en";
   const { ui } = getDictionary(locale);
   const href = (path: string) => localePath(locale, path);
-  const packs = packStats();
+  const packs = packStats(ui.packs);
   const totalTags = packs.reduce((sum, pack) => sum + pack.tagCount, 0);
   const abuseTags = packs.reduce((sum, pack) => sum + pack.abuseCount, 0);
 

@@ -9,7 +9,8 @@ import {
   packStats,
   snapshotAgeDays,
 } from "@/lib/tags";
-import { parseChain } from "@/lib/api-helpers";
+import { parseChain, parseLocale } from "@/lib/api-helpers";
+import { getDictionary } from "@/lib/i18n";
 
 export const runtime = "nodejs";
 
@@ -26,7 +27,7 @@ export async function GET(request: NextRequest) {
   }
 
   const body = {
-    packs: packStats(),
+    packs: packStats(getDictionary(parseLocale(params.get("locale"))).ui.packs),
     // Provenance travels with the data: a consumer must be able to tell which
     // list version a screening result was produced against.
     sanctionsSnapshot: {

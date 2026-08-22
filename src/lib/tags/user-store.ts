@@ -1,6 +1,4 @@
 "use client";
-import { getDictionary } from "../i18n";
-import { clientLocale } from "../i18n/config";
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -84,8 +82,10 @@ export const ABUSE_TYPES: AbuseType[] = [
 ];
 
 /** Validates a parsed TagPack export before it replaces local state. */
-export function parseTagExport(input: unknown): Tag[] {
-  if (!input || typeof input !== "object") throw new Error(getDictionary(clientLocale()).ui.errors.notJsonObject);
+/** `notJsonObject` is passed in rather than looked up: this is a client module,
+ *  and a dictionary lookup here would bundle every locale's copy with it. */
+export function parseTagExport(input: unknown, notJsonObject = "File is not a JSON object."): Tag[] {
+  if (!input || typeof input !== "object") throw new Error(notJsonObject);
   const candidate = (input as { tags?: unknown }).tags;
   if (!Array.isArray(candidate)) throw new Error("Missing a top-level `tags` array.");
 

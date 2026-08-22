@@ -22,6 +22,7 @@ const CATEGORY_TONE: Record<string, "success" | "info" | "accent" | "danger" | "
 export function LabelFeedsPanel({ locale: raw }: { locale: string }) {
   const locale: Locale = isLocale(raw) ? raw : "en";
   const t = getDictionary(locale).ui.tags;
+  const categories = getDictionary(locale).ui.common.actorCategories;
   const snapshot = labelSnapshot();
   const error = labelSnapshotError();
   const leaders = actorLeaderboard(14);
@@ -151,7 +152,9 @@ export function LabelFeedsPanel({ locale: raw }: { locale: string }) {
                   <span className="truncate text-xs font-medium text-foreground">
                     {entry.label}
                   </span>
-                  <span className="text-[11px] text-foreground-muted">{entry.category}</span>
+                  <span className="text-[11px] text-foreground-muted">
+                    {categories[entry.category] ?? entry.category}
+                  </span>
                 </div>
                 <span className="tnum shrink-0 text-[11px] text-foreground-muted">
                   {formatNumber(entry.addresses, true)}

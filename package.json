@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "postbuild": "cp -r public .next/standalone/ 2>/dev/null || true; cp -r .next/static .next/standalone/.next/ 2>/dev/null || true",
+    "postbuild": "rm -rf .next/standalone/public .next/standalone/.next/static && cp -R public .next/standalone/public && cp -R .next/static .next/standalone/.next/static",
     "start": "node .next/standalone/server.js",
     "lint": "eslint",
     "sync:ofac": "node scripts/sync-ofac.mts",

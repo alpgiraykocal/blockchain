@@ -15,7 +15,7 @@ import { useCallback, useMemo, useState } from "react";
 import useSWR from "swr";
 import { CaseFile } from "@/components/aml/case-file";
 import { FindingCard } from "@/components/aml/finding-card";
-import { RadialGraph } from "@/components/aml/radial-graph";
+import { RadialGraphLazy } from "@/components/aml/radial-graph-lazy";
 import { SubjectTabs } from "@/components/subject-tabs";
 import { AddressLink } from "@/components/ui/address-link";
 import { DataTable, type Column } from "@/components/ui/data-table";
@@ -379,7 +379,7 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
                     </div>
                   </div>
                 ) : (
-                  <RadialGraph
+                  <RadialGraphLazy
                     nodes={network.nodes}
                     edges={network.edges}
                     selectedId={selectedId}
@@ -445,7 +445,12 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
                   <p className="mt-1.5 text-[11px] text-warning">
                     {t.reductionApplied(
                       network.reduction
-                        .map((step) => `${step.rule}${step.removed ? ` (−${step.removed})` : ""}`)
+                        .map(
+                          (step) =>
+                            `${dict.ui.common.reductionRules[step.rule] ?? step.rule}${
+                              step.removed ? ` (−${step.removed})` : ""
+                            }`,
+                        )
                         .join(", "),
                     )}
                   </p>
@@ -587,13 +592,17 @@ function CounterpartyTable({
     {
       key: "direction",
       header: t.colDirection,
+      // A counterparty that both sent and received is merged into one node with
+      // direction "both", and the subject itself carries "self". Falling through
+      // to the raw value printed those two as untranslated English in a table
+      // whose other rows were localised.
       cell: (node) =>
         node.direction === "in" ? (
           <Badge tone="success">{t.badgeIn}</Badge>
         ) : node.direction === "out" ? (
           <Badge tone="danger">{t.badgeOut}</Badge>
         ) : (
-          <Badge tone="neutral">{node.direction}</Badge>
+          <Badge tone="neutral">{node.direction === "self" ? t.badgeSelf : t.badgeBoth}</Badge>
         ),
       sortValue: (node) => node.direction,
     },

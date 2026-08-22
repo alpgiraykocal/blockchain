@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { UpstreamError } from "./http";
+import { getAdapter } from "./chains";
 import { isChainId, isValidAddress } from "./chains/registry";
 import { type Locale, isLocale } from "./i18n/config";
 import { getDictionary } from "./i18n";
@@ -20,12 +21,41 @@ export function parseLimit(value: string | null, fallback = 50, max = 200): numb
   return Math.min(Math.floor(parsed), max);
 }
 
-export function validateAddressParam(chain: ChainId, address: string | null) {
+/** Internal to `resolveSubject`: routes should go through that, so raw input is
+ *  never checked without the resolution step that follows it. */
+function validateAddressParam(chain: ChainId, address: string | null) {
   if (!address) return "Missing `address` parameter.";
   if (!isValidAddress(chain, address)) {
     return `"${address}" is not a valid ${chain.toUpperCase()} address.`;
   }
   return null;
+}
+
+/**
+ * Turns the caller's raw `address` parameter into a canonical address.
+ *
+ * The raw string is validated against the chain's own grammar *before* anything
+ * upstream sees it, and the resolved result is validated again. Resolving first
+ * and checking only the answer is what let a typo through: an explorer search
+ * index answers a malformed query with its nearest fuzzy match, so `0xZZZ` came
+ * back as a real, unrelated address and every panel then reported on it with
+ * full confidence.
+ */
+export async function resolveSubject(
+  chain: ChainId,
+  raw: string | null,
+): Promise<{ address: string; error: null } | { address: null; error: NextResponse }> {
+  const invalid = validateAddressParam(chain, raw);
+  if (invalid) return { address: null, error: jsonError(invalid, 400) };
+
+  const resolved = await getAdapter(chain).resolve(raw!);
+  if (!resolved || !isValidAddress(chain, resolved)) {
+    return {
+      address: null,
+      error: jsonError(`"${raw}" did not resolve to a ${chain.toUpperCase()} address.`, 404),
+    };
+  }
+  return { address: resolved, error: null };
 }
 
 /** Maps upstream explorer failures onto statuses the UI can act on. The message
