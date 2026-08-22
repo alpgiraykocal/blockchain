@@ -187,20 +187,32 @@ export function actorLabelsFor(chain: ChainId, address: string): Tag[] {
   ];
 }
 
-/** Top actors by how many addresses carry their label — the shape of the feed. */
-export function actorLeaderboard(limit = 12): {
+export interface LeaderboardEntry {
   actor: ActorRecord | null;
   label: string;
   category: string;
   addresses: number;
-}[] {
-  const snapshot = labelSnapshot();
+}
+
+/**
+ * The ranking behind `actorLeaderboard`, computed once per snapshot.
+ *
+ * Counting addresses per label means touching all 428k of them. That is fine
+ * once and wasteful on every render, so the whole ranking is memoised and only
+ * the final slice varies by `limit`. Keyed on snapshot identity: the parsed
+ * snapshot is never mutated, and a reload produces a new object.
+ */
+let leaderboardMemo: { for: LabelSnapshot; value: LeaderboardEntry[] } | null = null;
+
+function rankedActors(snapshot: LabelSnapshot): LeaderboardEntry[] {
+  if (leaderboardMemo?.for === snapshot) return leaderboardMemo.value;
+
   const perLabel = new Array<number>(snapshot.labels.length).fill(0);
   for (const bucket of Object.values(snapshot.addresses)) {
     for (const index of Object.values(bucket)) perLabel[index] = (perLabel[index] ?? 0) + 1;
   }
 
-  const byActor = new Map<string, { actor: ActorRecord | null; label: string; category: string; addresses: number }>();
+  const byActor = new Map<string, LeaderboardEntry>();
   snapshot.labels.forEach((record, index) => {
     const actor = record.actor == null ? null : snapshot.actors[record.actor];
     const key = actor?.id ?? record.label;
@@ -220,8 +232,15 @@ export function actorLeaderboard(limit = 12): {
     });
   });
 
-  return [...byActor.values()]
+  const value = [...byActor.values()]
     .filter((entry) => entry.addresses > 0)
-    .sort((a, b) => b.addresses - a.addresses)
-    .slice(0, limit);
+    .sort((a, b) => b.addresses - a.addresses);
+
+  leaderboardMemo = { for: snapshot, value };
+  return value;
+}
+
+/** Top actors by how many addresses carry their label — the shape of the feed. */
+export function actorLeaderboard(limit = 12): LeaderboardEntry[] {
+  return rankedActors(labelSnapshot()).slice(0, limit);
 }

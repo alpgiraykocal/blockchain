@@ -6,6 +6,7 @@ import { formatCoin, formatDate, formatRelative, formatUsd, truncateAddress } fr
 import type { ChainId, Transaction } from "@/lib/types";
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { Badge, EmptyState } from "@/components/ui/primitives";
+import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 
 export function TransactionsTable({
@@ -15,6 +16,8 @@ export function TransactionsTable({
   transactions: Transaction[];
   chain: ChainId;
 }) {
+  const { t: dict, locale } = useI18n();
+  const t = dict.ui.transactions;
   const meta = CHAINS[chain];
 
   const columns: Column<Transaction>[] = [
@@ -45,15 +48,15 @@ export function TransactionsTable({
       key: "time",
       header: "Time",
       cell: (tx) => (
-        <span title={formatDate(tx.timestamp)} className="whitespace-nowrap">
-          {tx.confirmed ? formatRelative(tx.timestamp) : "pending"}
+        <span title={formatDate(tx.timestamp, true, locale)} className="whitespace-nowrap">
+          {tx.confirmed ? formatRelative(tx.timestamp, locale) : "pending"}
         </span>
       ),
       sortValue: (tx) => (tx.timestamp ? new Date(tx.timestamp).getTime() : 0),
     },
     {
       key: "net",
-      header: "Net effect",
+      header: t.netEffect,
       align: "right",
       cell: (tx) => {
         const net = tx.netForAddress;
@@ -82,11 +85,11 @@ export function TransactionsTable({
     },
     {
       key: "total",
-      header: "Tx volume",
+      header: t.txVolume,
       align: "right",
       cell: (tx) => formatCoin(tx.totalValue, chain),
       sortValue: (tx) => tx.totalValue.coin,
-      headerHint: "Total value moved by the transaction, across all outputs",
+      headerHint: t.txVolumeHint,
     },
     {
       key: "fee",
@@ -105,7 +108,7 @@ export function TransactionsTable({
         </span>
       ),
       sortValue: (tx) => tx.inputs.length + tx.outputs.length,
-      headerHint: "Number of inputs and outputs in the transaction",
+      headerHint: t.ioHint,
     },
   ];
 
@@ -114,13 +117,13 @@ export function TransactionsTable({
       rows={transactions}
       columns={columns}
       rowKey={(tx) => tx.hash}
-      caption="Transactions in the analysed window"
+      caption={t.caption}
       initialSort={{ key: "time", direction: "desc" }}
       emptyState={
         <EmptyState
           icon={<RefreshCcw className="size-5" aria-hidden="true" />}
-          title="No transactions in the analysed window"
-          description="This address has no transaction history the upstream explorer could return."
+          title={t.empty}
+          description={t.emptyBody}
         />
       }
     />

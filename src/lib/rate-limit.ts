@@ -1,4 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { getDictionary } from "./i18n";
+import { isLocale } from "./i18n/config";
 
 /**
  * Per-client rate limiting for the API surface.
@@ -113,10 +115,12 @@ export function enforceRateLimit(
   if (result.ok) return null;
 
   const retryAfter = Math.max(1, Math.ceil((result.resetAt - Date.now()) / 1000));
+  const asked = request.nextUrl.searchParams.get("locale");
+  const t = getDictionary(isLocale(asked) ? asked : "en").ui.errors;
   return NextResponse.json(
     {
-      error: "Rate limit reached.",
-      detail: `This deployment proxies free public block explorers and limits callers to ${rule.limit} requests per minute. Retry in ${retryAfter}s.`,
+      error: t.rateLimitTitle,
+      detail: t.rateLimitDetail(rule.limit, retryAfter),
     },
     {
       status: 429,

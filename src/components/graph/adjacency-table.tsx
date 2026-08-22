@@ -4,6 +4,7 @@ import { DataTable, type Column } from "@/components/ui/data-table";
 import { AddressLink } from "@/components/ui/address-link";
 import { Badge, EmptyState } from "@/components/ui/primitives";
 import { formatCoin, formatNumber, formatUsd } from "@/lib/format";
+import { useT } from "@/lib/i18n/context";
 import type { GraphEdge, GraphNode } from "@/lib/types";
 
 interface Row {
@@ -23,6 +24,7 @@ export function AdjacencyTable({
   edges: GraphEdge[];
   onSelect?: (id: string) => void;
 }) {
+  const t = useT().ui.graph;
   const rows: Row[] = edges.map((edge) => ({
     edge,
     source: nodes[edge.source],
@@ -87,7 +89,7 @@ export function AdjacencyTable({
     },
     {
       key: "risk",
-      header: "Counterparty risk",
+      header: t.counterpartyRisk,
       align: "right",
       cell: (row) => {
         const risk = Math.max(row.source?.riskScore ?? 0, row.target?.riskScore ?? 0);
@@ -107,13 +109,13 @@ export function AdjacencyTable({
       rows={rows}
       columns={columns}
       rowKey={(row) => row.edge.id}
-      caption="Adjacency list of every edge currently on the graph canvas"
+      caption={t.adjacencyCaption}
       initialSort={{ key: "value", direction: "desc" }}
       onRowClick={onSelect ? (row) => onSelect(row.edge.target) : undefined}
       emptyState={
         <EmptyState
-          title="No links on the canvas yet"
-          description="Search an address to seed the graph, then expand a node to pull in its counterparties."
+          title={t.noLinks}
+          description={t.noLinksBody}
         />
       }
     />

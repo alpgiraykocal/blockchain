@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { RATE_LIMITS, enforceRateLimit } from "@/lib/rate-limit";
 import { getAdapter } from "@/lib/chains";
 import { CHAIN_IDS } from "@/lib/chains/registry";
-import { handleRouteError, parseChain } from "@/lib/api-helpers";
+import { handleRouteError, parseChain, parseLocale } from "@/lib/api-helpers";
 import type { ChainStats } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -38,6 +38,6 @@ export async function GET(request: NextRequest) {
       },
     );
   } catch (error) {
-    return handleRouteError(error);
+    return handleRouteError(error, parseLocale(request.nextUrl.searchParams.get("locale")));
   }
 }

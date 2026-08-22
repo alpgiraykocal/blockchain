@@ -5,6 +5,7 @@ import type { ChainId } from "@/lib/types";
 import type { NeighborRow } from "@/lib/analysis";
 import { AddressLink } from "@/components/ui/address-link";
 import { EmptyState } from "@/components/ui/primitives";
+import { useT } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 
 /** Horizontal value bars — a bar chart reads better than a pie for the long tail
@@ -20,6 +21,7 @@ export function FlowBars({
   direction: "in" | "out";
   limit?: number;
 }) {
+  const t = useT().ui.flow;
   const filtered = rows
     .filter((row) => row.direction === direction)
     .sort((a, b) => b.link.value.coin - a.link.value.coin)
@@ -28,8 +30,8 @@ export function FlowBars({
   if (!filtered.length) {
     return (
       <EmptyState
-        title={direction === "in" ? "No senders observed" : "No receivers observed"}
-        description="No counterparty of this direction appeared in the analysed transaction window."
+        title={direction === "in" ? t.noSenders : t.noReceivers}
+        description={t.noneBody}
       />
     );
   }

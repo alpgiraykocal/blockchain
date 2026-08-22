@@ -21,6 +21,7 @@ import { isChainId } from "@/lib/chains/registry";
 import { shortestPath, useGraphStore } from "@/lib/graph-store";
 import { truncateAddress } from "@/lib/format";
 import type { GraphNode } from "@/lib/types";
+import { useI18n, useT } from "@/lib/i18n/context";
 
 /** Starting points that show what the canvas is for without asking the user to
  *  find an interesting address first. */
@@ -29,23 +30,25 @@ const EXAMPLES = [
     chain: "eth" as const,
     address: "0x28C6c06298d514Db089934071355E5743bf21d60",
     label: "Binance hot wallet",
-    hint: "Exchange hub - dense fan-out of labelled counterparties.",
+    hintKey: "exampleExchangeHint" as const,
   },
   {
     chain: "eth" as const,
     address: "0x119c71D3BbAC22029622cbaEC24854d3D32D2828",
     label: "1inch Network",
-    hint: "DeFi router - contract attribution from the open feeds.",
+    hintKey: "exampleDefiHint" as const,
   },
   {
     chain: "btc" as const,
     address: "1295rkVyNfFpqZpXvKGhDqwhP1jZcNNDMV",
     label: "SUEX OTC",
-    hint: "OFAC-sanctioned - severe risk and a large co-spend cluster.",
+    hintKey: "exampleSanctionedHint" as const,
   },
 ];
 
 export function ExplorerClient() {
+  const { t: dict, href: localeHref } = useI18n();
+  const t = dict.ui.graph;
   const params = useSearchParams();
   const router = useRouter();
 
@@ -136,9 +139,7 @@ export function ExplorerClient() {
                     <button
                       type="button"
                       onClick={() =>
-                        router.push(
-                          `/explorer?chain=${example.chain}&address=${example.address}`,
-                        )
+                        router.push(localeHref(`/explorer?chain=${example.chain}&address=${example.address}`))
                       }
                       className="flex h-full w-full cursor-pointer flex-col gap-1 rounded-md border border-border bg-surface-2/40 p-3 text-left transition-colors duration-200 hover:border-border-strong hover:bg-surface-2"
                     >
@@ -149,7 +150,7 @@ export function ExplorerClient() {
                         </span>
                       </span>
                       <span className="text-[11px] leading-relaxed text-foreground-muted">
-                        {example.hint}
+                        {t[example.hintKey]}
                       </span>
                     </button>
                   </li>
@@ -180,7 +181,7 @@ export function ExplorerClient() {
             <p className="min-w-0 break-words text-xs text-destructive">{error}</p>
           </div>
           <Button size="sm" variant="ghost" onClick={clearError}>
-            Dismiss
+            {t.dismiss}
           </Button>
         </div>
       ) : null}
@@ -188,8 +189,8 @@ export function ExplorerClient() {
       <div className="grid min-w-0 gap-4 [&>*]:min-w-0 xl:grid-cols-[minmax(0,1fr)_360px]">
         <Panel
           flush
-          title="Transaction flow"
-          description={`${nodeList.length} nodes · ${edgeList.length} links · ${expanded.size} expanded`}
+          title={t.flowTitle}
+          description={t.flowDescription(nodeList.length, edgeList.length, expanded.size)}
           actions={
             <div className="flex items-center gap-1.5">
               <label className="hidden items-center gap-1.5 text-[11px] text-foreground-muted sm:flex">
@@ -221,7 +222,7 @@ export function ExplorerClient() {
                   reset();
                   setPathAnchor(null);
                   seededRef.current = null;
-                  router.replace("/explorer");
+                  router.replace(localeHref("/explorer"));
                 }}
               >
                 <Trash2 className="size-3.5" aria-hidden="true" />
@@ -271,7 +272,7 @@ export function ExplorerClient() {
 
         <Panel
           flush
-          title="Inspector"
+          title={t.inspector}
           className="min-h-[420px] xl:sticky xl:top-[4.75rem] xl:h-[calc(100dvh-11rem)]"
         >
           <NodeInspector
@@ -289,8 +290,8 @@ export function ExplorerClient() {
 
       <Panel
         flush
-        title="Adjacency list"
-        description="Text equivalent of the canvas — sortable and screen-reader friendly."
+        title={t.adjacencyTitle}
+        description={t.adjacencyDescription}
         actions={
           truncatedIds.size ? (
             <span className="inline-flex items-center gap-1 text-[11px] text-warning">
@@ -307,14 +308,12 @@ export function ExplorerClient() {
 }
 
 function PageHeading() {
+  const t = useT().ui.graph;
   return (
     <div className="flex flex-wrap items-end justify-between gap-3">
       <div>
-        <h1 className="text-lg font-semibold tracking-tight text-heading">Graph explorer</h1>
-        <p className="mt-0.5 text-xs text-foreground-muted">
-          Click to select, double-click to expand. Every expansion pulls one hop of
-          counterparties from live explorer data.
-        </p>
+        <h1 className="text-lg font-semibold tracking-tight text-heading">{t.heading}</h1>
+        <p className="mt-0.5 text-xs text-foreground-muted">{t.headingHint}</p>
       </div>
     </div>
   );

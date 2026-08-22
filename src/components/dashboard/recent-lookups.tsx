@@ -6,9 +6,11 @@ import { readRecent, type RecentEntry } from "@/components/search-bar";
 import { AddressLink } from "@/components/ui/address-link";
 import { Badge, EmptyState } from "@/components/ui/primitives";
 import { formatRelative } from "@/lib/format";
+import { useI18n } from "@/lib/i18n/context";
 import { storageEvent } from "@/lib/storage";
 
 export function RecentLookups() {
+  const { t, locale } = useI18n();
   const [recent, setRecent] = useState<RecentEntry[] | null>(null);
 
   useEffect(() => {
@@ -33,8 +35,8 @@ export function RecentLookups() {
     return (
       <EmptyState
         icon={<History className="size-5" aria-hidden="true" />}
-        title="No lookups yet"
-        description="Addresses you inspect appear here. The list is stored in this browser only and never leaves your device."
+        title={t.ui.home.recentEmptyTitle}
+        description={t.ui.home.recentEmptyBody}
       />
     );
   }
@@ -52,7 +54,7 @@ export function RecentLookups() {
           </div>
           <span className="inline-flex shrink-0 items-center gap-1 text-[11px] text-foreground-muted">
             <Clock className="size-3" aria-hidden="true" />
-            {formatRelative(item.at)}
+            {formatRelative(item.at, locale)}
           </span>
         </li>
       ))}

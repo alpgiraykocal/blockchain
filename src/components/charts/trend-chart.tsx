@@ -13,6 +13,7 @@ import {
 import { Table2, TrendingUp } from "lucide-react";
 import { Button, EmptyState } from "@/components/ui/primitives";
 import { formatDate, formatNumber } from "@/lib/format";
+import { useI18n } from "@/lib/i18n/context";
 import type { TimePoint } from "@/lib/types";
 
 /** Time series with a built-in table alternative — a chart alone is not a
@@ -32,6 +33,7 @@ export function TrendChart({
   color?: string;
   height?: number;
 }) {
+  const { t: dict, locale } = useI18n();
   const [asTable, setAsTable] = useState(false);
 
   const data = useMemo(() => {
@@ -74,8 +76,8 @@ export function TrendChart({
     return (
       <EmptyState
         icon={<TrendingUp className="size-5" aria-hidden="true" />}
-        title="No series data"
-        description="The upstream explorer did not return a history for this metric."
+        title={dict.ui.chart.noSeries}
+        description={dict.ui.chart.noSeriesBody}
       />
     );
   }
@@ -119,7 +121,7 @@ export function TrendChart({
             <tbody>
               {[...data].reverse().map((point) => (
                 <tr key={point.t} className="border-t border-border/70">
-                  <td className="px-2 py-1">{formatDate(point.t, false)}</td>
+                  <td className="px-2 py-1">{formatDate(point.t, false, locale)}</td>
                   <td className="tnum px-2 py-1 text-right">{formatNumber(point.v)}</td>
                 </tr>
               ))}

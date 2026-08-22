@@ -1,6 +1,7 @@
 import { formatCoin, formatDate, formatNumber, formatUsd, truncateAddress } from "../format";
 import { CHAINS } from "../chains/registry";
 import type { AddressSummary, ChainId, Transaction } from "../types";
+import type { AmlCopy } from "./copy";
 import { pct } from "./metrics";
 import type { CaseNarrative, Disposition, EgoMetrics, TypologyFinding } from "./types";
 
@@ -13,9 +14,6 @@ import type { CaseNarrative, Disposition, EgoMetrics, TypologyFinding } from "./
  * anyone laundered anything. It is a draft for a human to review, edit and own.
  */
 
-const DISCLAIMER =
-  "This narrative was generated from public blockchain data and open attribution sources. It supports human review; it is not a suspicious activity determination and carries no conclusion of law. Figures cover the analysed transaction window only. Attribution and sanctions matches reflect the snapshot versions recorded in the audit block. Final review, filing decisions and any customer action remain with a qualified compliance professional.";
-
 export interface NarrativeInput {
   chain: ChainId;
   address: AddressSummary;
@@ -26,23 +24,30 @@ export interface NarrativeInput {
   disposition: Disposition;
   windowSize: number;
   windowTotal: number;
+  /** Copy for the active locale. The narrative is drafted for a human reviewer
+   *  and exported into a case file, so it is written in their language. */
+  copy: AmlCopy;
+  /** Locale tag for the dates the narrative embeds. */
+  locale: string;
 }
 
 function subjectPhrase(input: NarrativeInput): string {
+  const t = input.copy.narrative;
   const meta = CHAINS[input.chain];
   const label = input.address.tags.length
-    ? `attributed to "${input.address.tags[0].label}"`
-    : "with no attribution in the loaded label sets";
-  return `${meta.name} address ${input.address.address}, ${label}`;
+    ? t.attributedTo(input.address.tags[0].label)
+    : t.noAttribution;
+  return t.subjectPhrase(meta.name, input.address.address, label);
 }
 
 function buildChronology(input: NarrativeInput): { at: string | null; event: string }[] {
+  const t = input.copy.narrative;
   const events: { at: string | null; event: string }[] = [];
 
   if (input.metrics.firstSeen) {
     events.push({
       at: input.metrics.firstSeen,
-      event: `First transaction inside the analysed window.`,
+      event: t.firstTx,
     });
   }
 
@@ -56,26 +61,32 @@ function buildChronology(input: NarrativeInput): { at: string | null; event: str
 
   for (const tx of notable) {
     const net = tx.netForAddress!;
-    const direction = net.coin >= 0 ? "received" : "sent";
     events.push({
       at: tx.timestamp,
-      event: `${direction === "received" ? "Received" : "Sent"} ${formatCoin(
-        { ...net, coin: Math.abs(net.coin) },
-        input.chain,
-      )}${net.usd != null ? ` (${formatUsd(Math.abs(net.usd), true)} at the current rate)` : ""} in transaction ${truncateAddress(tx.hash, 10, 8)}.`,
+      event: t.largestMovement(
+        net.coin >= 0 ? t.directionIn : t.directionOut,
+        formatCoin({ ...net, coin: Math.abs(net.coin) }, input.chain),
+        net.usd != null ? t.atCurrentRate(formatUsd(Math.abs(net.usd), true)) : "",
+        truncateAddress(tx.hash, 10, 8),
+      ),
     });
   }
 
   const dormancy = input.findings.find((f) => f.id === "dormant-then-burst" && f.matched);
   if (dormancy) {
-    const period = dormancy.evidence.find((e) => e.label === "Dormant period");
-    if (period) events.push({ at: null, event: `Dormant period observed: ${period.detail}` });
+    // Matched on the translated label the detector emitted, not on the English
+    // one, or the chronology would silently lose this entry in every other
+    // language.
+    const period = dormancy.evidence.find(
+      (e) => e.label === input.copy.typology.dormant.evDormant,
+    );
+    if (period) events.push({ at: null, event: t.dormantObserved(period.detail) });
   }
 
   if (input.metrics.lastSeen) {
     events.push({
       at: input.metrics.lastSeen,
-      event: "Most recent transaction inside the analysed window.",
+      event: t.lastTx,
     });
   }
 
@@ -83,54 +94,73 @@ function buildChronology(input: NarrativeInput): { at: string | null; event: str
 }
 
 export function buildNarrative(input: NarrativeInput): CaseNarrative {
+  const t = input.copy.narrative;
   const meta = CHAINS[input.chain];
   const matched = input.findings.filter((f) => f.matched && f.weight > 0);
 
   const summary = [
-    `This review covers ${subjectPhrase(input)}.`,
-    `Across ${formatNumber(input.windowSize)} of ${formatNumber(input.windowTotal)} transactions available from ${meta.explorerName}, the address received ${formatCoin(
-      input.metrics.inVolume,
-      input.chain,
-    )} from ${input.metrics.inDegree} distinct counterparties and sent ${formatCoin(
-      input.metrics.outVolume,
-      input.chain,
-    )} to ${input.metrics.outDegree}.`,
+    t.reviewCovers(subjectPhrase(input)),
+    t.volumeLine(
+      formatNumber(input.windowSize),
+      formatNumber(input.windowTotal),
+      meta.explorerName,
+      formatCoin(input.metrics.inVolume, input.chain),
+      input.metrics.inDegree,
+      formatCoin(input.metrics.outVolume, input.chain),
+      input.metrics.outDegree,
+    ),
     input.entityAddressCount > 1
-      ? `Co-spend analysis groups the address with ${input.entityAddressCount - 1} other address(es) under common control.`
-      : `No co-spending partner appeared in the window, so the address stands alone as its own entity.`,
+      ? t.coSpend(input.entityAddressCount - 1)
+      : t.noCoSpend,
     matched.length
-      ? `The activity is consistent with ${matched.length === 1 ? "one recognised pattern" : `${matched.length} recognised patterns`}: ${matched
-          .map((f) => f.title.toLowerCase())
-          .join(", ")}.`
-      : `No typology in the detection set matched the activity in this window.`,
+      ? t.consistentWith(
+          matched.length,
+          matched.map((f) => f.title.toLocaleLowerCase(input.locale)).join(", "),
+        )
+      : t.noTypologyMatched,
     input.disposition.headline + ".",
   ].join(" ");
 
   const sections: { heading: string; body: string }[] = [];
 
   sections.push({
-    heading: "Subject and scope",
+    heading: t.headingScope,
     body: [
-      `Subject: ${input.address.address} on ${meta.name}.`,
-      input.address.isContract ? "The address is a contract." : "",
-      `Lifetime figures reported by ${meta.explorerName}: received ${formatCoin(input.address.totalReceived, input.chain)}, sent ${formatCoin(input.address.totalSent, input.chain)}, current balance ${formatCoin(input.address.balance, input.chain)} across ${formatNumber(input.address.txCount)} transactions.`,
-      `Analysis window: ${formatDate(input.metrics.firstSeen)} to ${formatDate(input.metrics.lastSeen)}, covering ${formatNumber(input.windowSize)} transactions.`,
+      t.subjectLine(input.address.address, meta.name),
+      input.address.isContract ? t.isContract : "",
+      t.lifetimeFigures(
+        meta.explorerName,
+        formatCoin(input.address.totalReceived, input.chain),
+        formatCoin(input.address.totalSent, input.chain),
+        formatCoin(input.address.balance, input.chain),
+        formatNumber(input.address.txCount),
+      ),
+      t.windowLine(
+        formatDate(input.metrics.firstSeen, true, input.locale),
+        formatDate(input.metrics.lastSeen, true, input.locale),
+        formatNumber(input.windowSize),
+      ),
     ]
       .filter(Boolean)
       .join(" "),
   });
 
   sections.push({
-    heading: "Observed activity",
+    heading: t.headingActivity,
     body: [
-      `Counterparties: ${input.metrics.degree} distinct (${input.metrics.inDegree} sending, ${input.metrics.outDegree} receiving). ${pct(input.metrics.oneShotRatio)} appear exactly once.`,
-      `Value concentration: the largest single counterparty accounts for ${pct(input.metrics.concentration)} of observed flow.`,
-      `Retention: ${pct(input.metrics.passThroughRatio, 1)} of everything received has been sent on.`,
+      t.counterpartiesLine(
+        input.metrics.degree,
+        input.metrics.inDegree,
+        input.metrics.outDegree,
+        pct(input.metrics.oneShotRatio),
+      ),
+      t.concentrationLine(pct(input.metrics.concentration)),
+      t.retentionLine(pct(input.metrics.passThroughRatio, 1)),
       input.metrics.medianDwellHours !== null
-        ? `Median time between an inbound transaction and the next outbound one is ${input.metrics.medianDwellHours.toFixed(1)} hours.`
+        ? t.dwellLine(input.metrics.medianDwellHours.toFixed(1))
         : "",
-      `Activity spans ${input.metrics.activeDays} distinct day(s); the busiest day carries ${input.metrics.burstScore.toFixed(1)}x the mean daily transaction count.`,
-      `${pct(input.metrics.attributedRatio)} of counterparties carry attribution, of which ${input.metrics.serviceCounterparties} are known services.`,
+      t.activityLine(input.metrics.activeDays, input.metrics.burstScore.toFixed(1)),
+      t.attributionLine(pct(input.metrics.attributedRatio), input.metrics.serviceCounterparties),
     ]
       .filter(Boolean)
       .join(" "),
@@ -138,46 +168,54 @@ export function buildNarrative(input: NarrativeInput): CaseNarrative {
 
   if (matched.length) {
     sections.push({
-      heading: "Why this warrants attention",
+      heading: t.headingWhy,
       body: matched
         .map((finding) => {
-          const facts = finding.evidence.map((e) => `${e.label}: ${e.detail}`).join(" ");
-          return `${finding.title} (${finding.family}, ${finding.stage} stage). ${finding.summary} ${facts}`.trim();
+          const facts = finding.evidence.map((e) => t.factLine(e.label, e.detail)).join(" ");
+          return t
+            .findingLine(
+              finding.title,
+              finding.family,
+              input.copy.stage[finding.stage],
+              finding.summary,
+              facts,
+            )
+            .trim();
         })
         .join("\n\n"),
     });
 
     sections.push({
-      heading: "Alternative explanations considered",
+      heading: t.headingAlternatives,
       body: matched
-        .flatMap((finding) => finding.counterIndicators.map((c) => `${finding.title}: ${c}`))
+        .flatMap((finding) => finding.counterIndicators.map((c) => t.counterLine(finding.title, c)))
         .join("\n"),
     });
   } else {
     sections.push({
-      heading: "Why no pattern was raised",
-      body: "No detector in the set matched the activity in this window. This is a negative result over a bounded slice of history and over the attribution loaded at the time of review, not a clearance.",
+      heading: t.headingNoPattern,
+      body: t.noPatternBody,
     });
   }
 
   sections.push({
-    heading: "Recommended disposition",
+    heading: t.headingDisposition,
     body: [
       `${input.disposition.headline}.`,
       input.disposition.drivers.length
-        ? `Drivers: ${input.disposition.drivers.join(" ")}`
+        ? t.driversLine(input.disposition.drivers.join(" "))
         : "",
       input.disposition.mitigants.length
-        ? `Mitigating factors: ${input.disposition.mitigants.join(" ")}`
+        ? t.mitigantsLine(input.disposition.mitigants.join(" "))
         : "",
-      `Next steps: ${input.disposition.nextSteps.join(" ")}`,
+      t.nextStepsLine(input.disposition.nextSteps.join(" ")),
     ]
       .filter(Boolean)
       .join("\n\n"),
   });
 
   sections.push({
-    heading: "Residual uncertainty",
+    heading: t.headingUncertainty,
     body: input.disposition.wouldChangeIf.map((item) => `- ${item}`).join("\n"),
   });
 
@@ -185,7 +223,7 @@ export function buildNarrative(input: NarrativeInput): CaseNarrative {
     summary,
     chronology: buildChronology(input),
     sections,
-    disclaimer: DISCLAIMER,
+    disclaimer: t.disclaimer,
   };
 }
 
@@ -194,20 +232,23 @@ export function narrativeToMarkdown(
   narrative: CaseNarrative,
   heading: string,
   audit: Record<string, unknown>,
+  copy: AmlCopy,
+  locale = "en",
 ): string {
   const lines = [
     `# ${heading}`,
     "",
     narrative.summary,
     "",
-    "## Chronology",
+    `## ${copy.narrative.mdChronology}`,
     "",
     ...narrative.chronology.map(
-      (entry) => `- **${entry.at ? formatDate(entry.at) : "Undated"}** - ${entry.event}`,
+      (entry) =>
+        `- **${entry.at ? formatDate(entry.at, true, locale) : copy.narrative.undated}** - ${entry.event}`,
     ),
     "",
     ...narrative.sections.flatMap((section) => [`## ${section.heading}`, "", section.body, ""]),
-    "## Audit",
+    `## ${copy.narrative.mdAudit}`,
     "",
     "```json",
     JSON.stringify(audit, null, 2),
@@ -220,5 +261,3 @@ export function narrativeToMarkdown(
   ];
   return lines.join("\n");
 }
-
-export { DISCLAIMER };

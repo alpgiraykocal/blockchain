@@ -6,23 +6,31 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useTheme } from "@/components/theme-provider";
 import { SearchBar } from "@/components/search-bar";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { useHeaderSearchVisible } from "@/components/primary-search";
+import { useI18n } from "@/lib/i18n/context";
+import { splitLocale } from "@/lib/i18n/config";
+import type { Dictionary } from "@/lib/i18n/types";
 import { cn } from "@/lib/utils";
 
 const NAV = [
-  { href: "/", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/investigate", label: "Investigate", icon: ScanSearch },
-  { href: "/explorer", label: "Explorer", icon: Network },
-  { href: "/tags", label: "Tags & risk", icon: Tags },
+  { href: "/", key: "dashboard", icon: LayoutDashboard },
+  { href: "/investigate", key: "investigate", icon: ScanSearch },
+  { href: "/explorer", key: "explorer", icon: Network },
+  { href: "/tags", key: "tags", icon: Tags },
 ] as const;
 
+/** Active state is decided on the path with the locale stripped, so /tr/tags and
+ *  /en/tags both light up the same item. */
 function isActive(pathname: string, href: string) {
-  if (href === "/") return pathname === "/";
-  return pathname === href || pathname.startsWith(`${href}/`);
+  const { rest } = splitLocale(pathname);
+  if (href === "/") return rest === "/";
+  return rest === href || rest.startsWith(`${href}/`);
 }
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  const { t, href: localeHref } = useI18n();
   // A page that owns a primary search field claims the slot; the header defers
   // rather than stacking a second identical input a few pixels away.
   const showHeaderSearch = useHeaderSearchVisible();
@@ -33,18 +41,18 @@ export function AppShell({ children }: { children: ReactNode }) {
         href="#main"
         className="sr-only focus:not-sr-only focus:absolute focus:left-3 focus:top-3 focus:z-50 focus:rounded focus:bg-primary focus:px-3 focus:py-2 focus:text-on-primary"
       >
-        Skip to main content
+        {t.ui.nav.skipToContent}
       </a>
 
       <header className="sticky top-0 z-30 border-b border-border bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/80">
         <div className="mx-auto flex h-14 w-full max-w-[1600px] items-center gap-3 px-3 sm:px-4">
           <Link
-            href="/"
+            href={localeHref("/")}
             className="flex shrink-0 cursor-pointer items-center gap-2 transition-opacity duration-150 hover:opacity-85"
           >
             <Logo />
             <span className="hidden text-sm font-semibold tracking-tight text-heading sm:inline">
-              Blockchain Analysis
+              {t.ui.nav.brand}
             </span>
           </Link>
 
@@ -54,6 +62,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <span className="flex-1" />
           )}
 
+          <LanguageSwitcher />
           <ThemeToggle />
         </div>
       </header>
@@ -61,15 +70,16 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div className="mx-auto flex w-full max-w-[1600px] flex-1 gap-0 px-0 sm:px-4">
         {/* Adaptive navigation: sidebar from lg up, bottom bar below. */}
         <nav
-          aria-label="Primary"
+          aria-label={t.ui.nav.primaryLabel}
           className="sticky top-14 hidden h-[calc(100dvh-3.5rem)] w-52 shrink-0 flex-col gap-1 border-r border-border py-4 pr-3 lg:flex"
         >
-          {NAV.map(({ href, label, icon: Icon }) => {
+          {NAV.map(({ href, key, icon: Icon }) => {
             const active = isActive(pathname, href);
+            const label = t.ui.nav[key];
             return (
               <Link
                 key={href}
-                href={href}
+                href={localeHref(href)}
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "flex h-11 min-h-11 cursor-pointer items-center gap-2.5 rounded-md px-3 text-sm font-medium",
@@ -92,11 +102,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           })}
 
           <div className="mt-auto space-y-1 rounded-md border border-border bg-surface-2/60 p-3 text-[11px] leading-relaxed text-foreground-muted">
-            <p className="font-semibold text-foreground">Live public data</p>
-            <p>
-              Bitcoin via mempool.space, Ethereum via Blockscout. Clustering and risk
-              scoring run locally over a bounded transaction window.
-            </p>
+            <p className="font-semibold text-foreground">{t.ui.nav.liveDataTitle}</p>
+            <p>{t.ui.nav.liveDataBody}</p>
           </div>
         </nav>
 
@@ -109,16 +116,17 @@ export function AppShell({ children }: { children: ReactNode }) {
       </div>
 
       <nav
-        aria-label="Primary"
+        aria-label={t.ui.nav.primaryLabel}
         className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] lg:hidden"
       >
         <ul className="mx-auto flex max-w-md">
-          {NAV.map(({ href, label, icon: Icon }) => {
+          {NAV.map(({ href, key, icon: Icon }) => {
             const active = isActive(pathname, href);
+            const label = t.ui.nav[key];
             return (
               <li key={href} className="flex-1">
                 <Link
-                  href={href}
+                  href={localeHref(href)}
                   aria-current={active ? "page" : undefined}
                   className={cn(
                     "flex h-14 min-h-14 cursor-pointer flex-col items-center justify-center gap-0.5 text-[11px] font-medium",
@@ -156,13 +164,18 @@ function Logo() {
 }
 
 const THEME_OPTIONS = [
-  { value: "light", label: "Light", Icon: Sun },
-  { value: "dark", label: "Dark", Icon: Moon },
-  { value: "system", label: "System", Icon: Monitor },
-] as const;
+  { value: "light", key: "light", Icon: Sun },
+  { value: "dark", key: "dark", Icon: Moon },
+  { value: "system", key: "system", Icon: Monitor },
+] as const satisfies readonly {
+  value: string;
+  key: keyof Pick<Dictionary["ui"]["theme"], "light" | "dark" | "system">;
+  Icon: typeof Sun;
+}[];
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const { t } = useI18n();
   const active = THEME_OPTIONS.find((option) => option.value === theme) ?? THEME_OPTIONS[2];
   const next = THEME_OPTIONS[(THEME_OPTIONS.indexOf(active) + 1) % THEME_OPTIONS.length];
   const ActiveIcon = active.Icon;
@@ -174,7 +187,7 @@ function ThemeToggle() {
       <button
         type="button"
         onClick={() => setTheme(next.value)}
-        aria-label={`Colour theme: ${active.label}. Switch to ${next.label}.`}
+        aria-label={t.ui.theme.cycle(t.ui.theme[active.key], t.ui.theme[next.key])}
         className="inline-flex size-11 min-h-11 shrink-0 cursor-pointer items-center justify-center rounded-md border border-border bg-surface-2 text-foreground-muted transition-colors duration-150 hover:text-foreground sm:hidden"
       >
         <ActiveIcon className="size-4" aria-hidden="true" />
@@ -182,15 +195,15 @@ function ThemeToggle() {
 
       <div
         role="group"
-        aria-label="Colour theme"
+        aria-label={t.ui.theme.groupLabel}
         className="hidden shrink-0 items-center gap-0.5 rounded-md border border-border bg-surface-2 p-0.5 sm:flex"
       >
-        {THEME_OPTIONS.map(({ value, label, Icon }) => (
+        {THEME_OPTIONS.map(({ value, key, Icon }) => (
           <button
             key={value}
             type="button"
-            aria-label={label}
-            title={label}
+            aria-label={t.ui.theme[key]}
+            title={t.ui.theme[key]}
             aria-pressed={theme === value}
             onClick={() => setTheme(value)}
             className={cn(

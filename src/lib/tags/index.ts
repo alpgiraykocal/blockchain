@@ -1,6 +1,7 @@
 import type { ChainId, Tag, TagPack } from "../types";
 import { BUILTIN_PACKS } from "./builtin";
 import {
+  type LabelSnapshot,
   actorLabelsFor,
   actorLeaderboard,
   hasLabelSnapshot,
@@ -77,6 +78,39 @@ export interface PackSummary {
   ageDays?: number;
 }
 
+/**
+ * Which chains each label source actually covers.
+ *
+ * Chains are counted per source, not globally: the mining-pool feed is
+ * Bitcoin-only and used to advertise an ETH badge it has no addresses for.
+ *
+ * Deriving this walks every address in the snapshot - 428k of them - so it is
+ * memoised. It used to run on each `packStats()` call, which put roughly four
+ * seconds of pure recomputation on the dashboard, the tags page and
+ * `/api/tags`, on every request. The snapshot is parsed once per process and
+ * never mutated, so keying the memo on its identity is enough: a reload
+ * produces a new object and recomputes, and nothing else can go stale.
+ */
+let chainsBySourceMemo: { for: LabelSnapshot; value: Map<number, Set<ChainId>> } | null = null;
+
+function chainsBySourceFor(labels: LabelSnapshot): Map<number, Set<ChainId>> {
+  if (chainsBySourceMemo?.for === labels) return chainsBySourceMemo.value;
+
+  const value = new Map<number, Set<ChainId>>();
+  for (const [chain, bucket] of Object.entries(labels.addresses)) {
+    for (const index of Object.values(bucket)) {
+      const record = labels.labels[index];
+      if (!record) continue;
+      const set = value.get(record.source) ?? new Set<ChainId>();
+      set.add(chain as ChainId);
+      value.set(record.source, set);
+    }
+  }
+
+  chainsBySourceMemo = { for: labels, value };
+  return value;
+}
+
 export function packStats(): PackSummary[] {
   const curated = BUILTIN_PACKS.map((pack) => ({
     id: pack.id,
@@ -93,19 +127,7 @@ export function packStats(): PackSummary[] {
   const issued = snapshotIssuedAt();
   const screenable = ofacTagCount();
   const labels = labelSnapshot();
-
-  // Chains are counted per source, not globally: the mining-pool feed is
-  // Bitcoin-only and used to advertise an ETH badge it has no addresses for.
-  const chainsBySource = new Map<number, Set<ChainId>>();
-  for (const [chain, bucket] of Object.entries(labels.addresses)) {
-    for (const index of Object.values(bucket)) {
-      const record = labels.labels[index];
-      if (!record) continue;
-      const set = chainsBySource.get(record.source) ?? new Set<ChainId>();
-      set.add(chain as ChainId);
-      chainsBySource.set(record.source, set);
-    }
-  }
+  const chainsBySource = chainsBySourceFor(labels);
 
   const openLabelPacks: PackSummary[] = labels.sources.map((source, index) => ({
     id: source.id,

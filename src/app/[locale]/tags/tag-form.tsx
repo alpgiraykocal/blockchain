@@ -6,6 +6,7 @@ import { CHAIN_IDS, isValidAddress } from "@/lib/chains/registry";
 import { ABUSE_TYPES, ACTOR_CATEGORIES, useUserTags } from "@/lib/tags/user-store";
 import type { AbuseType, ActorCategory, ChainId } from "@/lib/types";
 import { Button } from "@/components/ui/primitives";
+import { useT } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 
 interface Errors {
@@ -14,6 +15,7 @@ interface Errors {
 }
 
 export function TagForm({ presetSubject }: { presetSubject?: string }) {
+  const t = useT().ui.tags;
   const add = useUserTags((state) => state.add);
   const ids = useId();
 
@@ -29,7 +31,7 @@ export function TagForm({ presetSubject }: { presetSubject?: string }) {
 
   // Validation runs on blur and on submit, never on every keystroke.
   const validateSubject = (value: string): string | undefined => {
-    if (!value.trim()) return "Enter the address this tag applies to.";
+    if (!value.trim()) return t.formAddressRequired;
     if (!isValidAddress(chain, value.trim())) {
       return `Not a valid ${chain.toUpperCase()} address.`;
     }
@@ -37,7 +39,7 @@ export function TagForm({ presetSubject }: { presetSubject?: string }) {
   };
 
   const validateLabel = (value: string): string | undefined =>
-    value.trim() ? undefined : "Give the tag a label an analyst will recognise.";
+    value.trim() ? undefined : t.formLabelRequired;
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
@@ -72,7 +74,7 @@ export function TagForm({ presetSubject }: { presetSubject?: string }) {
   return (
     <form onSubmit={submit} className="space-y-3">
       <div className="grid gap-3 sm:grid-cols-2">
-        <FieldWrap label="Chain" htmlFor={`${ids}-chain`}>
+        <FieldWrap label={t.formChain} htmlFor={`${ids}-chain`}>
           <select
             id={`${ids}-chain`}
             value={chain}
@@ -91,11 +93,11 @@ export function TagForm({ presetSubject }: { presetSubject?: string }) {
         </FieldWrap>
 
         <FieldWrap
-          label="Label"
+          label={t.formLabel}
           htmlFor={`${ids}-label`}
           required
           error={errors.label}
-          helper="Shown on the graph node and in every table."
+          helper={t.formLabelHint}
         >
           <input
             id={`${ids}-label`}
@@ -104,7 +106,7 @@ export function TagForm({ presetSubject }: { presetSubject?: string }) {
             onBlur={(event) =>
               setErrors((current) => ({ ...current, label: validateLabel(event.target.value) }))
             }
-            placeholder="e.g. Acme Exchange deposit"
+            placeholder={t.formLabelPlaceholder}
             aria-invalid={errors.label ? true : undefined}
             className={cn(inputClass, errors.label && "border-destructive")}
           />
@@ -112,11 +114,11 @@ export function TagForm({ presetSubject }: { presetSubject?: string }) {
       </div>
 
       <FieldWrap
-        label="Address"
+        label={t.formAddress}
         htmlFor={`${ids}-subject`}
         required
         error={errors.subject}
-        helper="The address or entity this attribution belongs to."
+        helper={t.formAddressHint}
       >
         <input
           id={`${ids}-subject`}
@@ -134,7 +136,7 @@ export function TagForm({ presetSubject }: { presetSubject?: string }) {
       </FieldWrap>
 
       <div className="grid gap-3 sm:grid-cols-3">
-        <FieldWrap label="Actor category" htmlFor={`${ids}-category`}>
+        <FieldWrap label={t.formActorCategory} htmlFor={`${ids}-category`}>
           <select
             id={`${ids}-category`}
             value={category}
@@ -150,9 +152,9 @@ export function TagForm({ presetSubject }: { presetSubject?: string }) {
         </FieldWrap>
 
         <FieldWrap
-          label="Abuse type"
+          label={t.formAbuseType}
           htmlFor={`${ids}-abuse`}
-          helper="Drives the risk score."
+          helper={t.formAbuseHint}
         >
           <select
             id={`${ids}-abuse`}
@@ -169,9 +171,9 @@ export function TagForm({ presetSubject }: { presetSubject?: string }) {
         </FieldWrap>
 
         <FieldWrap
-          label={`Confidence — ${Math.round(confidence * 100)}%`}
+          label={t.formConfidence(Math.round(confidence * 100))}
           htmlFor={`${ids}-confidence`}
-          helper="Scales how strongly the tag moves the score."
+          helper={t.formConfidenceHint}
         >
           <input
             id={`${ids}-confidence`}
@@ -186,13 +188,13 @@ export function TagForm({ presetSubject }: { presetSubject?: string }) {
         </FieldWrap>
       </div>
 
-      <FieldWrap label="Notes" htmlFor={`${ids}-notes`} helper="Optional context for the case file.">
+      <FieldWrap label={t.formNotes} htmlFor={`${ids}-notes`} helper={t.formNotesHelper}>
         <textarea
           id={`${ids}-notes`}
           value={notes}
           rows={2}
           onChange={(event) => setNotes(event.target.value)}
-          placeholder="Where the attribution came from, ticket reference, …"
+          placeholder={t.formNotesPlaceholder}
           className={cn(inputClass, "h-auto py-2")}
         />
       </FieldWrap>
@@ -200,13 +202,13 @@ export function TagForm({ presetSubject }: { presetSubject?: string }) {
       <div className="flex items-center gap-3">
         <Button type="submit" variant="primary">
           <Plus className="size-3.5" aria-hidden="true" />
-          Add tag
+          {t.formSubmit}
         </Button>
         <p aria-live="polite" className="text-xs text-success">
           {saved ? (
             <span className="inline-flex items-center gap-1">
               <Check className="size-3.5" aria-hidden="true" />
-              Tag saved to this browser
+              {t.formSaved}
             </span>
           ) : null}
         </p>

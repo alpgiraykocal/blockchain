@@ -13,6 +13,7 @@ import { formatCoin, formatNumber, formatRelative, formatUsd, truncateAddress } 
 import { useAddressAnalysis } from "@/hooks/use-address-analysis";
 import type { GraphNode } from "@/lib/types";
 import { CopyButton } from "@/components/ui/copy-button";
+import { useI18n } from "@/lib/i18n/context";
 import { RiskBadge } from "@/components/ui/risk-badge";
 import { TagChip } from "@/components/ui/tag-chip";
 import {
@@ -38,6 +39,8 @@ export function NodeInspector({
   onRemove: (node: GraphNode) => void;
   onSetPathAnchor: (node: GraphNode | null) => void;
 }) {
+  const { t: dict, locale, href } = useI18n();
+  const t = dict.ui.graph;
   const { data, loading, error, reload } = useAddressAnalysis(
     node?.chain ?? null,
     node?.address ?? null,
@@ -48,8 +51,8 @@ export function NodeInspector({
     return (
       <EmptyState
         icon={<Maximize2 className="size-5" aria-hidden="true" />}
-        title="No node selected"
-        description="Click a node on the canvas to inspect its attribution, balance and risk signals. Double-click to expand its counterparties."
+        title={t.noNodeSelected}
+        description={t.noNodeSelectedBody}
       />
     );
   }
@@ -66,7 +69,7 @@ export function NodeInspector({
             </p>
             <p className="mt-0.5 flex items-center gap-1 font-mono text-[11px] text-foreground-muted">
               <span className="truncate">{truncateAddress(node.address, 12, 10)}</span>
-              <CopyButton value={node.address} label="Copy address" />
+              <CopyButton value={node.address} label={dict.ui.common.copyAddress} />
             </p>
           </div>
           {data ? (
@@ -94,7 +97,7 @@ export function NodeInspector({
             onClick={() => onSetPathAnchor(isPathAnchor ? null : node)}
           >
             <Route className="size-3.5" aria-hidden="true" />
-            {isPathAnchor ? "Path anchor set" : "Set path anchor"}
+            {isPathAnchor ? t.pathAnchorSet : t.setPathAnchor}
           </Button>
           <Button size="sm" variant="danger" onClick={() => onRemove(node)}>
             <Trash2 className="size-3.5" aria-hidden="true" />
@@ -135,12 +138,12 @@ export function NodeInspector({
                   {formatCoin(data.address.totalSent, node.chain)}
                 </span>
               </Field>
-              <Field label="In / out degree" hint="Distinct counterparties in the analysed window">
+              <Field label={t.inOutDegree} hint={t.inOutDegreeHint}>
                 <span className="tnum">
                   {data.address.inDegree} / {data.address.outDegree}
                 </span>
               </Field>
-              <Field label="Last activity">{formatRelative(data.address.lastSeen)}</Field>
+              <Field label={t.lastActivity}>{formatRelative(data.address.lastSeen, locale)}</Field>
             </dl>
 
             <Divider className="my-3" />
@@ -187,7 +190,7 @@ export function NodeInspector({
             <Divider className="my-3" />
 
             <div className="flex flex-col gap-1.5 text-xs">
-              <InlineLink href={`/address/${node.chain}/${node.address}`}>
+              <InlineLink href={href(`/address/${node.chain}/${node.address}`)}>
                 Open full address report
               </InlineLink>
               <InlineLink href={meta.explorerAddressUrl(node.address)} external>

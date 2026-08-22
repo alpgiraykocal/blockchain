@@ -6,6 +6,7 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { detectChain, isValidAddress } from "@/lib/chains/registry";
 import { storageEvent, storageKey } from "@/lib/storage";
 import { useClaimPrimarySearch } from "@/components/primary-search";
+import { useI18n } from "@/lib/i18n/context";
 import { truncateAddress } from "@/lib/format";
 import type { ChainId } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -45,7 +46,7 @@ export function SearchBar({
   autoFocus,
   compact = false,
   primary = false,
-  placeholder = "Search a BTC or ETH address, or an ENS name",
+  placeholder,
 }: {
   className?: string;
   autoFocus?: boolean;
@@ -55,6 +56,9 @@ export function SearchBar({
   primary?: boolean;
   placeholder?: string;
 }) {
+  const { t, locale, href: localeHref } = useI18n();
+  const copy = t.ui.search;
+  const resolvedPlaceholder = placeholder ?? copy.placeholder;
   useClaimPrimarySearch(primary);
   const [narrow, setNarrow] = useState(false);
 
@@ -94,9 +98,9 @@ export function SearchBar({
     (chain: ChainId, address: string) => {
       pushRecent({ chain, address });
       setOpen(false);
-      router.push(`/address/${chain}/${address}`);
+      router.push(localeHref(`/address/${chain}/${address}`));
     },
-    [router],
+    [router, localeHref],
   );
 
   const submit = useCallback(
@@ -116,31 +120,33 @@ export function SearchBar({
       setBusy(true);
       setError(null);
       try {
-        const response = await fetch(`/api/search?q=${encodeURIComponent(value)}`);
+        const response = await fetch(
+          `/api/search?q=${encodeURIComponent(value)}&locale=${locale}`,
+        );
         const data = await response.json();
         if (!response.ok || !data.hits?.length) {
           setError(
             data.hint ??
               data.error ??
-              "Nothing matched. Enter a full BTC address, ETH address or ENS name.",
+              copy.noMatch,
           );
           return;
         }
         go(data.hits[0].chain, data.hits[0].address);
       } catch {
-        setError("Search failed — check your connection and retry.");
+        setError(copy.failed);
       } finally {
         setBusy(false);
       }
     },
-    [query, go],
+    [query, go, copy, locale],
   );
 
   return (
     <div ref={containerRef} className={cn("relative min-w-0", className)}>
       <form onSubmit={submit} role="search">
         <label htmlFor={inputId} className="sr-only">
-          Search address
+          {copy.srLabel}
         </label>
         <div
           className={cn(
@@ -165,7 +171,7 @@ export function SearchBar({
               setQuery(event.target.value);
               if (error) setError(null);
             }}
-            placeholder={narrow ? "Search address" : placeholder}
+            placeholder={narrow ? copy.placeholderShort : resolvedPlaceholder}
             aria-describedby={error ? `${inputId}-error` : undefined}
             aria-invalid={error ? true : undefined}
             className="min-w-0 flex-1 bg-transparent font-mono text-[13px] text-foreground outline-none focus-visible:outline-none placeholder:font-sans placeholder:text-foreground-muted"
@@ -173,7 +179,7 @@ export function SearchBar({
           {query ? (
             <button
               type="button"
-              aria-label="Clear search"
+              aria-label={copy.clear}
               onClick={() => {
                 setQuery("");
                 setError(null);
@@ -202,7 +208,7 @@ export function SearchBar({
       {open && recent.length > 0 && !query ? (
         <div className="absolute left-0 right-0 top-[calc(100%+6px)] z-40 max-h-72 overflow-y-auto overscroll-contain rounded-md border border-border bg-surface shadow-lg">
           <p className="sticky top-0 border-b border-border bg-surface px-3 py-1.5 text-[11px] font-medium uppercase tracking-wide text-foreground-muted">
-            Recent
+            {copy.recent}
           </p>
           <ul>
             {recent.map((item) => (

@@ -12,7 +12,8 @@
     "start": "node .next/standalone/server.js",
     "lint": "eslint",
     "sync:ofac": "node scripts/sync-ofac.mts",
-    "sync:labels": "node scripts/sync-labels.mts"
+    "sync:labels": "node scripts/sync-labels.mts",
+    "check:i18n": "node scripts/find-untranslated.mjs"
   },
   "dependencies": {
     "clsx": "^2.1.1",

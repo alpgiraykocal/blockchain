@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/lib/i18n/context";
 
 import cytoscape, { type Core, type ElementDefinition } from "cytoscape";
 import { useCallback, useEffect, useMemo, useRef } from "react";
@@ -63,6 +64,7 @@ export function RadialGraph({
   const containerRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<Core | null>(null);
   const { resolved } = useTheme();
+  const t = useT().ui.graph;
 
   const ringCounts = useMemo(() => {
     const counts: Record<number, number> = {};
@@ -260,7 +262,7 @@ export function RadialGraph({
       ref={containerRef}
       className="size-full min-h-[380px] touch-manipulation"
       role="application"
-      aria-label="Radial ego network. The counterparty table below carries the same data as text."
+      aria-label={t.radialLabel}
     />
   );
 }

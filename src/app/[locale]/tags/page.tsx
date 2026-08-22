@@ -15,20 +15,26 @@ import {
 } from "@/lib/tags";
 import { formatDate, formatNumber } from "@/lib/format";
 import type { ChainId } from "@/lib/types";
+import { getDictionary } from "@/lib/i18n";
+import { type Locale, isLocale } from "@/lib/i18n/config";
 
-export const metadata: Metadata = {
-  title: "Tags & risk",
-  description:
-    "Browse the loaded attribution TagPacks, manage your own local tags, and read how the risk score is derived.",
-};
+interface PageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const { ui } = getDictionary(isLocale(locale) ? locale : "en");
+  return { title: ui.tags.metaTitle, description: ui.tags.metaDescription };
+}
 
 const RISK_BANDS = [
-  { range: "0–14", level: "Clear", detail: "No attribution matched and no structural heuristic fired." },
-  { range: "15–39", level: "Low", detail: "Weak or distant signal — worth noting, not acting on." },
-  { range: "40–69", level: "Medium", detail: "Structural pattern or a decayed multi-hop exposure." },
-  { range: "70–89", level: "High", detail: "Strong direct attribution or close exposure to an abuse category." },
-  { range: "90–100", level: "Severe", detail: "Sanctions match or equivalent — a hard stop, not a score." },
-];
+  { range: "0–14", level: "levelClear", detail: "bandClear" },
+  { range: "15–39", level: "levelLow", detail: "bandLow" },
+  { range: "40–69", level: "levelMedium", detail: "bandMedium" },
+  { range: "70–89", level: "levelHigh", detail: "bandHigh" },
+  { range: "90–100", level: "levelSevere", detail: "bandSevere" },
+] as const;
 
 /* Rendered per request rather than prerendered: the CSP carries a per-request
  * nonce, and Next cannot stamp one onto HTML built at compile time - a
@@ -38,7 +44,10 @@ const RISK_BANDS = [
  */
 export const dynamic = "force-dynamic";
 
-export default function TagsPage() {
+export default async function TagsPage({ params }: PageProps) {
+  const { locale: raw } = await params;
+  const locale: Locale = isLocale(raw) ? raw : "en";
+  const t = getDictionary(locale).ui.tags;
   const packs = packStats();
   const totalTags = packs.reduce((sum, pack) => sum + pack.tagCount, 0);
   const stale = isSnapshotStale();
@@ -62,16 +71,14 @@ export default function TagsPage() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-lg font-semibold tracking-tight text-heading">Tags & risk</h1>
+        <h1 className="text-lg font-semibold tracking-tight text-heading">{t.heading}</h1>
         <p className="mt-0.5 max-w-2xl text-xs leading-relaxed text-foreground-muted">
-          Attribution is what turns an anonymous address into an actor. Blockchain Analysis ships
-          with public TagPacks and lets you layer your own tags on top — both feed the
-          same risk model.
+          {t.lede}
         </p>
       </div>
 
       <div className="grid gap-4 [&>*]:min-w-0 lg:grid-cols-2">
-        <Panel title="Loaded TagPacks" description={`${formatNumber(totalTags)} tags across ${packs.length} packs`}>
+        <Panel title={t.packsTitle} description={t.packsDescription(formatNumber(totalTags), packs.length)}>
           <ul className="space-y-2.5">
             {packs.map((pack) => (
               <li key={pack.id} className="rounded border border-border bg-surface-2/40 p-3">
@@ -79,23 +86,23 @@ export default function TagsPage() {
                   <div className="min-w-0">
                     <p className="text-sm font-medium text-foreground">{pack.title}</p>
                     <p className="text-[11px] text-foreground-muted">
-                      {pack.creator.startsWith("©") ? pack.creator : `by ${pack.creator}`}
+                      {pack.creator.startsWith("©") ? pack.creator : t.by(pack.creator)}
                     </p>
                   </div>
                   <div className="flex shrink-0 flex-wrap gap-1.5">
                     {pack.generated ? (
                       <Badge tone="info" icon={<RefreshCw className="size-3" aria-hidden="true" />}>
-                        auto-synced
+                        {t.autoSynced}
                       </Badge>
                     ) : null}
                     {pack.stale ? (
                       <Badge tone="warning" icon={<AlertTriangle className="size-3" aria-hidden="true" />}>
-                        {pack.ageDays}d old
+                        {t.daysOld(pack.ageDays!)}
                       </Badge>
                     ) : null}
-                    <Badge tone="neutral">{formatNumber(pack.tagCount)} tags</Badge>
+                    <Badge tone="neutral">{t.tagCount(formatNumber(pack.tagCount))}</Badge>
                     {pack.abuseCount ? (
-                      <Badge tone="danger">{formatNumber(pack.abuseCount)} abuse</Badge>
+                      <Badge tone="danger">{t.abuseCount(formatNumber(pack.abuseCount))}</Badge>
                     ) : null}
                     {pack.chains.map((chain) => (
                       <Badge key={chain} tone="info">
@@ -108,11 +115,11 @@ export default function TagsPage() {
                   {pack.description}
                 </p>
                 <p className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11px] text-foreground-muted">
-                  <span>Last modified {formatDate(pack.lastmod, false)}</span>
+                  <span>{t.lastModified(formatDate(pack.lastmod, false, locale))}</span>
                   {pack.homepage ? (
                     <InlineLink href={pack.homepage} external>
                       <span className="inline-flex items-center gap-1">
-                        source
+                        {t.source}
                         <ExternalLink className="size-3" aria-hidden="true" />
                       </span>
                     </InlineLink>
@@ -124,44 +131,41 @@ export default function TagsPage() {
         </Panel>
 
         <Panel
-          title="How the risk score works"
-          description="Deterministic, explainable, and always shown with its signals"
+          title={t.scoreTitle}
+          description={t.scoreDescription}
         >
           <ol className="space-y-2 text-xs leading-relaxed text-foreground-muted">
             <li>
-              <span className="font-medium text-foreground">1. Direct attribution.</span> A tag
-              on the address itself contributes its abuse weight scaled by the tag&apos;s
-              confidence. Sanctions saturate the score at 100.
+              <span className="font-medium text-foreground">{t.step1Lead}</span>
+              {t.step1Body}
             </li>
             <li>
-              <span className="font-medium text-foreground">2. Exposure by hop.</span> A tagged
-              counterparty contributes the same weight decayed by 0.55 per hop, then scaled
-              by that counterparty&apos;s share of the observed flow.
+              <span className="font-medium text-foreground">{t.step2Lead}</span>
+              {t.step2Body}
             </li>
             <li>
-              <span className="font-medium text-foreground">3. Structural heuristics.</span>{" "}
-              Fan-in, fan-out and non-repeating-counterparty patterns lift a clean address
-              into the medium band — they never push it into high on their own.
+              <span className="font-medium text-foreground">{t.step3Lead}</span>
+              {t.step3Body}
             </li>
             <li>
-              <span className="font-medium text-foreground">4. The maximum wins.</span> Signals
-              do not stack into a sum, so one strong finding cannot be diluted by many weak ones.
+              <span className="font-medium text-foreground">{t.step4Lead}</span>
+              {t.step4Body}
             </li>
           </ol>
 
           <div className="mt-3 overflow-x-auto">
             <table className="w-full min-w-[420px] text-left text-xs">
-              <caption className="sr-only">Risk score bands</caption>
+              <caption className="sr-only">{t.bandsCaption}</caption>
               <thead>
                 <tr className="border-b border-border">
                   <th scope="col" className="py-1.5 pr-3 font-semibold text-foreground-muted">
-                    Score
+                    {t.colScore}
                   </th>
                   <th scope="col" className="py-1.5 pr-3 font-semibold text-foreground-muted">
-                    Level
+                    {t.colLevel}
                   </th>
                   <th scope="col" className="py-1.5 font-semibold text-foreground-muted">
-                    Meaning
+                    {t.colMeaning}
                   </th>
                 </tr>
               </thead>
@@ -169,8 +173,8 @@ export default function TagsPage() {
                 {RISK_BANDS.map((band) => (
                   <tr key={band.range} className="border-b border-border/70 last:border-b-0">
                     <td className="tnum py-1.5 pr-3">{band.range}</td>
-                    <td className="py-1.5 pr-3 font-medium text-foreground">{band.level}</td>
-                    <td className="py-1.5 text-foreground-muted">{band.detail}</td>
+                    <td className="py-1.5 pr-3 font-medium text-foreground">{t[band.level]}</td>
+                    <td className="py-1.5 text-foreground-muted">{t[band.detail]}</td>
                   </tr>
                 ))}
               </tbody>
@@ -187,25 +191,24 @@ export default function TagsPage() {
           <AlertTriangle className="mt-0.5 size-4 shrink-0 text-warning" aria-hidden="true" />
           <div className="min-w-0 text-[11px] leading-relaxed text-foreground-muted">
             <p className="font-medium text-foreground">
-              Sanctions snapshot is {snapshotAgeDays()} days old
+              {t.staleTitle(snapshotAgeDays()!)}
             </p>
             <p className="mt-0.5">
-              OFAC publishes on business days. Re-run{" "}
-              <code className="rounded bg-surface-2 px-1 py-0.5 font-mono">npm run sync:ofac</code>{" "}
-              before relying on a clear result — an absent designation in a stale
-              snapshot is not a clearance.
+              {t.staleBodyBefore}
+              <code className="rounded bg-surface-2 px-1 py-0.5 font-mono">npm run sync:ofac</code>
+              {t.staleBodyAfter}
             </p>
           </div>
         </div>
       ) : null}
 
       <Panel
-        title="OFAC sanctions snapshot"
-        description="Pulled straight from the OFAC Sanctions List Service — no hand-maintained sanctions data"
+        title={t.ofacTitle}
+        description={t.ofacDescription}
         actions={
           <span className="inline-flex items-center gap-1 text-[11px] text-destructive">
             <ShieldAlert className="size-3.5" aria-hidden="true" />
-            {formatNumber(ofacTagCount())} screenable
+            {t.screenable(formatNumber(ofacTagCount()))}
           </span>
         }
       >
@@ -213,23 +216,23 @@ export default function TagsPage() {
           <div className="space-y-2.5">
             <dl className="space-y-1.5 rounded border border-border bg-surface-2/40 p-3 text-[11px]">
               <div className="flex items-baseline justify-between gap-2">
-                <dt className="text-foreground-muted">Source</dt>
+                <dt className="text-foreground-muted">{t.fieldSource}</dt>
                 <dd className="text-right font-medium text-foreground">{OFAC_SNAPSHOT.source}</dd>
               </div>
               <div className="flex items-baseline justify-between gap-2">
-                <dt className="text-foreground-muted">List issued</dt>
+                <dt className="text-foreground-muted">{t.fieldIssued}</dt>
                 <dd className="tnum text-right font-medium text-foreground">
-                  {formatDate(issued, false)}
+                  {formatDate(issued, false, locale)}
                 </dd>
               </div>
               <div className="flex items-baseline justify-between gap-2">
-                <dt className="text-foreground-muted">Retrieved</dt>
+                <dt className="text-foreground-muted">{t.fieldRetrieved}</dt>
                 <dd className="tnum text-right font-medium text-foreground">
-                  {formatDate(OFAC_SNAPSHOT.retrievedAt)}
+                  {formatDate(OFAC_SNAPSHOT.retrievedAt, true, locale)}
                 </dd>
               </div>
               <div className="flex items-baseline justify-between gap-2">
-                <dt className="text-foreground-muted">Addresses in file</dt>
+                <dt className="text-foreground-muted">{t.fieldAddresses}</dt>
                 <dd className="tnum text-right font-medium text-foreground">
                   {formatNumber(OFAC_SNAPSHOT.counts.total)}
                 </dd>
@@ -238,7 +241,7 @@ export default function TagsPage() {
                 <div key={file.name} className="border-t border-border pt-1.5">
                   <p className="font-mono text-[10px] text-foreground">{file.name}</p>
                   <p className="tnum text-foreground-muted">
-                    {(file.bytes / 1e6).toFixed(1)} MB · {formatNumber(file.addresses)} addresses
+                    {t.fileLine((file.bytes / 1e6).toFixed(1), formatNumber(file.addresses))}
                   </p>
                   <p
                     className="truncate font-mono text-[10px] text-foreground-muted"
@@ -253,7 +256,7 @@ export default function TagsPage() {
             <div className="rounded border border-border bg-surface-2/40 p-3">
               <p className="mb-1.5 inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-foreground-muted">
                 <Database className="size-3" aria-hidden="true" />
-                By currency
+                {t.byCurrency}
               </p>
               <ul className="flex flex-wrap gap-1.5">
                 {Object.entries(OFAC_SNAPSHOT.counts.byCurrency)
@@ -266,8 +269,8 @@ export default function TagsPage() {
                         }
                         title={
                           currency === "XBT" || currency === "ETH"
-                            ? "Screened by Blockchain Analysis"
-                            : "Stored in the snapshot; no adapter for this chain yet"
+                            ? t.currencyScreened
+                            : t.currencyStored
                         }
                       >
                         {currency} {count}
@@ -279,7 +282,7 @@ export default function TagsPage() {
 
             <div className="rounded border border-border bg-surface-2/40 p-3">
               <p className="mb-1.5 text-[11px] font-medium uppercase tracking-wide text-foreground-muted">
-                Top programmes
+                {t.topProgrammes}
               </p>
               <ul className="space-y-1">
                 {programBreakdown(6).map((entry) => (
@@ -295,10 +298,7 @@ export default function TagsPage() {
             </div>
 
             <p className="text-[11px] leading-relaxed text-foreground-muted">
-              A hit is an exact identifier match on a published address. It does not
-              cover addresses controlled by a designated party but never published,
-              nor entities blocked derivatively under the 50 Percent Rule — neither
-              is derivable from this file.
+              {t.hitNote}
             </p>
           </div>
 
@@ -306,7 +306,7 @@ export default function TagsPage() {
         </div>
       </Panel>
 
-      <LabelFeedsPanel />
+      <LabelFeedsPanel locale={locale} />
 
       <UserTagsPanel />
     </div>

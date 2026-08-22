@@ -2,12 +2,18 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { ExplorerClient } from "./explorer-client";
 import { Panel, Skeleton } from "@/components/ui/primitives";
+import { getDictionary } from "@/lib/i18n";
+import { isLocale } from "@/lib/i18n/config";
 
-export const metadata: Metadata = {
-  title: "Graph explorer",
-  description:
-    "Expand address and entity counterparties one hop at a time and trace transaction flow across Bitcoin and Ethereum.",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}): Promise<Metadata> {
+  const { locale } = await params;
+  const { ui } = getDictionary(isLocale(locale) ? locale : "en");
+  return { title: ui.graph.metaTitle, description: ui.graph.metaDescription };
+}
 
 /* Rendered per request rather than prerendered: the CSP carries a per-request
  * nonce, and Next cannot stamp one onto HTML built at compile time - a

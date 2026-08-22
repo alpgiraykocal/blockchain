@@ -4,6 +4,7 @@ import useSWR from "swr";
 import { ChainStatsCard } from "./chain-stats-card";
 import { ErrorState, Panel } from "@/components/ui/primitives";
 import { jsonFetcher } from "@/lib/fetcher";
+import { useT } from "@/lib/i18n/context";
 import type { ChainStats } from "@/lib/types";
 
 interface StatsResponse {
@@ -12,6 +13,7 @@ interface StatsResponse {
 }
 
 export function DashboardClient() {
+  const t = useT().ui.dashboard;
   // Chain tips move every few minutes; a 90s refresh keeps the tiles honest
   // without hammering the public explorers.
   const { data, error, mutate } = useSWR<StatsResponse>("/api/stats", jsonFetcher, {
@@ -24,7 +26,7 @@ export function DashboardClient() {
     return (
       <Panel>
         <ErrorState
-          detail={error instanceof Error ? error.message : "Failed to load chain statistics."}
+          detail={error instanceof Error ? error.message : t.statsFailed}
           onRetry={() => void mutate()}
         />
       </Panel>
@@ -50,8 +52,10 @@ export function DashboardClient() {
       </div>
       {data.failures.length ? (
         <p role="status" className="text-[11px] text-warning">
-          {data.failures.map((failure) => failure.chain.toUpperCase()).join(", ")} statistics
-          are temporarily unavailable — the rest of the dashboard is unaffected.
+          {t.chainUnavailable(
+            data.failures.map((failure) => failure.chain.toUpperCase()).join(", "),
+            data.failures.map((failure) => failure.reason).join("; "),
+          )}
         </p>
       ) : null}
     </div>

@@ -8,10 +8,13 @@ import { DataTable, type Column } from "@/components/ui/data-table";
 import { TagChip } from "@/components/ui/tag-chip";
 import { Badge, Button, EmptyState, Panel } from "@/components/ui/primitives";
 import { formatRelative } from "@/lib/format";
+import { useI18n } from "@/lib/i18n/context";
 import { parseTagExport, useUserTags } from "@/lib/tags/user-store";
 import type { Tag } from "@/lib/types";
 
 export function UserTagsPanel() {
+  const { t: dict, locale } = useI18n();
+  const t = dict.ui.tags;
   const tags = useUserTags((state) => state.tags);
   const remove = useUserTags((state) => state.remove);
   const replaceAll = useUserTags((state) => state.replaceAll);
@@ -24,7 +27,7 @@ export function UserTagsPanel() {
   const exportUrl = useMemo(() => {
     if (typeof window === "undefined") return null;
     const payload = {
-      title: "Blockchain Analysis local analyst tags",
+      title: t.exportName,
       creator: "local",
       lastmod: new Date().toISOString().slice(0, 10),
       tags,
@@ -32,30 +35,30 @@ export function UserTagsPanel() {
     return URL.createObjectURL(
       new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }),
     );
-  }, [tags]);
+  }, [tags, t]);
 
   const columns: Column<Tag>[] = [
     {
       key: "label",
-      header: "Tag",
+      header: t.colTag,
       cell: (tag) => <TagChip tag={tag} />,
       sortValue: (tag) => tag.label,
     },
     {
       key: "subject",
-      header: "Address",
+      header: t.colAddress,
       cell: (tag) => <AddressLink chain={tag.chain} address={tag.subject} head={10} tail={8} />,
       sortValue: (tag) => tag.subject,
     },
     {
       key: "chain",
-      header: "Chain",
+      header: t.colChain,
       cell: (tag) => <Badge tone="neutral">{tag.chain.toUpperCase()}</Badge>,
       sortValue: (tag) => tag.chain,
     },
     {
       key: "abuse",
-      header: "Abuse",
+      header: t.colAbuse,
       cell: (tag) =>
         tag.abuse === "none" ? (
           <span className="text-foreground-muted">—</span>
@@ -66,16 +69,16 @@ export function UserTagsPanel() {
     },
     {
       key: "confidence",
-      header: "Confidence",
+      header: t.colConfidence,
       align: "right",
       cell: (tag) => `${Math.round(tag.confidence * 100)}%`,
       sortValue: (tag) => tag.confidence,
     },
     {
       key: "created",
-      header: "Added",
+      header: t.colAdded,
       align: "right",
-      cell: (tag) => formatRelative(tag.createdAt),
+      cell: (tag) => formatRelative(tag.createdAt, locale),
       sortValue: (tag) => new Date(tag.createdAt).getTime(),
     },
     {
@@ -86,10 +89,10 @@ export function UserTagsPanel() {
         <Button
           size="sm"
           variant="danger"
-          aria-label={`Delete tag ${tag.label}`}
+          aria-label={t.deleteTag(tag.label)}
           onClick={() => {
             remove(tag.id);
-            setNotice({ tone: "ok", message: `Deleted "${tag.label}".` });
+            setNotice({ tone: "ok", message: t.deleted(tag.label) });
           }}
         >
           <Trash2 className="size-3.5" aria-hidden="true" />
@@ -102,13 +105,13 @@ export function UserTagsPanel() {
     try {
       const parsed = parseTagExport(JSON.parse(await file.text()));
       replaceAll(parsed);
-      setNotice({ tone: "ok", message: `Imported ${parsed.length} tags.` });
+      setNotice({ tone: "ok", message: t.imported(parsed.length) });
     } catch (error) {
       setNotice({
         tone: "error",
-        message: `Import failed: ${
-          error instanceof Error ? error.message : "the file could not be read."
-        } Fix the file and try again.`,
+        message: t.importFailed(
+          error instanceof Error ? error.message : t.importUnreadable,
+        ),
       });
     }
   };
@@ -116,8 +119,8 @@ export function UserTagsPanel() {
   return (
     <div className="space-y-4">
       <Panel
-        title="Your tags"
-        description="Stored in this browser only — never uploaded anywhere."
+        title={t.yourTags}
+        description={t.yourTagsDescription}
         actions={
           <div className="flex items-center gap-1.5">
             <input
@@ -133,7 +136,7 @@ export function UserTagsPanel() {
             />
             <Button size="sm" onClick={() => fileRef.current?.click()}>
               <Upload className="size-3.5" aria-hidden="true" />
-              Import
+              {t.importAction}
             </Button>
             {exportUrl && tags.length ? (
               <a
@@ -142,7 +145,7 @@ export function UserTagsPanel() {
                 className="inline-flex h-9 min-h-9 cursor-pointer items-center gap-1.5 rounded-md border border-border-strong px-2.5 text-xs font-medium text-foreground transition-colors duration-200 hover:bg-surface-2"
               >
                 <Download className="size-3.5" aria-hidden="true" />
-                Export
+                {t.exportAction}
               </a>
             ) : null}
             {tags.length ? (
@@ -157,11 +160,11 @@ export function UserTagsPanel() {
                   }
                   clear();
                   setConfirmClear(false);
-                  setNotice({ tone: "ok", message: "All local tags removed." });
+                  setNotice({ tone: "ok", message: t.allRemoved });
                 }}
               >
                 <Trash2 className="size-3.5" aria-hidden="true" />
-                {confirmClear ? "Confirm delete all" : "Delete all"}
+                {confirmClear ? t.confirmDeleteAll : t.deleteAll}
               </Button>
             ) : null}
           </div>
@@ -185,18 +188,18 @@ export function UserTagsPanel() {
           rows={tags}
           columns={columns}
           rowKey={(tag) => tag.id}
-          caption="Analyst tags stored locally"
+          caption={t.localTagsCaption}
           initialSort={{ key: "created", direction: "desc" }}
           emptyState={
             <EmptyState
-              title="No local tags yet"
-              description="Add an attribution below, or import a TagPack JSON export. Local tags override nothing — they sit alongside the bundled packs."
+              title={t.noLocalTags}
+              description={t.noLocalTagsBody}
             />
           }
         />
       </Panel>
 
-      <Panel title="Add a tag" description="Attribution you record while working a case">
+      <Panel title={t.addTag} description={t.addTagDescription}>
         <TagForm />
       </Panel>
     </div>

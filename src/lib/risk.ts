@@ -1,3 +1,4 @@
+import type { AmlCopy } from "./aml/copy";
 import type {
   AbuseType,
   NodeKind,
@@ -20,17 +21,6 @@ const ABUSE_WEIGHT: Record<AbuseType, number> = {
   none: 0,
 };
 
-const ABUSE_LABEL: Record<AbuseType, string> = {
-  sanctions: "Sanctioned party",
-  "terrorism-financing": "Terrorism financing",
-  ransomware: "Ransomware",
-  theft: "Theft / hack proceeds",
-  "darknet-market": "Darknet market",
-  mixer: "Mixing service",
-  scam: "Scam / fraud",
-  none: "No abuse category",
-};
-
 /** How much of a neighbour's risk carries across one hop of exposure. */
 const HOP_DECAY = 0.55;
 
@@ -43,6 +33,9 @@ export interface RiskInput {
   outDegree: number;
   /** Fraction of counterparties that appear exactly once — a peel-chain fingerprint. */
   oneShotRatio?: number;
+  /** Copy for the active locale. Signal labels and details are read by a person
+   *  and quoted in the case file, so they follow the interface language. */
+  copy: AmlCopy;
 }
 
 export function levelFor(score: number): RiskLevel {
@@ -54,6 +47,7 @@ export function levelFor(score: number): RiskLevel {
 }
 
 export function assessRisk(input: RiskInput): RiskAssessment {
+  const t = input.copy.risk;
   const signals: RiskSignal[] = [];
   let score = 0;
   let maxHops = 0;
@@ -63,16 +57,14 @@ export function assessRisk(input: RiskInput): RiskAssessment {
     if (weight <= 0) continue;
     signals.push({
       code: `direct:${tag.abuse}`,
-      label: `Direct: ${ABUSE_LABEL[tag.abuse]}`,
+      label: t.directLabel(t.abuse[tag.abuse]),
       weight: Math.round(weight),
       // Carry the tag's provenance into the signal: for a sanctions hit that is
       // the list, party type, programme and designation date an analyst needs to
       // act on, not just a label.
       detail: tag.notes
-        ? `Tagged "${tag.label}" by ${tag.pack}. ${tag.notes}`
-        : `Tagged "${tag.label}" by ${tag.pack} (confidence ${Math.round(
-            tag.confidence * 100,
-          )}%).`,
+        ? t.directDetailNotes(tag.label, tag.pack, tag.notes)
+        : t.directDetail(tag.label, tag.pack, Math.round(tag.confidence * 100)),
     });
     score = Math.max(score, weight);
   }
@@ -87,11 +79,9 @@ export function assessRisk(input: RiskInput): RiskAssessment {
       maxHops = Math.max(maxHops, neighbor.hops);
       signals.push({
         code: `indirect:${tag.abuse}`,
-        label: `${neighbor.hops}-hop exposure: ${ABUSE_LABEL[tag.abuse]}`,
+        label: t.indirectLabel(neighbor.hops, t.abuse[tag.abuse]),
         weight: Math.round(weighted),
-        detail: `Counterparty tagged "${tag.label}" holds ${Math.round(
-          neighbor.shareOfValue * 100,
-        )}% of the observed flow.`,
+        detail: t.indirectDetail(tag.label, Math.round(neighbor.shareOfValue * 100)),
       });
       score = Math.max(score, weighted);
     }
@@ -122,27 +112,27 @@ export function assessRisk(input: RiskInput): RiskAssessment {
   if (!isKnownService && input.outDegree >= 25 && input.inDegree <= 3) {
     signals.push({
       code: "structure:fan-out",
-      label: "Fan-out distribution",
+      label: t.fanOutLabel,
       weight: 18,
-      detail: `${input.outDegree} receiving counterparties against ${input.inDegree} senders — consistent with dispersal or peeling.`,
+      detail: t.fanOutDetail(input.outDegree, input.inDegree),
     });
     score = Math.max(score, 30);
   }
   if (!isKnownService && input.inDegree >= 25 && input.outDegree <= 3) {
     signals.push({
       code: "structure:fan-in",
-      label: "Fan-in consolidation",
+      label: t.fanInLabel,
       weight: 18,
-      detail: `${input.inDegree} senders funnel into ${input.outDegree} outputs — consistent with collection or mule aggregation.`,
+      detail: t.fanInDetail(input.inDegree, input.outDegree),
     });
     score = Math.max(score, 30);
   }
   if (!isKnownService && input.oneShotRatio != null && input.oneShotRatio > 0.9 && degree >= 20) {
     signals.push({
       code: "structure:one-shot",
-      label: "Non-repeating counterparties",
+      label: t.oneShotLabel,
       weight: 12,
-      detail: `${Math.round(input.oneShotRatio * 100)}% of counterparties appear exactly once.`,
+      detail: t.oneShotDetail(Math.round(input.oneShotRatio * 100)),
     });
     score = Math.max(score, 25);
   }
@@ -150,13 +140,9 @@ export function assessRisk(input: RiskInput): RiskAssessment {
   if (!signals.length) {
     signals.push({
       code: "clear",
-      label: isKnownService
-        ? "Known service — structural heuristics suppressed"
-        : "No attribution or structural signal",
+      label: isKnownService ? t.knownServiceLabel : t.noSignalLabel,
       weight: 0,
-      detail: isKnownService
-        ? "Tagged as a known service, where high fan-in and fan-out are expected rather than suspicious."
-        : "No tag matched and no structural heuristic fired in the analysed window.",
+      detail: isKnownService ? t.knownServiceDetail : t.noSignalDetail,
     });
   }
 

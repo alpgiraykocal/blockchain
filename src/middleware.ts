@@ -1,7 +1,17 @@
 import { NextResponse, type NextRequest } from "next/server";
+import {
+  DEFAULT_LOCALE,
+  LOCALE_COOKIE,
+  LOCALE_COOKIE_MAX_AGE,
+  type Locale,
+  isLocale,
+  localePath,
+  matchLocale,
+  splitLocale,
+} from "@/lib/i18n/config";
 
 /**
- * Per-request CSP nonce.
+ * Per-request CSP nonce, and locale resolution.
  *
  * Next emits inline bootstrap and flight-data scripts on every page, so a policy
  * of `script-src 'self'` blocks the app's own hydration and ships a site that
@@ -13,7 +23,46 @@ import { NextResponse, type NextRequest } from "next/server";
  * API routes and their caches, not in rendering the shell. `strict-dynamic` lets
  * the nonced bootstrap load the chunks it needs without enumerating them.
  */
+
+/** Paths that carry no locale: API routes and the crawler-facing metadata files
+ *  are single-language by nature and must keep their canonical URLs. */
+function isLocaleExempt(pathname: string): boolean {
+  return (
+    pathname.startsWith("/api/") ||
+    pathname === "/robots.txt" ||
+    pathname === "/sitemap.xml" ||
+    pathname === "/favicon.ico"
+  );
+}
+
+/** Cookie first - an explicit choice from the switcher outranks the browser's
+ *  header, otherwise picking Turkish once would be undone on the next request. */
+function detectLocale(request: NextRequest): Locale {
+  const cookie = request.cookies.get(LOCALE_COOKIE)?.value;
+  if (isLocale(cookie)) return cookie;
+  return matchLocale(request.headers.get("accept-language")) ?? DEFAULT_LOCALE;
+}
+
 export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  if (!isLocaleExempt(pathname)) {
+    const { locale } = splitLocale(pathname);
+
+    if (!locale) {
+      // No locale in the URL: send the visitor to the one that fits them. A
+      // redirect rather than a rewrite, so the address bar shows the language
+      // actually being served and the link stays shareable.
+      const target = request.nextUrl.clone();
+      target.pathname = localePath(detectLocale(request), pathname);
+      const redirect = NextResponse.redirect(target);
+      // Two visitors with different Accept-Language must not share a cached
+      // redirect from an edge or proxy in front of this app.
+      redirect.headers.set("Vary", "Accept-Language, Cookie");
+      return redirect;
+    }
+  }
+
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
 
   const csp = [
@@ -44,6 +93,20 @@ export function middleware(request: NextRequest) {
 
   const response = NextResponse.next({ request: { headers } });
   response.headers.set("Content-Security-Policy", csp);
+
+  // Keep the cookie in step with the URL, so a visitor who edits the path or
+  // follows a shared /tr link keeps that language on their next visit.
+  if (!isLocaleExempt(pathname)) {
+    const { locale } = splitLocale(pathname);
+    if (locale && request.cookies.get(LOCALE_COOKIE)?.value !== locale) {
+      response.cookies.set(LOCALE_COOKIE, locale, {
+        path: "/",
+        maxAge: LOCALE_COOKIE_MAX_AGE,
+        sameSite: "lax",
+      });
+    }
+  }
+
   return response;
 }
 

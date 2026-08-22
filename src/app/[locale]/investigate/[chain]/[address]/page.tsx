@@ -5,23 +5,29 @@ import { CHAINS, isChainId, isValidAddress } from "@/lib/chains/registry";
 import { ErrorState, Panel } from "@/components/ui/primitives";
 import { truncateAddress } from "@/lib/format";
 import type { ChainId } from "@/lib/types";
+import { getDictionary } from "@/lib/i18n";
+import { isLocale } from "@/lib/i18n/config";
 
 interface PageProps {
-  params: Promise<{ chain: string; address: string }>;
+  params: Promise<{ locale: string; chain: string; address: string }>;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { chain, address } = await params;
-  if (!isChainId(chain)) return { title: "Unknown chain" };
+  const { locale, chain, address } = await params;
+  const { ui } = getDictionary(isLocale(locale) ? locale : "en");
+  if (!isChainId(chain)) return { title: ui.address.unknownChain };
   return {
-    title: `Investigation · ${CHAINS[chain].ticker} ${truncateAddress(address, 8, 6)}`,
-    description:
-      "AML/CTF investigation workspace: ego-network analysis, typology findings, triage disposition and a draft case file.",
+    title: ui.graph.investigationMetaTitle(
+      CHAINS[chain].ticker,
+      truncateAddress(address, 8, 6),
+    ),
+    description: ui.graph.investigationMetaDescription,
   };
 }
 
 export default async function InvestigatePage({ params }: PageProps) {
-  const { chain: chainParam, address: rawAddress } = await params;
+  const { locale, chain: chainParam, address: rawAddress } = await params;
+  const t = getDictionary(isLocale(locale) ? locale : "en").ui.address;
   if (!isChainId(chainParam)) notFound();
   const chain: ChainId = chainParam;
   const address = decodeURIComponent(rawAddress);
@@ -30,8 +36,8 @@ export default async function InvestigatePage({ params }: PageProps) {
     return (
       <Panel>
         <ErrorState
-          title="Not a valid address"
-          detail={`"${address}" is not a recognised ${CHAINS[chain].name} address.`}
+          title={t.notValidTitle}
+          detail={t.notValidDetail(address, CHAINS[chain].name)}
         />
       </Panel>
     );

@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { AddressLink } from "@/components/ui/address-link";
 import { DataTable, type Column } from "@/components/ui/data-table";
 import { Badge, EmptyState } from "@/components/ui/primitives";
+import { useI18n } from "@/lib/i18n/context";
 import { formatDate } from "@/lib/format";
 import type { ChainId } from "@/lib/types";
 
@@ -25,6 +26,8 @@ export interface OfacRow {
 const PAGE_SIZE = 40;
 
 export function OfacPanel({ rows }: { rows: OfacRow[] }) {
+  const { t: dict, locale } = useI18n();
+  const t = dict.ui.tags;
   const [query, setQuery] = useState("");
 
   const filtered = useMemo(() => {
@@ -44,7 +47,7 @@ export function OfacPanel({ rows }: { rows: OfacRow[] }) {
   const columns: Column<OfacRow>[] = [
     {
       key: "name",
-      header: "Designated party",
+      header: t.ofacDesignated,
       cell: (row) => (
         <span className="inline-flex items-center gap-1.5">
           <ShieldAlert className="size-3 shrink-0 text-destructive" aria-hidden="true" />
@@ -55,19 +58,19 @@ export function OfacPanel({ rows }: { rows: OfacRow[] }) {
     },
     {
       key: "address",
-      header: "Address",
+      header: t.colAddress,
       cell: (row) => <AddressLink chain={row.chain} address={row.address} head={10} tail={8} />,
       sortValue: (row) => row.address,
     },
     {
       key: "chain",
-      header: "Chain",
+      header: t.colChain,
       cell: (row) => <Badge tone="info">{row.chain.toUpperCase()}</Badge>,
       sortValue: (row) => row.chain,
     },
     {
       key: "programs",
-      header: "Programme",
+      header: t.ofacColProgramme,
       cell: (row) => (
         <span className="flex flex-wrap gap-1">
           {row.programs.length ? (
@@ -85,15 +88,15 @@ export function OfacPanel({ rows }: { rows: OfacRow[] }) {
     },
     {
       key: "type",
-      header: "Type",
+      header: t.ofacColType,
       cell: (row) => <span className="text-foreground-muted">{row.partyType}</span>,
       sortValue: (row) => row.partyType,
     },
     {
       key: "designated",
-      header: "Designated",
+      header: t.ofacColDesignated,
       align: "right",
-      cell: (row) => formatDate(row.designatedAt, false),
+      cell: (row) => formatDate(row.designatedAt, false, locale),
       sortValue: (row) => (row.designatedAt ? new Date(row.designatedAt).getTime() : 0),
     },
   ];
@@ -109,7 +112,7 @@ export function OfacPanel({ rows }: { rows: OfacRow[] }) {
           id="ofac-filter"
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Filter by party, address, programme or chain"
+          placeholder={t.ofacFilter}
           spellCheck={false}
           autoComplete="off"
           className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-foreground-muted"
@@ -126,12 +129,12 @@ export function OfacPanel({ rows }: { rows: OfacRow[] }) {
         rows={visible}
         columns={columns}
         rowKey={(row) => `${row.currency}:${row.address}`}
-        caption="OFAC-designated digital currency addresses on supported chains"
+        caption={t.ofacCaption}
         initialSort={{ key: "designated", direction: "desc" }}
         emptyState={
           <EmptyState
-            title="No match"
-            description="Nothing in the current snapshot matches that filter. A miss here is not a clearance — screen the address itself."
+            title={t.ofacNoMatch}
+            description={t.ofacNoMatchBody}
           />
         }
       />

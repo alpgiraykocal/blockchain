@@ -1,21 +1,26 @@
+"use client";
+
+import { useT } from "@/lib/i18n/context";
 import type { NodeKind } from "@/lib/types";
 
-const KINDS: { kind: NodeKind; label: string; className: string }[] = [
-  { kind: "address", label: "Address", className: "bg-node-address" },
-  { kind: "entity", label: "Entity (cluster)", className: "bg-node-entity" },
-  { kind: "exchange", label: "Exchange", className: "bg-node-exchange" },
-  { kind: "mixer", label: "Mixer / sanctioned", className: "bg-node-mixer" },
-  { kind: "service", label: "Service / DeFi", className: "bg-node-service" },
-  { kind: "unknown", label: "Untagged", className: "bg-node-unknown" },
-];
+const KINDS = [
+  { kind: "address", key: "legendAddress", className: "bg-node-address" },
+  { kind: "entity", key: "legendEntity", className: "bg-node-entity" },
+  { kind: "exchange", key: "legendExchange", className: "bg-node-exchange" },
+  { kind: "mixer", key: "legendMixer", className: "bg-node-mixer" },
+  { kind: "service", key: "legendService", className: "bg-node-service" },
+  { kind: "unknown", key: "legendUntagged", className: "bg-node-unknown" },
+] as const satisfies readonly { kind: NodeKind; key: string; className: string }[];
 
 export function GraphLegend() {
+  const t = useT().ui.graph;
+
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11px] text-foreground-muted">
-      {KINDS.map(({ kind, label, className }) => (
+      {KINDS.map(({ kind, key, className }) => (
         <span key={kind} className="inline-flex items-center gap-1.5">
           <span className={`size-2.5 rounded-full ${className}`} aria-hidden="true" />
-          {label}
+          {t[key]}
         </span>
       ))}
       <span className="inline-flex items-center gap-1.5">
@@ -23,11 +28,11 @@ export function GraphLegend() {
           className="size-2.5 rounded-full border-2 border-destructive"
           aria-hidden="true"
         />
-        High risk ring
+        {t.legendHighRiskRing}
       </span>
       <span className="inline-flex items-center gap-1.5">
         <span className="size-2.5 rotate-45 border-2 border-ring" aria-hidden="true" />
-        Focus node
+        {t.legendFocus}
       </span>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
+import { useT } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ button */
@@ -210,7 +211,7 @@ export function EmptyState({
 }
 
 export function ErrorState({
-  title = "Could not load data",
+  title,
   detail,
   onRetry,
 }: {
@@ -218,6 +219,7 @@ export function ErrorState({
   detail?: string;
   onRetry?: () => void;
 }) {
+  const t = useT().ui.common;
   return (
     <div
       role="alert"
@@ -233,7 +235,7 @@ export function ErrorState({
           strokeLinejoin="round"
         />
       </svg>
-      <p className="text-sm font-medium text-foreground">{title}</p>
+      <p className="text-sm font-medium text-foreground">{title ?? t.couldNotLoad}</p>
       {detail ? (
         <p className="max-w-md break-words text-xs leading-relaxed text-foreground-muted">
           {detail}
@@ -241,7 +243,7 @@ export function ErrorState({
       ) : null}
       {onRetry ? (
         <Button size="sm" variant="secondary" onClick={onRetry} className="mt-2">
-          Retry
+          {t.retry}
         </Button>
       ) : null}
     </div>

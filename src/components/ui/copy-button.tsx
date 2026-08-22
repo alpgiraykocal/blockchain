@@ -2,17 +2,19 @@
 
 import { Check, Copy } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useT } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 
 export function CopyButton({
   value,
-  label = "Copy",
+  label,
   className,
 }: {
   value: string;
   label?: string;
   className?: string;
 }) {
+  const t = useT().ui.common;
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -24,7 +26,7 @@ export function CopyButton({
   return (
     <button
       type="button"
-      aria-label={copied ? "Copied to clipboard" : label}
+      aria-label={copied ? t.copied : (label ?? t.copy)}
       onClick={async () => {
         try {
           await navigator.clipboard.writeText(value);
@@ -45,7 +47,7 @@ export function CopyButton({
         <Copy className="size-3.5" aria-hidden="true" />
       )}
       <span aria-live="polite" className="sr-only">
-        {copied ? "Copied" : ""}
+        {copied ? t.copied : ""}
       </span>
     </button>
   );

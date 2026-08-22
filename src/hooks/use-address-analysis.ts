@@ -3,6 +3,7 @@
 import useSWR from "swr";
 import type { AddressAnalysis } from "@/lib/analysis";
 import { jsonFetcher } from "@/lib/fetcher";
+import { useI18n } from "@/lib/i18n/context";
 import type { ChainId } from "@/lib/types";
 
 export function useAddressAnalysis(
@@ -10,9 +11,12 @@ export function useAddressAnalysis(
   address: string | null,
   limit = 50,
 ) {
+  // Risk signals come back as prose, so the request carries the language they
+  // should be written in.
+  const { locale } = useI18n();
   const key =
     chain && address
-      ? `/api/address?${new URLSearchParams({ chain, address, limit: String(limit) })}`
+      ? `/api/address?${new URLSearchParams({ chain, address, limit: String(limit), locale })}`
       : null;
 
   const { data, error, isLoading, mutate } = useSWR<AddressAnalysis>(key, jsonFetcher, {

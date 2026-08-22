@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CHAINS } from "@/lib/chains/registry";
 import { truncateAddress } from "@/lib/format";
 import type { ChainId } from "@/lib/types";
+import { useI18n } from "@/lib/i18n/context";
 import { cn } from "@/lib/utils";
 import { CopyButton } from "@/components/ui/copy-button";
 
@@ -22,22 +23,22 @@ import { CopyButton } from "@/components/ui/copy-button";
 const LENSES = [
   {
     key: "report",
-    label: "Report",
-    hint: "Balances, cluster, transactions",
+    labelKey: "report",
+    hintKey: "reportHint",
     icon: FileText,
     href: (chain: ChainId, address: string) => `/address/${chain}/${address}`,
   },
   {
     key: "investigation",
-    label: "Investigation",
-    hint: "Typologies, disposition, case file",
+    labelKey: "investigation",
+    hintKey: "investigationHint",
     icon: ScanSearch,
     href: (chain: ChainId, address: string) => `/investigate/${chain}/${address}`,
   },
   {
     key: "graph",
-    label: "Graph",
-    hint: "Free-form expansion",
+    labelKey: "graph",
+    hintKey: "graphHint",
     icon: Network,
     href: (chain: ChainId, address: string) =>
       `/explorer?chain=${chain}&address=${encodeURIComponent(address)}`,
@@ -54,6 +55,8 @@ export function SubjectTabs({
   active: "report" | "investigation" | "graph";
 }) {
   const meta = CHAINS[chain];
+  const { t: dict, href } = useI18n();
+  const t = dict.ui.subject;
 
   return (
     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-lg border border-border bg-surface px-3 py-2">
@@ -67,10 +70,10 @@ export function SubjectTabs({
         >
           {truncateAddress(address, 10, 8)}
         </span>
-        <CopyButton value={address} label="Copy address" />
+        <CopyButton value={address} label={dict.ui.common.copyAddress} />
       </div>
 
-      <nav aria-label="Subject views">
+      <nav aria-label={t.viewsLabel}>
         <ul className="flex flex-wrap items-center gap-1">
         {LENSES.map((lens) => {
           const isActive = lens.key === active;
@@ -78,9 +81,9 @@ export function SubjectTabs({
           return (
             <li key={lens.key}>
               <Link
-                href={lens.href(chain, address)}
+                href={href(lens.href(chain, address))}
                 aria-current={isActive ? "page" : undefined}
-                title={lens.hint}
+                title={t[lens.hintKey]}
                 className={cn(
                   "flex h-9 min-h-9 cursor-pointer items-center gap-1.5 rounded-md px-2.5 text-xs font-medium",
                   "transition-colors duration-200",
@@ -90,7 +93,7 @@ export function SubjectTabs({
                 )}
               >
                 <Icon className="size-3.5 shrink-0" aria-hidden="true" />
-                {lens.label}
+                {t[lens.labelKey]}
               </Link>
             </li>
           );
@@ -104,7 +107,7 @@ export function SubjectTabs({
         rel="noopener noreferrer"
         className="ml-auto hidden cursor-pointer items-center gap-1 text-[11px] text-secondary underline-offset-2 transition-colors duration-150 hover:text-primary hover:underline sm:inline-flex"
       >
-        Open on {meta.explorerName}
+        {dict.ui.common.openOn(meta.explorerName)}
         <ExternalLink className="size-3" aria-hidden="true" />
       </a>
     </div>

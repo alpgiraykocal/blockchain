@@ -7,8 +7,10 @@ import {
   jsonError,
   parseChain,
   parseLimit,
+  parseLocale,
   validateAddressParam,
 } from "@/lib/api-helpers";
+import { getDictionary } from "@/lib/i18n";
 
 export const runtime = "nodejs";
 
@@ -30,6 +32,7 @@ export async function GET(request: NextRequest) {
   const topK = parseLimit(params.get("topK"), 12, 40);
   const direction = params.get("direction");
   const minValue = Number(params.get("minValue"));
+  const locale = parseLocale(params.get("locale"));
 
   try {
     const resolved = raw ? await getAdapter(chain).resolve(raw) : null;
@@ -44,10 +47,12 @@ export async function GET(request: NextRequest) {
       suppressServiceHubs: params.get("hubs") !== "all",
       windowStart: params.get("from"),
       windowEnd: params.get("to"),
+      copy: getDictionary(locale).aml,
+      locale,
     });
 
     return NextResponse.json({ assessment, network });
   } catch (error) {
-    return handleRouteError(error);
+    return handleRouteError(error, parseLocale(request.nextUrl.searchParams.get("locale")));
   }
 }

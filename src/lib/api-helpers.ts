@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { UpstreamError } from "./http";
 import { isChainId, isValidAddress } from "./chains/registry";
+import { type Locale, isLocale } from "./i18n/config";
+import { getDictionary } from "./i18n";
 import type { ChainId } from "./types";
 
 export function jsonError(message: string, status: number, detail?: string) {
@@ -26,24 +28,34 @@ export function validateAddressParam(chain: ChainId, address: string | null) {
   return null;
 }
 
-/** Maps upstream explorer failures onto statuses the UI can act on. */
-export function handleRouteError(error: unknown) {
+/** Maps upstream explorer failures onto statuses the UI can act on. The message
+ *  is rendered to a person, so it follows the locale the caller asked for. */
+export function handleRouteError(error: unknown, locale: Locale = "en") {
+  const t = getDictionary(locale).ui.errors;
   if (error instanceof UpstreamError) {
     if (error.status === 404) {
-      return jsonError("Not found on the upstream explorer.", 404, error.url);
+      return jsonError(t.notFound, 404, error.url);
     }
     if (error.status === 429) {
-      return jsonError(
-        "Upstream rate limit reached. Wait a few seconds and retry.",
-        429,
-        error.url,
-      );
+      return jsonError(t.rateLimited, 429, error.url);
     }
-    return jsonError("Upstream explorer request failed.", 502, error.message);
+    return jsonError(t.upstreamFailed, 502, error.message);
   }
   if (error instanceof Error && error.name === "AbortError") {
-    return jsonError("Upstream request timed out.", 504);
+    return jsonError(t.timeout, 504);
   }
   const detail = error instanceof Error ? error.message : String(error);
-  return jsonError("Unexpected server error.", 500, detail);
+  return jsonError(t.unexpected, 500, detail);
+}
+
+/**
+ * Locale for a response body that contains prose.
+ *
+ * Several endpoints return risk signals, findings and a narrative that a person
+ * reads, so the caller states which language it wants. An unknown or absent
+ * value falls back to English rather than failing the request: a monitor that
+ * omits the parameter should still get a usable answer.
+ */
+export function parseLocale(value: string | null): Locale {
+  return isLocale(value) ? value : "en";
 }

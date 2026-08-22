@@ -3,6 +3,7 @@ import { CHAINS } from "../chains/registry";
 import { makeValue } from "../format";
 import { levelFor } from "../risk";
 import type { ChainId, RiskLevel } from "../types";
+import type { AmlCopy } from "./copy";
 import { computeMetrics } from "./metrics";
 import type {
   EgoEdge,
@@ -135,6 +136,8 @@ export interface ExtractOptions extends Partial<EgoFilters> {
   windowEnd?: string | null;
   /** Reuse an analysis the caller already fetched. */
   seed?: AddressAnalysis;
+  /** Copy for the risk signals the underlying analysis produces. */
+  copy?: AmlCopy;
 }
 
 export interface ExtractResult {
@@ -153,7 +156,7 @@ export async function extractEgoNetwork(
   const reduction: ReductionStep[] = [];
   const now = Date.now();
 
-  const analysis = options.seed ?? (await analyzeAddress(chain, address, 50));
+  const analysis = options.seed ?? (await analyzeAddress(chain, address, 50, options.copy));
   const centreId = nodeId(chain, analysis.address.address);
 
   const window: EgoTimeWindow = {
@@ -342,7 +345,7 @@ export async function extractEgoNetwork(
       HOP2_CONCURRENCY,
       async (parent) => {
         try {
-          const sub = await analyzeAddress(chain, parent.address, 25);
+          const sub = await analyzeAddress(chain, parent.address, 25, options.copy);
           return { parent, sub, error: null as string | null };
         } catch (error) {
           return {

@@ -1,6 +1,9 @@
 import { getAdapter } from "./chains";
 import type { NeighborAgg } from "./chains/adapter";
 import { makeValue } from "./format";
+import type { AmlCopy } from "./aml/copy";
+import { en } from "./i18n/dictionaries/en";
+
 import { assessRisk, nodeKindFor } from "./risk";
 import { builtinTagsFor } from "./tags";
 import type {
@@ -13,6 +16,10 @@ import type {
   Tag,
   Transaction,
 } from "./types";
+
+/** Callers that have no locale in hand - background jobs and internal expansion
+ *  - fall back to English rather than being forced to invent one. */
+const defaultCopy: AmlCopy = en.aml;
 
 export interface NeighborRow {
   node: GraphNode;
@@ -39,7 +46,7 @@ export interface AddressAnalysis {
 
 /** Attribution attached to an explorer-supplied public label, so Blockscout's own
  *  metadata (e.g. "Binance 14") shows up next to TagPack entries. */
-function explorerTag(chain: ChainId, subject: string, label: string): Tag {
+function explorerTag(chain: ChainId, subject: string, label: string, copy: AmlCopy): Tag {
   return {
     id: `explorer:${chain}:${subject.toLowerCase()}`,
     chain,
@@ -51,7 +58,7 @@ function explorerTag(chain: ChainId, subject: string, label: string): Tag {
     source: "tagpack",
     pack: "explorer-metadata",
     createdAt: new Date().toISOString(),
-    notes: "Public label supplied by the block explorer.",
+    notes: copy.explorerLabelNote,
   };
 }
 
@@ -59,10 +66,11 @@ function tagsFor(
   chain: ChainId,
   address: string,
   explorerLabel: string | null,
+  copy: AmlCopy,
 ): Tag[] {
   const tags = [...builtinTagsFor(chain, address)];
   if (explorerLabel && !tags.some((tag) => tag.label === explorerLabel)) {
-    tags.push(explorerTag(chain, address, explorerLabel));
+    tags.push(explorerTag(chain, address, explorerLabel, copy));
   }
   return tags;
 }
@@ -92,6 +100,8 @@ export async function analyzeAddress(
   chain: ChainId,
   address: string,
   limit = 50,
+  /** Copy for the risk signals, which are prose an analyst reads. */
+  copy: AmlCopy = defaultCopy,
 ): Promise<AddressAnalysis> {
   const adapter = getAdapter(chain);
   const [{ usd: priceUsd }, bundle] = await Promise.all([
@@ -99,7 +109,7 @@ export async function analyzeAddress(
     adapter.getAddressBundle(address, limit),
   ]);
 
-  const ownTags = tagsFor(chain, bundle.address, bundle.label);
+  const ownTags = tagsFor(chain, bundle.address, bundle.label, copy);
   for (const member of bundle.cluster.addresses) {
     if (member === bundle.address) continue;
     for (const tag of builtinTagsFor(chain, member)) ownTags.push(tag);
@@ -112,7 +122,7 @@ export async function analyzeAddress(
   );
 
   const neighbors: NeighborRow[] = bundle.neighbors.map((neighbor) =>
-    toNeighborRow(chain, bundle.address, neighbor, totalNeighborValue, priceUsd),
+    toNeighborRow(chain, bundle.address, neighbor, totalNeighborValue, priceUsd, copy),
   );
 
   const inDegree = neighbors.filter((row) => row.direction === "in").length;
@@ -120,6 +130,7 @@ export async function analyzeAddress(
   const oneShot = neighbors.filter((row) => row.link.txCount === 1).length;
 
   const risk = assessRisk({
+    copy,
     ownTags,
     neighborTags: neighbors
       .filter((row) => row.node.tags.length > 0)
@@ -190,11 +201,13 @@ function toNeighborRow(
   neighbor: NeighborAgg,
   totalValue: bigint,
   priceUsd: number | null,
+  copy: AmlCopy,
 ): NeighborRow {
-  const tags = tagsFor(chain, neighbor.address, neighbor.label);
+  const tags = tagsFor(chain, neighbor.address, neighbor.label, copy);
   const value = makeValue(neighbor.valueRaw, chain, priceUsd);
 
   const risk = assessRisk({
+    copy,
     ownTags: tags,
     neighborTags: [],
     txCount: neighbor.txCount,

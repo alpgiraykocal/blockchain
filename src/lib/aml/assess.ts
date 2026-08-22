@@ -3,6 +3,7 @@ import { CHAINS } from "../chains/registry";
 import { OFAC_SNAPSHOT, isSnapshotStale, snapshotIssuedAt } from "../tags/ofac";
 import { labelSnapshot } from "../tags/actors";
 import type { ChainId } from "../types";
+import type { AmlCopy } from "./copy";
 import { decideDisposition } from "./disposition";
 import { ENGINE_VERSION, LAYOUT_VERSION, extractEgoNetwork, type ExtractOptions } from "./ego-network";
 import { buildNarrative } from "./narrative";
@@ -82,14 +83,22 @@ function buildAudit(
 
 export interface AssessOptions extends ExtractOptions {
   analyst?: string | null;
+  /** Copy for the language the assessment is written in. */
+  copy: AmlCopy;
+  /** Locale tag for embedded dates. */
+  locale: string;
 }
 
 export async function assessAddress(
   chain: ChainId,
   address: string,
-  options: AssessOptions = {},
+  options: AssessOptions,
 ): Promise<{ assessment: AmlAssessment; network: EgoNetwork }> {
-  const { network, analysis, returnPaths } = await extractEgoNetwork(chain, address, options);
+  const { copy, locale } = options;
+  const { network, analysis, returnPaths } = await extractEgoNetwork(chain, address, {
+    ...options,
+    copy,
+  });
 
   const subjectIsKnownService = analysis.address.tags.some(
     (tag) => tag.abuse === "none" && tag.confidence >= 0.7 && SERVICE_CATEGORIES.has(tag.category),
@@ -105,6 +114,8 @@ export async function assessAddress(
     returnPaths,
     subjectIsKnownService,
     windowComplete,
+    copy,
+    locale,
   });
 
   const disposition = decideDisposition({
@@ -115,6 +126,7 @@ export async function assessAddress(
     subjectIsKnownService,
     sanctionsSnapshotStale: isSnapshotStale(),
     windowComplete,
+    copy,
   });
 
   const narrative = buildNarrative({
@@ -127,39 +139,34 @@ export async function assessAddress(
     disposition,
     windowSize: analysis.window.txsAnalysed,
     windowTotal: analysis.window.txsTotal,
+    copy,
+    locale,
   });
 
+  const lim = copy.limitations;
   const limitations: string[] = [
-    `Counterparties and timing derive from ${analysis.window.txsAnalysed} of ${analysis.window.txsTotal} transactions supplied by ${CHAINS[chain].explorerName}. A pattern outside that window cannot fire a detector.`,
+    lim.window(
+      analysis.window.txsAnalysed,
+      analysis.window.txsTotal,
+      CHAINS[chain].explorerName,
+    ),
   ];
   if (analysis.window.clusterPartial) {
-    limitations.push(
-      "Co-spend clustering sees only the transactions in the window, so the entity may be larger on the full chain.",
-    );
+    limitations.push(lim.clusterPartial);
   }
   if (analysis.window.totalsWindowed) {
-    limitations.push(
-      "Received and sent totals are computed over the window rather than full history on this chain.",
-    );
+    limitations.push(lim.totalsWindowed);
   }
   if (analysis.window.txsUnavailable) {
-    limitations.push(
-      `The explorer could not serve the transaction list (${analysis.window.txsUnavailable}); behavioural detectors had no data to run against.`,
-    );
+    limitations.push(lim.txsUnavailable(analysis.window.txsUnavailable));
   }
   if (isSnapshotStale()) {
-    limitations.push(
-      "The sanctions snapshot is older than the seven-day review threshold; a recent designation may be missing.",
-    );
+    limitations.push(lim.snapshotStale);
   }
   if (network.incomplete.length) {
-    limitations.push(
-      `${network.incomplete.length} second-hop expansion(s) failed and are absent from the network.`,
-    );
+    limitations.push(lim.expansionsFailed(network.incomplete.length));
   }
-  limitations.push(
-    "No customer information is in scope. Every structural finding describes shape only and becomes meaningful only against a stated business profile.",
-  );
+  limitations.push(lim.noCustomerInfo);
 
   return {
     assessment: {

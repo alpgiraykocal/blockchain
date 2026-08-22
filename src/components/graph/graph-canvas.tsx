@@ -1,4 +1,5 @@
 "use client";
+import { useT } from "@/lib/i18n/context";
 
 import cytoscape, { type Core, type ElementDefinition } from "cytoscape";
 import fcose from "cytoscape-fcose";
@@ -67,6 +68,7 @@ export function GraphCanvas({
   const containerRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<Core | null>(null);
   const { resolved } = useTheme();
+  const t = useT().ui.graph;
 
   const elements = useMemo<ElementDefinition[]>(() => {
     const nodeElements: ElementDefinition[] = nodes.map((node) => ({
@@ -346,7 +348,7 @@ export function GraphCanvas({
       ref={containerRef}
       className="size-full min-h-[360px] touch-manipulation"
       role="application"
-      aria-label="Transaction flow graph. Use the adjacency table below for a text equivalent."
+      aria-label={t.canvasLabel}
     />
   );
 }

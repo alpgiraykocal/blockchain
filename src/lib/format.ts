@@ -67,11 +67,21 @@ export function truncateAddress(address: string, head = 8, tail = 6): string {
   return `${address.slice(0, head)}…${address.slice(-tail)}`;
 }
 
-export function formatDate(iso: string | null, withTime = true): string {
+/**
+ * Dates and relative times are the one numeric surface that is really text -
+ * month names and "3 days ago" are words - so they follow the active locale.
+ *
+ * Quantities deliberately do not. `formatCoin`, `formatUsd` and `formatNumber`
+ * stay on en-US grouping in both languages because every figure here is meant
+ * to be cross-checked against mempool.space or Blockscout, which render
+ * `1,234.56`; switching the separators for one language would make the same
+ * balance look different from the explorer it was read from.
+ */
+export function formatDate(iso: string | null, withTime = true, locale = "en"): string {
   if (!iso) return "—";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleString("en-GB", {
+  return d.toLocaleString(locale === "tr" ? "tr-TR" : "en-GB", {
     year: "numeric",
     month: "short",
     day: "2-digit",
@@ -79,7 +89,7 @@ export function formatDate(iso: string | null, withTime = true): string {
   });
 }
 
-export function formatRelative(iso: string | null): string {
+export function formatRelative(iso: string | null, locale = "en"): string {
   if (!iso) return "—";
   const then = new Date(iso).getTime();
   if (Number.isNaN(then)) return "—";
@@ -91,11 +101,11 @@ export function formatRelative(iso: string | null): string {
     [1000 * 60 * 60, "hour"],
     [1000 * 60, "minute"],
   ];
-  const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
   for (const [ms, unit] of units) {
     if (Math.abs(diff) >= ms) return rtf.format(-Math.round(diff / ms), unit);
   }
-  return "just now";
+  return locale === "tr" ? "az önce" : "just now";
 }
 
 export function formatPercent(n: number | null, digits = 2): string {

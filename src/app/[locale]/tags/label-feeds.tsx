@@ -2,6 +2,8 @@ import { ExternalLink, Scale, ShieldQuestion } from "lucide-react";
 import { Badge, InlineLink, Panel } from "@/components/ui/primitives";
 import { formatDate, formatNumber } from "@/lib/format";
 import { actorLeaderboard, labelSnapshot, labelSnapshotError } from "@/lib/tags";
+import { getDictionary } from "@/lib/i18n";
+import { type Locale, isLocale } from "@/lib/i18n/config";
 
 const CATEGORY_TONE: Record<string, "success" | "info" | "accent" | "danger" | "neutral"> = {
   exchange: "success",
@@ -15,20 +17,25 @@ const CATEGORY_TONE: Record<string, "success" | "info" | "accent" | "danger" | "
   unknown: "neutral",
 };
 
-export function LabelFeedsPanel() {
+/** A server component: it reads the label snapshot off disk, so the copy is
+ *  looked up here rather than through the client context. */
+export function LabelFeedsPanel({ locale: raw }: { locale: string }) {
+  const locale: Locale = isLocale(raw) ? raw : "en";
+  const t = getDictionary(locale).ui.tags;
   const snapshot = labelSnapshot();
   const error = labelSnapshotError();
   const leaders = actorLeaderboard(14);
 
   if (error) {
     return (
-      <Panel title="Open label feeds" description="Actor attribution from public sources">
+      <Panel title={t.feedsTitle} description={t.feedsDescription}>
         <div role="alert" className="rounded border border-warning/45 bg-warning/10 px-3 py-2.5">
-          <p className="text-xs font-medium text-foreground">No label snapshot on disk</p>
+          <p className="text-xs font-medium text-foreground">{t.feedsNoSnapshot}</p>
           <p className="mt-1 text-[11px] leading-relaxed text-foreground-muted">
-            {error}. Run{" "}
-            <code className="rounded bg-surface-2 px-1 py-0.5 font-mono">npm run sync:labels</code>{" "}
-            to build it. Sanctions screening is unaffected — that feed is bundled separately.
+            {error}
+            {t.feedsNoSnapshotBefore}
+            <code className="rounded bg-surface-2 px-1 py-0.5 font-mono">npm run sync:labels</code>
+            {t.feedsNoSnapshotAfter}
           </p>
         </div>
       </Panel>
@@ -37,12 +44,12 @@ export function LabelFeedsPanel() {
 
   return (
     <Panel
-      title="Open label feeds"
-      description="Exchange, mining pool, DeFi and service attribution, rebuilt from public repositories"
+      title={t.feedsTitle}
+      description={t.feedsPanelDescription}
       actions={
         <div className="flex items-center gap-1.5">
-          <Badge tone="neutral">profile: {snapshot.profile}</Badge>
-          <Badge tone="info">{formatNumber(snapshot.counts.total)} addresses</Badge>
+          <Badge tone="neutral">{t.feedsProfile(snapshot.profile)}</Badge>
+          <Badge tone="info">{t.feedsAddresses(formatNumber(snapshot.counts.total))}</Badge>
         </div>
       }
     >
@@ -62,14 +69,14 @@ export function LabelFeedsPanel() {
                 </p>
                 <dl className="mt-1.5 flex flex-wrap gap-x-3 gap-y-0.5 text-[11px] text-foreground-muted">
                   <div className="flex gap-1">
-                    <dt>addresses</dt>
+                    <dt>{t.feedsAddressesLabel}</dt>
                     <dd className="tnum font-medium text-foreground">
                       {formatNumber(source.addresses)}
                     </dd>
                   </div>
                   <div className="flex gap-1">
-                    <dt>revision</dt>
-                    <dd className="font-mono text-foreground">{source.version ?? "unknown"}</dd>
+                    <dt>{t.feedsRevision}</dt>
+                    <dd className="font-mono text-foreground">{source.version ?? t.feedsUnknown}</dd>
                   </div>
                 </dl>
                 <InlineLink href={source.homepage} external className="mt-1 inline-block text-[11px]">
@@ -84,7 +91,7 @@ export function LabelFeedsPanel() {
 
           <div className="rounded border border-border bg-surface-2/40 p-3">
             <p className="mb-1.5 text-[11px] font-medium uppercase tracking-wide text-foreground-muted">
-              Coverage
+              {t.feedsCoverage}
             </p>
             <ul className="flex flex-wrap gap-1.5">
               {Object.entries(snapshot.counts.byCategory)
@@ -98,12 +105,14 @@ export function LabelFeedsPanel() {
                 ))}
             </ul>
             <p className="mt-2 text-[11px] text-foreground-muted">
-              {Object.entries(snapshot.counts.byChain)
-                .map(([chain, count]) => `${chain.toUpperCase()} ${formatNumber(count)}`)
-                .join(" · ")}{" "}
-              · {formatNumber(snapshot.labels.length)} distinct labels ·{" "}
-              {formatNumber(snapshot.actors.length)} named actors · built{" "}
-              {formatDate(snapshot.generatedAt, false)}
+              {t.feedsTotals(
+                Object.entries(snapshot.counts.byChain)
+                  .map(([chain, count]) => `${chain.toUpperCase()} ${formatNumber(count)}`)
+                  .join(" · "),
+                formatNumber(snapshot.labels.length),
+                formatNumber(snapshot.actors.length),
+                formatDate(snapshot.generatedAt, false, locale),
+              )}
             </p>
           </div>
 
@@ -115,9 +124,9 @@ export function LabelFeedsPanel() {
               <ShieldQuestion className="mt-0.5 size-4 shrink-0 text-warning" aria-hidden="true" />
               <div className="min-w-0">
                 <p className="text-[11px] font-medium text-foreground">
-                  Excluded: {source.title}{" "}
+                  {t.feedsExcluded(source.title)}{" "}
                   <span className="font-normal text-foreground-muted">
-                    (licence: {source.licence})
+                    {t.feedsLicence(source.licence)}
                   </span>
                 </p>
                 <p className="mt-0.5 text-[11px] leading-relaxed text-foreground-muted">
@@ -130,7 +139,7 @@ export function LabelFeedsPanel() {
 
         <div>
           <p className="mb-2 text-[11px] font-medium uppercase tracking-wide text-foreground-muted">
-            Most-labelled actors
+            {t.feedsTopActors}
           </p>
           <ul className="grid gap-1.5 sm:grid-cols-2">
             {leaders.map((entry) => (
@@ -152,10 +161,7 @@ export function LabelFeedsPanel() {
           </ul>
 
           <p className="mt-3 text-[11px] leading-relaxed text-foreground-muted">
-            Actor labels describe <em>who</em> an address belongs to. They carry a confidence
-            weight from the publishing feed and never set an abuse category on their own —
-            a service being large or opaque is not, by itself, a risk finding. Sanctions
-            come from OFAC alone.
+            {t.feedsNote}
           </p>
         </div>
       </div>

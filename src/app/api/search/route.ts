@@ -3,7 +3,7 @@ import { RATE_LIMITS, enforceRateLimit } from "@/lib/rate-limit";
 import { getAdapter } from "@/lib/chains";
 import { CHAIN_IDS, detectChain, isValidAddress } from "@/lib/chains/registry";
 import { builtinTagsFor } from "@/lib/tags";
-import { handleRouteError, jsonError } from "@/lib/api-helpers";
+import { handleRouteError, jsonError, parseLocale } from "@/lib/api-helpers";
 import type { ChainId, Tag } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -49,6 +49,6 @@ export async function GET(request: NextRequest) {
         : "No chain recognised this string. Blockchain Analysis accepts BTC addresses (1…, 3…, bc1…), ETH addresses (0x…) and ENS names.",
     });
   } catch (error) {
-    return handleRouteError(error);
+    return handleRouteError(error, parseLocale(request.nextUrl.searchParams.get("locale")));
   }
 }

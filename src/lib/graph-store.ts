@@ -1,4 +1,6 @@
 "use client";
+import { getDictionary } from "./i18n";
+import { clientLocale } from "./i18n/config";
 
 import { create } from "zustand";
 import type { ChainId, GraphEdge, GraphNode } from "./types";
@@ -134,7 +136,7 @@ export const useGraphStore = create<GraphState>((set, get) => ({
         loading.delete(id);
         return {
           loadingIds: loading,
-          error: error instanceof Error ? error.message : "Expansion failed.",
+          error: error instanceof Error ? error.message : getDictionary(clientLocale()).ui.graph.expansionFailed,
         };
       });
     }

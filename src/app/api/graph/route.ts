@@ -8,7 +8,9 @@ import {
   parseChain,
   parseLimit,
   validateAddressParam,
+  parseLocale,
 } from "@/lib/api-helpers";
+import { getDictionary } from "@/lib/i18n";
 import type { GraphEdge, GraphNode } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -33,7 +35,12 @@ export async function GET(request: NextRequest) {
     const invalid = validateAddressParam(chain, resolved);
     if (invalid) return jsonError(invalid, 400);
 
-    const analysis = await analyzeAddress(chain, resolved!, limit);
+    const analysis = await analyzeAddress(
+      chain,
+      resolved!,
+      limit,
+      getDictionary(parseLocale(params.get("locale"))).aml,
+    );
     const fragment = toGraphFragment(analysis);
 
     const rootId = fragment.nodes[0]?.id;
@@ -59,6 +66,6 @@ export async function GET(request: NextRequest) {
       window: analysis.window,
     });
   } catch (error) {
-    return handleRouteError(error);
+    return handleRouteError(error, parseLocale(request.nextUrl.searchParams.get("locale")));
   }
 }

@@ -3,12 +3,18 @@ import Link from "next/link";
 import { ScanSearch, ShieldAlert } from "lucide-react";
 import { SearchBar } from "@/components/search-bar";
 import { Badge, Panel } from "@/components/ui/primitives";
+import { getDictionary } from "@/lib/i18n";
+import { type Locale, isLocale, localePath } from "@/lib/i18n/config";
 
-export const metadata: Metadata = {
-  title: "Investigate",
-  description:
-    "Open an AML/CTF investigation on a Bitcoin or Ethereum address: ego-network analysis, typology findings, triage disposition and a draft case file.",
-};
+interface PageProps {
+  params: Promise<{ locale: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { locale } = await params;
+  const { ui } = getDictionary(isLocale(locale) ? locale : "en");
+  return { title: ui.investigate.metaTitle, description: ui.investigate.metaDescription };
+}
 
 /** Subjects that demonstrate a different disposition each, so the workspace can
  *  be judged on more than a single happy path. */
@@ -16,22 +22,24 @@ const EXAMPLES = [
   {
     chain: "eth" as const,
     address: "0x098B716B8Aaf21512996dC57EB0615e2383E2f96",
+    // Actor names are proper nouns and stay as published; only the hint that
+    // explains why the example is here gets translated.
     label: "Lazarus Group",
-    hint: "Sanctions match on the subject. Expect escalation and a hard stop.",
+    hintKey: "exampleLazarusHint" as const,
     tone: "danger" as const,
   },
   {
     chain: "btc" as const,
     address: "1295rkVyNfFpqZpXvKGhDqwhP1jZcNNDMV",
     label: "SUEX OTC",
-    hint: "Designated exchange with a large co-spend cluster.",
+    hintKey: "exampleSuexHint" as const,
     tone: "danger" as const,
   },
   {
     chain: "eth" as const,
     address: "0x28C6c06298d514Db089934071355E5743bf21d60",
     label: "Binance hot wallet",
-    hint: "Attributed service. Structural findings are expected and de-weighted.",
+    hintKey: "exampleBinanceHint" as const,
     tone: "success" as const,
   },
 ];
@@ -44,15 +52,17 @@ const EXAMPLES = [
  */
 export const dynamic = "force-dynamic";
 
-export default function InvestigateLanding() {
+export default async function InvestigateLanding({ params }: PageProps) {
+  const { locale: raw } = await params;
+  const locale: Locale = isLocale(raw) ? raw : "en";
+  const t = getDictionary(locale).ui.investigate;
+
   return (
     <div className="flex min-h-[calc(100dvh-9rem)] flex-col gap-4">
       <div>
-        <h1 className="text-lg font-semibold tracking-tight text-heading">Investigate</h1>
+        <h1 className="text-lg font-semibold tracking-tight text-heading">{t.heading}</h1>
         <p className="mt-0.5 max-w-2xl text-xs leading-relaxed text-foreground-muted">
-          Runs an ego-network extraction around one subject, tests the activity against a set of
-          named money-laundering typologies, and drafts a case file with the evidence and the
-          arguments against it.
+          {t.lede}
         </p>
       </div>
 
@@ -61,23 +71,22 @@ export default function InvestigateLanding() {
           <span className="mx-auto inline-flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
             <ScanSearch className="size-6" aria-hidden="true" />
           </span>
-          <h2 className="mt-3 text-base font-semibold text-foreground">Choose a subject</h2>
+          <h2 className="mt-3 text-base font-semibold text-foreground">{t.chooseSubject}</h2>
           <p className="mx-auto mt-1 max-w-md text-xs leading-relaxed text-foreground-muted">
-            Enter the address under review. The assessment covers the transaction window the
-            block explorer will serve, and says so wherever it draws a conclusion.
+            {t.chooseSubjectBody}
           </p>
 
           <SearchBar className="mx-auto mt-4 w-full max-w-lg" compact primary />
 
           <div className="mt-6">
             <p className="text-[11px] font-medium uppercase tracking-wide text-foreground-muted">
-              Or open a worked example
+              {t.workedExamples}
             </p>
             <ul className="mt-2 grid gap-2 sm:grid-cols-3">
               {EXAMPLES.map((example) => (
                 <li key={example.address}>
                   <Link
-                    href={`/investigate/${example.chain}/${example.address}`}
+                    href={localePath(locale, `/investigate/${example.chain}/${example.address}`)}
                     className="flex h-full flex-col gap-1 rounded-md border border-border bg-surface-2/40 p-3 text-left transition-colors duration-200 hover:border-border-strong hover:bg-surface-2"
                   >
                     <span className="flex items-center gap-1.5">
@@ -87,7 +96,7 @@ export default function InvestigateLanding() {
                       </span>
                     </span>
                     <span className="text-[11px] leading-relaxed text-foreground-muted">
-                      {example.hint}
+                      {t[example.hintKey]}
                     </span>
                   </Link>
                 </li>
@@ -98,10 +107,7 @@ export default function InvestigateLanding() {
           <p className="mx-auto mt-6 flex max-w-xl items-start gap-2 rounded-md border border-warning/40 bg-warning/8 p-3 text-left text-[11px] leading-relaxed text-foreground-muted">
             <ShieldAlert className="mt-0.5 size-4 shrink-0 text-warning" aria-hidden="true" />
             <span>
-              Output supports human review. Typology matches are &ldquo;consistent with&rdquo;
-              findings, priority scores order a queue, and nothing here establishes that anyone
-              committed an offence. Filing decisions and customer action remain with a qualified
-              compliance professional.
+              {t.disclaimer}
             </span>
           </p>
         </div>

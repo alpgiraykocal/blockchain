@@ -8,7 +8,9 @@ import {
   parseChain,
   parseLimit,
   validateAddressParam,
+  parseLocale,
 } from "@/lib/api-helpers";
+import { getDictionary } from "@/lib/i18n";
 
 export const runtime = "nodejs";
 
@@ -28,11 +30,16 @@ export async function GET(request: NextRequest) {
     const invalid = validateAddressParam(chain, resolved);
     if (invalid) return jsonError(invalid, 400);
 
-    const analysis = await analyzeAddress(chain, resolved!, limit);
+    const analysis = await analyzeAddress(
+      chain,
+      resolved!,
+      limit,
+      getDictionary(parseLocale(params.get("locale"))).aml,
+    );
     return NextResponse.json(analysis, {
       headers: { "cache-control": "public, max-age=15, s-maxage=45, stale-while-revalidate=120" },
     });
   } catch (error) {
-    return handleRouteError(error);
+    return handleRouteError(error, parseLocale(request.nextUrl.searchParams.get("locale")));
   }
 }

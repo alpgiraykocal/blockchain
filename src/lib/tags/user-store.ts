@@ -1,4 +1,6 @@
 "use client";
+import { getDictionary } from "../i18n";
+import { clientLocale } from "../i18n/config";
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
@@ -83,7 +85,7 @@ export const ABUSE_TYPES: AbuseType[] = [
 
 /** Validates a parsed TagPack export before it replaces local state. */
 export function parseTagExport(input: unknown): Tag[] {
-  if (!input || typeof input !== "object") throw new Error("File is not a JSON object.");
+  if (!input || typeof input !== "object") throw new Error(getDictionary(clientLocale()).ui.errors.notJsonObject);
   const candidate = (input as { tags?: unknown }).tags;
   if (!Array.isArray(candidate)) throw new Error("Missing a top-level `tags` array.");
 
