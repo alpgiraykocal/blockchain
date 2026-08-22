@@ -387,6 +387,9 @@ export const ui = {
     ofacColProgramme: "Programme",
     ofacColType: "Type",
     ofacColDesignated: "Designated",
+    ofacShowing: (shown: number, total: number) =>
+      `Showing ${shown} of ${total} screenable address${total === 1 ? "" : "es"}`,
+    ofacFilteredFrom: (all: number) => ` (filtered from ${all}).`,
     ofacFilter: "Filter by party, address, programme or chain",
     ofacCaption: "OFAC-designated digital currency addresses on supported chains",
     ofacNoMatch: "No match",

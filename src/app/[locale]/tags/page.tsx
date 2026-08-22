@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { AlertTriangle, Database, ExternalLink, RefreshCw, ShieldAlert } from "lucide-react";
-import { UserTagsPanel } from "./tags-client";
-import { OfacPanel, type OfacRow } from "./ofac-panel";
+import { UserTagsPanelLazy } from "./user-tags-lazy";
+import { OfacPanel } from "./ofac-panel";
 import { LabelFeedsPanel } from "./label-feeds";
 import { Badge, InlineLink, Panel } from "@/components/ui/primitives";
 import {
@@ -10,11 +10,11 @@ import {
   ofacTagCount,
   packStats,
   programBreakdown,
+  screenableTable,
   snapshotAgeDays,
   snapshotIssuedAt,
 } from "@/lib/tags";
 import { formatDate, formatNumber } from "@/lib/format";
-import type { ChainId } from "@/lib/types";
 import { getDictionary } from "@/lib/i18n";
 import { type Locale, isLocale } from "@/lib/i18n/config";
 
@@ -54,20 +54,7 @@ export default async function TagsPage({ params }: PageProps) {
   const stale = isSnapshotStale();
   const issued = snapshotIssuedAt();
 
-  const ofacRows: OfacRow[] = OFAC_SNAPSHOT.entries
-    .filter((entry): entry is typeof entry & { chain: ChainId } =>
-      entry.chain === "btc" || entry.chain === "eth",
-    )
-    .map((entry) => ({
-      address: entry.address,
-      chain: entry.chain,
-      currency: entry.currency,
-      name: entry.name,
-      partyType: entry.partyType,
-      list: entry.list,
-      programs: entry.programs,
-      designatedAt: entry.designatedAt,
-    }));
+  const ofacTable = screenableTable();
 
   return (
     <div className="space-y-4">
@@ -303,13 +290,13 @@ export default async function TagsPage({ params }: PageProps) {
             </p>
           </div>
 
-          <OfacPanel rows={ofacRows} />
+          <OfacPanel table={ofacTable} />
         </div>
       </Panel>
 
       <LabelFeedsPanel locale={locale} />
 
-      <UserTagsPanel />
+      <UserTagsPanelLazy />
     </div>
   );
 }

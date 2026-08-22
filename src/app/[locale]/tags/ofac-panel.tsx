@@ -7,17 +7,29 @@ import { DataTable, type Column } from "@/components/ui/data-table";
 import { Badge, EmptyState } from "@/components/ui/primitives";
 import { useI18n } from "@/lib/i18n/context";
 import { formatDate } from "@/lib/format";
+import type { OfacTable } from "@/lib/tags/ofac";
 import type { ChainId } from "@/lib/types";
 
-export interface OfacRow {
+/** What the table renders. Rebuilt on mount from the interned `OfacTable` the
+ *  server sends - see `screenableTable()` for why the wire shape differs. */
+interface OfacRow {
   address: string;
   chain: ChainId;
-  currency: string;
   name: string;
   partyType: string;
-  list: string;
   programs: string[];
   designatedAt: string | null;
+}
+
+function expand(table: OfacTable): OfacRow[] {
+  return table.addresses.map((address, i) => ({
+    address,
+    chain: table.chains[table.chainOf[i]],
+    name: table.names[table.nameOf[i]],
+    partyType: table.partyTypes[table.partyTypeOf[i]],
+    programs: table.programSets[table.programsOf[i]],
+    designatedAt: table.dates[table.dateOf[i]],
+  }));
 }
 
 /** The screenable slice of the OFAC snapshot is several hundred rows. Rendering
@@ -25,10 +37,12 @@ export interface OfacRow {
  *  and the filter narrows it — the count line always states the true total. */
 const PAGE_SIZE = 40;
 
-export function OfacPanel({ rows }: { rows: OfacRow[] }) {
+export function OfacPanel({ table }: { table: OfacTable }) {
   const { t: dict, locale } = useI18n();
   const t = dict.ui.tags;
   const [query, setQuery] = useState("");
+
+  const rows = useMemo(() => expand(table), [table]);
 
   const filtered = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -120,15 +134,14 @@ export function OfacPanel({ rows }: { rows: OfacRow[] }) {
       </div>
 
       <p className="text-[11px] text-foreground-muted" aria-live="polite">
-        Showing {visible.length} of {filtered.length} screenable address
-        {filtered.length === 1 ? "" : "es"}
-        {filtered.length !== rows.length ? ` (filtered from ${rows.length})` : ""}.
+        {t.ofacShowing(visible.length, filtered.length)}
+        {filtered.length !== rows.length ? t.ofacFilteredFrom(rows.length) : ""}
       </p>
 
       <DataTable
         rows={visible}
         columns={columns}
-        rowKey={(row) => `${row.currency}:${row.address}`}
+        rowKey={(row) => `${row.chain}:${row.address}`}
         caption={t.ofacCaption}
         initialSort={{ key: "designated", direction: "desc" }}
         emptyState={

@@ -382,6 +382,9 @@ export const ui: Dictionary["ui"] = {
     ofacColProgramme: "Program",
     ofacColType: "Tür",
     ofacColDesignated: "Listeye alınma",
+    ofacShowing: (shown: number, total: number) =>
+      `Taranabilir ${total} adresin ${shown} tanesi gösteriliyor`,
+    ofacFilteredFrom: (all: number) => ` (${all} adres arasından süzüldü).`,
     ofacFilter: "Tarafa, adrese, programa veya zincire göre filtrele",
     ofacCaption: "Desteklenen zincirlerdeki OFAC listesindeki dijital para adresleri",
     ofacNoMatch: "Eşleşme yok",

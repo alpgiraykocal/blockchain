@@ -17,6 +17,7 @@ import {
   ofacTagCount,
   ofacTagsFor,
   programBreakdown,
+  screenableTable,
   snapshotAgeDays,
   snapshotIssuedAt,
 } from "./ofac";
@@ -185,6 +186,7 @@ export {
   isSnapshotStale,
   ofacTagCount,
   programBreakdown,
+  screenableTable,
   snapshotAgeDays,
   snapshotIssuedAt,
 };

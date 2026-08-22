@@ -57,17 +57,21 @@ export function snapshotIssuedAt(): string | null {
 
 /** Programs present in the snapshot, most-listed first — the shape of the
  *  designated population, useful context on the tags screen. */
+let programsMemo: { program: string; count: number }[] | null = null;
+
 export function programBreakdown(limit = 8): { program: string; count: number }[] {
-  const counts = new Map<string, number>();
-  for (const entry of OFAC_SNAPSHOT.entries) {
-    for (const program of entry.programs) {
-      counts.set(program, (counts.get(program) ?? 0) + 1);
+  if (!programsMemo) {
+    const counts = new Map<string, number>();
+    for (const entry of OFAC_SNAPSHOT.entries) {
+      for (const program of entry.programs) {
+        counts.set(program, (counts.get(program) ?? 0) + 1);
+      }
     }
+    programsMemo = [...counts.entries()]
+      .map(([program, count]) => ({ program, count }))
+      .sort((a, b) => b.count - a.count);
   }
-  return [...counts.entries()]
-    .map(([program, count]) => ({ program, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, limit);
+  return programsMemo.slice(0, limit);
 }
 
 function toTag(entry: OfacEntry): Tag {
@@ -125,6 +129,94 @@ export function ofacTagsFor(chain: ChainId, address: string): Tag[] {
 
 export function ofacTagCount(): number {
   return [...INDEX.values()].reduce((sum, tags) => sum + tags.length, 0);
+}
+
+/**
+ * The screenable snapshot, encoded for the wire.
+ *
+ * The tags screen filters these rows in the browser, which means every one of
+ * them has to reach it - but sent as a row per object they cost 128 KB of the
+ * page's RSC payload to display forty at a time. Only the address is actually
+ * high-entropy: across 627 rows there is one distinct list name, two party
+ * types, two chains, twenty-three programme sets, forty-six designation dates
+ * and seventy-five designated parties. Repeating those inline, with their keys,
+ * is most of the weight.
+ *
+ * So the columns are interned and indexed. Addresses stay verbatim, everything
+ * else becomes a small dictionary plus one index per row, and the panel rebuilds
+ * the rows once on mount. Same data, same instant filtering, about a third of
+ * the bytes.
+ *
+ * `list` and `currency` are absent because nothing reads them: `list` was never
+ * displayed, and `currency` only keyed a table row, which `chain:address`
+ * already does uniquely.
+ */
+export interface OfacTable {
+  addresses: string[];
+  /** Dictionaries. The `*Of` arrays below hold one index into each, per row. */
+  names: string[];
+  programSets: string[][];
+  dates: (string | null)[];
+  partyTypes: string[];
+  chains: ChainId[];
+  nameOf: number[];
+  programsOf: number[];
+  dateOf: number[];
+  partyTypeOf: number[];
+  chainOf: number[];
+}
+
+/** Interns a column, returning its dictionary and one index per row. */
+function intern<T>(values: T[], key: (value: T) => string): { dict: T[]; index: number[] } {
+  const seen = new Map<string, number>();
+  const dict: T[] = [];
+  const index = values.map((value) => {
+    const k = key(value);
+    let at = seen.get(k);
+    if (at === undefined) {
+      at = dict.length;
+      dict.push(value);
+      seen.set(k, at);
+    }
+    return at;
+  });
+  return { dict, index };
+}
+
+/** Built once. The snapshot is a frozen import that only changes when the sync
+ *  job writes a new one and the process restarts, and the page is force-dynamic,
+ *  so without this every request re-filtered 974 entries and re-interned five
+ *  columns to produce a byte-identical result. */
+let tableMemo: OfacTable | null = null;
+
+export function screenableTable(): OfacTable {
+  if (tableMemo) return tableMemo;
+
+  const entries = OFAC_SNAPSHOT.entries.filter(
+    (entry): entry is OfacEntry & { chain: ChainId } =>
+      entry.chain === "btc" || entry.chain === "eth",
+  );
+
+  const names = intern(entries.map((e) => e.name), (v) => v);
+  const programSets = intern(entries.map((e) => e.programs), (v) => v.join("\u0000"));
+  const dates = intern(entries.map((e) => e.designatedAt), (v) => String(v));
+  const partyTypes = intern(entries.map((e) => e.partyType), (v) => v);
+  const chains = intern(entries.map((e) => e.chain), (v) => v);
+
+  tableMemo = {
+    addresses: entries.map((e) => e.address),
+    names: names.dict,
+    programSets: programSets.dict,
+    dates: dates.dict,
+    partyTypes: partyTypes.dict,
+    chains: chains.dict,
+    nameOf: names.index,
+    programsOf: programSets.index,
+    dateOf: dates.index,
+    partyTypeOf: partyTypes.index,
+    chainOf: chains.index,
+  };
+  return tableMemo;
 }
 
 /** Every screenable OFAC tag, for the tags screen listing. */
