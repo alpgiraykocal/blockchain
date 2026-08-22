@@ -325,7 +325,7 @@ holding the whole map in memory - a data-layer change, not a config flag.
   an availability one. The counter is in-process: exact on one instance,
   proportionally looser if you run several.
 * **A strict Content-Security-Policy** with a per-request nonce, set in
-  `src/middleware.ts`. Next emits inline hydration scripts, so `script-src 'self'`
+  `src/proxy.ts`. Next emits inline hydration scripts, so `script-src 'self'`
   alone ships a site that renders and then does nothing; `'unsafe-inline'` would
   make the directive decorative. The nonce is why the pages render per request
   rather than being prerendered - Next cannot stamp one onto HTML built at

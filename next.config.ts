@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 /** Static headers. The Content-Security-Policy is not here: it carries a
- *  per-request nonce and is set in `src/middleware.ts`. */
+ *  per-request nonce and is set in `src/proxy.ts`. */
 const securityHeaders = [
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "X-Content-Type-Options", value: "nosniff" },
