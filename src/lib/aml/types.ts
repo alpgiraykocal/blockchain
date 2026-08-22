@@ -25,7 +25,8 @@ export type TypologyId =
   | "dormant-then-burst"
   | "round-tripping"
   | "off-graph-continuation"
-  | "dusting-inbound";
+  | "dusting-inbound"
+  | "chain-hopping";
 
 export type FindingStrength = "indicative" | "supporting" | "weak";
 

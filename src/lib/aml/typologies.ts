@@ -1,5 +1,5 @@
 import type { NeighborRow } from "../analysis";
-import { formatCoin, formatDate, formatNumber } from "../format";
+import { formatCoin, formatDate, formatNumber, makeValue } from "../format";
 import type { AddressSummary, ChainId, Tag, Transaction } from "../types";
 import type { AmlCopy } from "./copy";
 import { pct } from "./metrics";
@@ -566,6 +566,72 @@ function inboundDusting(input: TypologyInput): TypologyFinding {
   };
 }
 
+/**
+ * Chain-hopping through bridges.
+ *
+ * Moving value to another chain breaks tracing that only watches one, which is
+ * why it appears in the layering typologies. It is also what a large share of
+ * ordinary users do every day to reach a cheaper rollup, so the bar here is
+ * deliberately high: a single bridge transfer is not a finding, and never
+ * becomes one.
+ *
+ * What separates the two is repetition and venue. Value concentrated into
+ * bridges *and* either spread across more than one of them or sent again and
+ * again is the shape worth a second look. Even then it is graded no higher than
+ * mixer exposure, because the destination chain is simply not visible from here
+ * - this marks where single-chain visibility ends, not where value ended.
+ */
+function chainHopping(input: TypologyInput): TypologyFinding {
+  const t = input.copy.typology.chainHopping;
+
+  const outbound = input.neighbors.filter((row) => row.direction === "out");
+  const bridges = outbound.filter((row) =>
+    row.node.tags.some((tag) => tag.category === "bridge"),
+  );
+
+  const outRaw = outbound.reduce((sum, row) => sum + BigInt(row.link.value.raw), 0n);
+  const bridgeRaw = bridges.reduce((sum, row) => sum + BigInt(row.link.value.raw), 0n);
+  const share = outRaw > 0n ? Number((bridgeRaw * 10_000n) / outRaw) / 10_000 : 0;
+
+  const venues = new Set(bridges.map((row) => row.node.address.toLowerCase())).size;
+  const transfers = bridges.reduce((sum, row) => sum + row.link.txCount, 0);
+
+  // A quarter of outbound value through bridges, and either more than one venue
+  // or repeated use. One transfer to one rollup stays silent by construction.
+  const matched = share >= 0.25 && (venues >= 2 || transfers >= 5);
+
+  const evidence: Evidence[] = [];
+  if (matched) {
+    evidence.push(
+      derived(t.evShare, t.evShareDetail(pct(share), formatCoin(makeValue(bridgeRaw, input.chain, null), input.chain))),
+      derived(t.evVenues, t.evVenuesDetail(venues, transfers)),
+    );
+    for (const row of bridges.slice(0, 4)) {
+      evidence.push(
+        attribution(
+          t.evBridge(row.node.label ?? t.fallbackLabel),
+          t.evBridgeDetail(formatCoin(row.link.value, input.chain), row.link.txCount),
+        ),
+      );
+    }
+  }
+
+  return {
+    id: "chain-hopping",
+    title: t.title,
+    family: t.family,
+    stage: "layering",
+    matched,
+    strength: matched && venues >= 2 && share >= 0.5 ? "indicative" : matched ? "supporting" : "weak",
+    weight: matched ? (venues >= 2 ? 45 : 35) : 0,
+    summary: matched ? t.summaryMatched(pct(share), venues) : t.summaryNone,
+    evidence,
+    counterIndicators: matched
+      ? [t.counterOrdinary, t.counterService, t.counterDestination, t.counterCoverage]
+      : [],
+  };
+}
+
 function emptyFinding(
   id: TypologyId,
   title: string,
@@ -602,6 +668,7 @@ export function detectTypologies(input: TypologyInput): TypologyFinding[] {
     roundTripping(input),
     offGraphContinuation(input),
     inboundDusting(input),
+    chainHopping(input),
   ];
 
   // Structural typologies describe the shape of a service as accurately as they

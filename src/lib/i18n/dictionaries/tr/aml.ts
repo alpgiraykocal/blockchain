@@ -453,6 +453,32 @@ export const aml: Dictionary["aml"] = {
         "Bu noktadan öteye gitmek, daha fazla zincir üstü analiz değil, alıcı kuruma yapılacak bir talep gerektirir.",
     },
 
+    chainHopping: {
+      title: "Köprülerle zincir atlama",
+      family: "Zincirler arası katmanlama",
+      fallbackLabel: "atfı yapılmış bir köprü",
+      summaryMatched: (share: string, venues: number) =>
+        venues > 1
+          ? `Giden değerin ${share} kadarı ${venues} farklı köprü kontratına gitti. Zincir değiştiren değer, tek zincirli izlemenin erişiminden çıkar.`
+          : `Giden değerin ${share} kadarı tekrar tekrar bir köprü kontratına gitti. Zincir değiştiren değer, tek zincirli izlemenin erişiminden çıkar.`,
+      summaryNone: "İncelenen pencerede yoğunlaşmış ya da tekrarlayan köprü kullanımı yok.",
+      evShare: "Giden değer köprülerde yoğunlaşmış",
+      evShareDetail: (share: string, amount: string) =>
+        `Bu adresten çıkanın ${share} kadarı köprü kontratlarına gitti; incelenen pencerede ${amount}.`,
+      evVenues: "Tekrar ve mecra",
+      evVenuesDetail: (venues: number, transfers: number) =>
+        `${transfers} transferde ${venues} ayrı köprü. Tek bir geçiş olağandır ve bu bulguya ulaşmaz.`,
+      evBridge: (label: string) => `${label} adresine gönderildi`,
+      evBridgeDetail: (amount: string, txCount: number) => `${txCount} transferde ${amount}.`,
+      counterOrdinary:
+        "Bir rollup'a köprülemek sıradan iştir: kullanıcılar daha ucuz ücret için sürekli geçer ve köprü trafiğinin çoğunda gizleme amacı yoktur.",
+      counterService:
+        "Köprü bir hizmettir. Onu kullanmak, kullanan tarafın niyeti hakkında hiçbir şey söylemez.",
+      counterDestination:
+        "İzleme durmaz, yer değiştirir. Değer hedef zincirde devam eder; bu araç o zinciri incelemez. Yani bu, izin sonu değil, buradaki görünürlüğün sınırıdır.",
+      counterCoverage:
+        "Yalnız yüklü atıfta bulunan köprüler tanınır. Etiketsiz bir köprü hiçbir bulgu üretmez; yokluk hiçbir şey kanıtlamaz.",
+    },
     dusting: {
       title: "Gelen toz serpme",
       family: "Atıf saldırısı / gizlilik yoklaması",

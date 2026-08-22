@@ -453,6 +453,33 @@ export const aml = {
         "Continuing past this point requires a request to the receiving institution, not further on-chain analysis.",
     },
 
+    chainHopping: {
+      title: "Chain-hopping through bridges",
+      family: "Cross-chain layering",
+      fallbackLabel: "an attributed bridge",
+      summaryMatched: (share: string, venues: number) =>
+        venues > 1
+          ? `${share} of outbound value went to ${venues} different bridge contracts. Value that crosses a chain leaves the reach of single-chain tracing.`
+          : `${share} of outbound value went repeatedly to a bridge contract. Value that crosses a chain leaves the reach of single-chain tracing.`,
+      summaryNone: "No concentrated or repeated bridge use in the analysed window.",
+      evShare: "Outbound value concentrated into bridges",
+      evShareDetail: (share: string, amount: string) =>
+        `${share} of what left this address went to bridge contracts, ${amount} in the analysed window.`,
+      evVenues: "Repetition and venue",
+      evVenuesDetail: (venues: number, transfers: number) =>
+        `${venues} distinct bridge${venues === 1 ? "" : "s"} across ${transfers} transfer${transfers === 1 ? "" : "s"}. A single crossing is ordinary and does not reach this finding.`,
+      evBridge: (label: string) => `Sent to ${label}`,
+      evBridgeDetail: (amount: string, txCount: number) =>
+        `${amount} over ${txCount} transfer${txCount === 1 ? "" : "s"}.`,
+      counterOrdinary:
+        "Bridging to a rollup is routine: users cross constantly for lower fees, and most bridge traffic has no concealment motive whatsoever.",
+      counterService:
+        "A bridge is a service. Using one says nothing about the intent of the party using it.",
+      counterDestination:
+        "Tracing does not stop, it moves. The value continues on the destination chain, which this tool does not analyse - so this marks the edge of visibility here, not the end of the trail.",
+      counterCoverage:
+        "Only bridges present in the loaded attribution are recognised. An unlabelled bridge produces no finding at all, so absence proves nothing.",
+    },
     dusting: {
       title: "Inbound dusting",
       family: "Attribution attack / privacy probe",
