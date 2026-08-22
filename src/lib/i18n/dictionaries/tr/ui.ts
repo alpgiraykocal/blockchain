@@ -261,6 +261,11 @@ export const ui: Dictionary["ui"] = {
     retainedHint: "Alınan her şeyin hâlâ elde tutulan payı",
     medianDwell: "Medyan bekleme",
     dwellSecondary: "gelenden sonraki gidene kadar",
+    riskProximity: "Risk yakınlığı",
+    riskProximityValue: (count: number) => `${count} karşı taraf`,
+    riskProximitySecondary: (share: string) => `gözlenen akışın ${share}`,
+    riskProximityHint:
+      "Yaptırım listesinde olan ya da karıştırıcı olarak sınıflanan doğrudan karşı taraflar ve incelenen pencerede hareket eden değerdeki payları. Borsa, token ya da kumar etiketi bir kategoridir, kaygı değil; sayılmaz. Yakınlık maruziyettir, davranış değil: böyle bir taraftan gelen değer talep edilmemiş olabilir.",
     burst: "Yoğunluk",
     activeDays: (n: number) => `${n} etkin gün`,
     burstHint: "En yoğun günün, günlük ortalama işlem sayısına oranı",
@@ -271,6 +276,13 @@ export const ui: Dictionary["ui"] = {
     egoNetwork: "Ego ağı",
     networkDescription: (nodes: number, edges: number, hop: number) =>
       `${nodes} düğüm · ${edges} bağlantı · ${hop} adım`,
+    nothingTimeWindow: (days: number, removed: number) =>
+      `Son ${days} günde etkin karşı taraf yok; pencere ${removed} tanesini düşürdü. Yukarıdaki bulgular ve metrikler yine tam dilimi kapsıyor — çizdirmek için pencereyi genişlet.`,
+    windowLabel: "Pencere",
+    windowFull: "Tam dilim",
+    windowDays: (days: number) => `Son ${days}g`,
+    windowNarrowed: (days: number) =>
+      `Çizilen ağ, son ${days} günde etkin olan karşı taraflara daraltıldı. Metrikler tam dilim üzerinde kalır.`,
     hop1: "1 adım",
     hop2: "2 adım",
     dirBoth: "İkisi",

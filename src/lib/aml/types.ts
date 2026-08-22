@@ -79,6 +79,18 @@ export interface EgoMetrics {
   attributedRatio: number;
   /** Counterparties tagged as a known service - the noisy hubs. */
   serviceCounterparties: number;
+  /**
+   * Proximity to attributed risk, at one hop.
+   *
+   * Two plain numbers rather than a composite: how many direct counterparties
+   * carry an abuse tag or a mixer category, and what share of observed flow
+   * moved through them.
+   * Count alone treats a dusting spray and a funding transfer alike; share
+   * alone hides a single small transfer to a sanctioned party. Both are
+   * re-derivable by hand from the same window.
+   */
+  riskyCounterparties: number;
+  riskyValueShare: number;
   activeDays: number;
   firstSeen: string | null;
   lastSeen: string | null;

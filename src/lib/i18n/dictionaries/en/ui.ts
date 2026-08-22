@@ -265,6 +265,12 @@ export const ui = {
     retainedHint: "Share of everything received that is still held",
     medianDwell: "Median dwell",
     dwellSecondary: "inbound to next outbound",
+    riskProximity: "Risk proximity",
+    riskProximityValue: (count: number) =>
+      count === 1 ? "1 counterparty" : `${count} counterparties`,
+    riskProximitySecondary: (share: string) => `${share} of observed flow`,
+    riskProximityHint:
+      "Direct counterparties that are either sanctions-listed or categorised as a mixer, and their share of the value moved in the analysed window. An exchange, token or gambling label is a category rather than a concern and is not counted. Proximity is exposure, not conduct: value arriving from such a party may be unsolicited.",
     burst: "Burst",
     activeDays: (n: number) => `${n} active day(s)`,
     burstHint: "Busiest day against the mean daily transaction count",
@@ -275,6 +281,13 @@ export const ui = {
     egoNetwork: "Ego network",
     networkDescription: (nodes: number, edges: number, hop: number) =>
       `${nodes} nodes · ${edges} links · ${hop} hop`,
+    nothingTimeWindow: (days: number, removed: number) =>
+      `No counterparty was active in the last ${days} days; the window dropped ${removed}. The findings and metrics above still cover the full slice — widen the window to draw them.`,
+    windowLabel: "Window",
+    windowFull: "Full slice",
+    windowDays: (days: number) => `Last ${days}d`,
+    windowNarrowed: (days: number) =>
+      `Drawn network narrowed to counterparties active in the last ${days} days. Metrics stay on the full slice.`,
     hop1: "1 hop",
     hop2: "2 hops",
     dirBoth: "Both",

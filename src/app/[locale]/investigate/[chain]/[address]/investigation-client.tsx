@@ -7,6 +7,7 @@ import {
   ArrowUpRight,
   Gauge,
   Network,
+  ShieldAlert,
   ShieldCheck,
   Timer,
   Users,
@@ -54,6 +55,22 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
   const [topK, setTopK] = useState(12);
   const [direction, setDirection] = useState<"both" | "in" | "out">("both");
   const [showHubs, setShowHubs] = useState(false);
+  /**
+   * Analyst time window: the days the label shows, and the instant it resolved to.
+   *
+   * The cutoff is pinned when the analyst picks it rather than recomputed from
+   * `Date.now()` on each render. Two reasons: a value that moves every render
+   * makes a new request key every render, and an audit record that says "the last
+   * 30 days" without saying from when cannot be reproduced later.
+   *
+   * Null by default, deliberately. The published guidance for this pattern
+   * suggests a 30-90 day default, but that assumes a store holding full history.
+   * Here the explorer has already truncated to one page, so a second default
+   * narrowing would compound two limits with no way to tell which one removed a
+   * counterparty - and it would permanently silence the dormancy detector, which
+   * needs at least 180 days of history to fire at all.
+   */
+  const [timeWindow, setTimeWindow] = useState<{ days: number; from: string } | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const key = useMemo(() => {
@@ -68,8 +85,9 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
       locale,
     });
     if (showHubs) params.set("hubs", "all");
+    if (timeWindow) params.set("from", timeWindow.from);
     return `/api/aml/assessment?${params}`;
-  }, [chain, address, hop, topK, direction, showHubs, locale]);
+  }, [chain, address, hop, topK, direction, showHubs, timeWindow, locale]);
 
   const { data, error, isLoading, mutate } = useSWR<Payload>(key, jsonFetcher, {
     revalidateOnFocus: false,
@@ -119,6 +137,10 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
   }
 
   const { assessment, network } = data;
+  // How many counterparties the analyst's own window removed, so the empty state
+  // can name the control that did it rather than guessing.
+  const windowDropped =
+    network.reduction.find((step) => step.rule === "time-window")?.removed ?? 0;
   const { subject, disposition, metrics, findings } = assessment;
   const meta = CHAINS[chain];
   const selected = selectedId ? network.nodes.find((node) => node.id === selectedId) : null;
@@ -269,6 +291,18 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
           secondary={t.dwellSecondary}
         />
         <StatTile
+          label={t.riskProximity}
+          icon={<ShieldAlert className="size-3" aria-hidden="true" />}
+          value={t.riskProximityValue(metrics.riskyCounterparties)}
+          secondary={t.riskProximitySecondary(pct(metrics.riskyValueShare, 1))}
+          hint={t.riskProximityHint}
+          // Tinted only as a supplement: the count, the share and the icon
+          // already carry the signal without relying on colour.
+          className={
+            metrics.riskyCounterparties > 0 ? "border-destructive/45 bg-destructive/5" : undefined
+          }
+        />
+        <StatTile
           label={t.burst}
           icon={<Activity className="size-3" aria-hidden="true" />}
           value={`${metrics.burstScore.toFixed(1)}x`}
@@ -330,6 +364,31 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
                   onChange={(value) => setDirection(value as typeof direction)}
                 />
                 <label className="flex items-center gap-1.5 text-[11px] text-foreground-muted">
+                  {t.windowLabel}
+                  <select
+                    value={timeWindow?.days ?? ""}
+                    onChange={(event) => {
+                      const days = event.target.value ? Number(event.target.value) : null;
+                      setTimeWindow(
+                        days === null
+                          ? null
+                          : {
+                              days,
+                              from: new Date(Date.now() - days * 86_400_000).toISOString(),
+                            },
+                      );
+                    }}
+                    className="h-9 cursor-pointer rounded border border-border bg-surface px-1.5 text-xs text-foreground"
+                  >
+                    <option value="">{t.windowFull}</option>
+                    {[30, 90, 365].map((days) => (
+                      <option key={days} value={days}>
+                        {t.windowDays(days)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex items-center gap-1.5 text-[11px] text-foreground-muted">
                   {t.topK}
                   <select
                     value={topK}
@@ -368,13 +427,19 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
                         {t.nothingToDraw}
                       </p>
                       <p className="mt-1 text-[11px] leading-relaxed text-foreground-muted">
+                        {/* Say which control emptied the canvas. Falling through
+                            to the generic line left an analyst who had just
+                            narrowed the window reading about the source slice
+                            instead of the filter they set. */}
                         {assessment.dataHealth.txsUnavailable
                           ? t.nothingUpstream(meta.explorerName)
-                          : direction !== "both"
-                            ? t.nothingDirection(
-                                direction === "in" ? t.directionSending : t.directionReceiving,
-                              )
-                            : t.nothingEmptyWindow(assessment.dataHealth.txsAnalysed)}
+                          : timeWindow && windowDropped
+                            ? t.nothingTimeWindow(timeWindow.days, windowDropped)
+                            : direction !== "both"
+                              ? t.nothingDirection(
+                                  direction === "in" ? t.directionSending : t.directionReceiving,
+                                )
+                              : t.nothingEmptyWindow(assessment.dataHealth.txsAnalysed)}
                       </p>
                     </div>
                   </div>

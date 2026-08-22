@@ -100,6 +100,25 @@ export function computeMetrics(input: MetricsInput): EgoMetrics {
   );
 
   const attributed = neighbors.filter((row) => row.node.tags.length > 0).length;
+
+  /*
+   * Proximity to attributed risk.
+   *
+   * Two things count. An abuse tag is the obvious one. The second is a mixer
+   * category, and it has to be named explicitly: of the label sources loaded
+   * here only OFAC ever sets an abuse value, so a definition of "risky" written
+   * as `abuse !== "none"` alone would silently pass over the ~37k addresses the
+   * feeds categorise as mixers - which is precisely the layering exposure an
+   * analyst opens this page to see.
+   *
+   * Nothing else qualifies. An exchange or a token contract is a category, not a
+   * concern, and gambling is higher-risk without being illicit - the codebase
+   * already treats all three as services rather than risk.
+   */
+  const risky = neighbors.filter((row) =>
+    row.node.tags.some((tag) => tag.abuse !== "none" || tag.category === "mixer"),
+  );
+  const riskyRaw = risky.reduce((sum, row) => sum + BigInt(row.link.value.raw), 0n);
   const services = neighbors.filter((row) =>
     row.node.tags.some((tag) =>
       ["exchange", "mining-pool", "token", "defi", "bridge", "wallet-service"].includes(
@@ -132,6 +151,9 @@ export function computeMetrics(input: MetricsInput): EgoMetrics {
     burstScore: burstScore(transactions),
     attributedRatio: degree ? attributed / degree : 0,
     serviceCounterparties: services,
+    riskyCounterparties: risky.length,
+    riskyValueShare:
+      totalObserved > 0n ? Number((riskyRaw * 10_000n) / totalObserved) / 10_000 : 0,
     activeDays,
     firstSeen: timestamps[0] ?? null,
     lastSeen: timestamps[timestamps.length - 1] ?? null,

@@ -28,15 +28,21 @@ export interface DispositionInput {
 
 export function decideDisposition(input: DispositionInput): Disposition {
   const t = input.copy.disposition;
-  const matched = input.findings.filter((finding) => finding.matched && finding.weight > 0);
+  // Two different questions, so two different sets. `weighted` drives the
+  // priority and the drivers list. `matched` is every detector that fired,
+  // including the ones that carry no weight by design - off-graph continuation
+  // is an orientation finding, not a suspicion one, and reading it out of the
+  // weighted set meant its follow-up step could never fire.
+  const matched = input.findings.filter((finding) => finding.matched);
+  const weighted = matched.filter((finding) => finding.weight > 0);
 
   // The strongest single finding sets the priority. Summing would let a pile of
   // weak structural observations outrank one sanctions match, which inverts how
   // an analyst should actually read the queue.
-  const priority = matched.reduce((max, finding) => Math.max(max, finding.weight), 0);
+  const priority = weighted.reduce((max, finding) => Math.max(max, finding.weight), 0);
 
   const sanctionsDirect = input.address.tags.some((tag) => tag.abuse === "sanctions");
-  const sanctionsNearby = matched.some((finding) => finding.id === "sanctions-exposure");
+  const sanctionsNearby = weighted.some((finding) => finding.id === "sanctions-exposure");
 
   const action: Disposition["action"] = sanctionsDirect
     ? "escalate"
@@ -48,7 +54,7 @@ export function decideDisposition(input: DispositionInput): Disposition {
           ? "monitor"
           : "no-action";
 
-  const drivers = matched.map((finding) => t.driver(finding.title, finding.summary));
+  const drivers = weighted.map((finding) => t.driver(finding.title, finding.summary));
 
   const mitigants: string[] = [];
   if (input.subjectIsKnownService) {
@@ -63,7 +69,7 @@ export function decideDisposition(input: DispositionInput): Disposition {
   if (input.address.balance.coin > 0 && input.metrics.passThroughRatio < 0.6) {
     mitigants.push(t.mitigantRetains(formatCoin(input.address.balance, input.chain)));
   }
-  for (const finding of matched.slice(0, 3)) {
+  for (const finding of weighted.slice(0, 3)) {
     for (const counter of finding.counterIndicators.slice(0, 1)) mitigants.push(counter);
   }
 
