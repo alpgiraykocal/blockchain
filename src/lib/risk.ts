@@ -8,8 +8,22 @@ import type {
   Tag,
 } from "./types";
 
-/** Weight of a direct attribution, 0..100. Sanctions are absolute — a match is a
- *  compliance stop, so it saturates the score on its own. */
+/**
+ * Weight of a direct attribution, 0..100. Sanctions are absolute — a match is a
+ * compliance stop, so it saturates the score on its own.
+ *
+ * Only `sanctions` is reachable from the attribution currently loaded: OFAC is
+ * the one source that sets an abuse value, and every other feed — 428k actor
+ * labels, the curated packs, explorer metadata — writes `none`. The rest of this
+ * table is therefore inert today.
+ *
+ * It stays complete anyway. The taxonomy is the contract a new feed would be
+ * mapped onto, and a partial table would silently score an imported ransomware
+ * or theft tag at zero, which is a worse failure than an unused row. Where a
+ * behaviour needs to be caught without an abuse tag behind it, the detectors do
+ * it structurally — mixer exposure keys on the category, because that is what
+ * the feeds actually populate.
+ */
 const ABUSE_WEIGHT: Record<AbuseType, number> = {
   sanctions: 100,
   "terrorism-financing": 100,

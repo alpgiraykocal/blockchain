@@ -580,6 +580,11 @@ export const ui: Dictionary["ui"] = {
         description:
           "Yaygın olarak yayımlanmış saklamalı sıcak cüzdan adresleri. Akışın bittiği nokta olarak işe yarar — buralara ulaşan fonlar kendi saklamasından çıkmıştır.",
       },
+      "l1-bridges": {
+        title: "L1 köprü kontratları",
+        description:
+          "Rollup ve zincirler arası köprülerin Ethereum ana ağ giriş noktaları. Her adres Blockscout üzerinde kendi Bridge etiketini taşıyor, yani atıfın ikinci bir kaynağı var; o etiketi taşımayan adaylar dışarıda bırakıldı.",
+      },
       "known-services": {
         title: "Bilinen hizmetler ve protokoller",
         description: "Grafikte sıkça merkez olarak beliren köprüler, DeFi yönlendiricileri ve madencilik havuzları.",

@@ -587,6 +587,11 @@ export const ui = {
         description:
           "Widely published custodial hot-wallet addresses. Useful as flow termination points — funds reaching one of these have left self-custody.",
       },
+      "l1-bridges": {
+        title: "L1 bridge contracts",
+        description:
+          "Ethereum mainnet entry points for rollup and cross-chain bridges. Every address carries its own Bridge tag on Blockscout, so the attribution has a second source; candidates without that tag were left out.",
+      },
       "known-services": {
         title: "Known services and protocols",
         description: "Bridges, DeFi routers and mining pools that commonly appear as graph hubs.",
