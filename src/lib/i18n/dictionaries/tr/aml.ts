@@ -453,6 +453,27 @@ export const aml: Dictionary["aml"] = {
         "Bu noktadan öteye gitmek, daha fazla zincir üstü analiz değil, alıcı kuruma yapılacak bir talep gerektirir.",
     },
 
+    dusting: {
+      title: "Gelen toz serpme",
+      family: "Atıf saldırısı / gizlilik yoklaması",
+      summaryMatched: (count: number, share: string) =>
+        `${count} gönderen, harcamanın maliyetinden daha düşük değerde tutarlar gönderdi; bu adrese gönderenlerin ${share} kadarı. Bu örüntü adrese yapılır, adres tarafından değil.`,
+      summaryNone: "İncelenen pencerede harcanamayacak küçüklükte bir gelen serpme yok.",
+      summaryNoPrice:
+        "İncelenen pencere için fiyat bulunamadı; gelen tutarlar ekonomik toz eşiğine karşı sınanamadı.",
+      evSpray: "Harcanamayacak tutarlarda serpme",
+      evSprayDetail: (dust: number, inbound: number, share: string) =>
+        `${inbound} gelen karşı taraftan ${dust} tanesi bir kez 1 USD altında gönderdi ve bir daha görünmedi (${share}).`,
+      evNegligible: "Değer taşımıyor",
+      evNegligibleDetail: (share: string) =>
+        `Bu transferler gelen değerin ${share} kadarını oluşturuyor; toz serpmeyi küçük ödeme işleyen bir hizmetten ayıran da bu.`,
+      counterNotConduct:
+        "Toz almak, adres sahibinin davranışı değildir. Gönderenin izne ihtiyacı yoktur ve alıcı hiç fark etmemiş olabilir.",
+      counterInflates:
+        "Toz, bu konunun karşı taraf sayısını ve gelen dağılımını şişirir; yukarıdaki derece ve maruziyet okumaları bundan arındırılarak okunmalıdır.",
+      counterFaucet:
+        "Musluklar, airdrop'lar, iadeler ve test trafiği hiçbir atıf amacı olmadan aynı şekli üretir.",
+    },
     serviceDeweighted:
       "Konu, bu yapının anormallik değil beklenen çalışma biçimi olduğu, atfı yapılmış bir hizmettir.",
   },

@@ -499,6 +499,73 @@ function offGraphContinuation(input: TypologyInput): TypologyFinding {
   };
 }
 
+/**
+ * Inbound dusting.
+ *
+ * A spray of amounts too small to be worth spending, from senders that each
+ * appear once. Two things make it worth surfacing, and neither is suspicion of
+ * the subject.
+ *
+ * It is done *to* an address, not by it: the sender is buying a link, either to
+ * taint the recipient by association or to watch which addresses later co-spend
+ * the dust and so collapse a wallet's privacy. Reading it as the subject's own
+ * behaviour inverts who is acting.
+ *
+ * And it manufactures exposure. Every dusted address gains counterparties it
+ * never chose, so degree, fan-in and any "value received from X" reading are
+ * inflated by transfers the holder may not have noticed. The finding carries no
+ * weight for that reason - it exists to discount the others.
+ */
+function inboundDusting(input: TypologyInput): TypologyFinding {
+  const t = input.copy.typology.dusting;
+
+  // Economic dust, not a fixed coin amount: the test is whether the transfer is
+  // worth less than it costs to move on. A USD floor keeps that comparable
+  // across a chain whose unit is worth cents and one whose unit is worth
+  // thousands. Where no price is available the finding stays silent rather than
+  // guessing.
+  const inbound = input.neighbors.filter((row) => row.direction === "in");
+  const priced = inbound.filter((row) => row.link.value.usd !== null);
+  const dust = priced.filter((row) => row.link.value.usd! < 1 && row.link.txCount === 1);
+
+  const dustShareOfSenders = inbound.length ? dust.length / inbound.length : 0;
+  const inboundUsd = priced.reduce((sum, row) => sum + row.link.value.usd!, 0);
+  const dustUsd = dust.reduce((sum, row) => sum + row.link.value.usd!, 0);
+  const dustShareOfValue = inboundUsd > 0 ? dustUsd / inboundUsd : 0;
+
+  // Enough senders to be a spray rather than a rounding error, and carrying
+  // almost none of the value - the shape that separates dusting from a service
+  // that simply handles small payments.
+  const matched = dust.length >= 5 && dustShareOfSenders >= 0.3 && dustShareOfValue < 0.01;
+
+  return {
+    id: "dusting-inbound",
+    title: t.title,
+    family: t.family,
+    stage: "unclear",
+    matched,
+    strength: "supporting",
+    // Deliberately zero. This is context that discounts the exposure readings
+    // above it, not a reason to escalate the subject.
+    weight: 0,
+    summary: matched
+      ? t.summaryMatched(dust.length, pct(dustShareOfSenders))
+      : priced.length
+        ? t.summaryNone
+        : t.summaryNoPrice,
+    evidence: matched
+      ? [
+          derived(
+            t.evSpray,
+            t.evSprayDetail(dust.length, inbound.length, pct(dustShareOfSenders)),
+          ),
+          derived(t.evNegligible, t.evNegligibleDetail(pct(dustShareOfValue, 2))),
+        ]
+      : [],
+    counterIndicators: matched ? [t.counterNotConduct, t.counterInflates, t.counterFaucet] : [],
+  };
+}
+
 function emptyFinding(
   id: TypologyId,
   title: string,
@@ -534,6 +601,7 @@ export function detectTypologies(input: TypologyInput): TypologyFinding[] {
     dormantThenBurst(input),
     roundTripping(input),
     offGraphContinuation(input),
+    inboundDusting(input),
   ];
 
   // Structural typologies describe the shape of a service as accurately as they

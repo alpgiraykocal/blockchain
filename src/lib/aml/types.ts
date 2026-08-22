@@ -24,7 +24,8 @@ export type TypologyId =
   | "uniform-amount-layering"
   | "dormant-then-burst"
   | "round-tripping"
-  | "off-graph-continuation";
+  | "off-graph-continuation"
+  | "dusting-inbound";
 
 export type FindingStrength = "indicative" | "supporting" | "weak";
 

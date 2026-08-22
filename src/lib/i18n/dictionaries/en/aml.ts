@@ -453,6 +453,27 @@ export const aml = {
         "Continuing past this point requires a request to the receiving institution, not further on-chain analysis.",
     },
 
+    dusting: {
+      title: "Inbound dusting",
+      family: "Attribution attack / privacy probe",
+      summaryMatched: (count: number, share: string) =>
+        `${count} senders delivered amounts worth less than it costs to spend them, ${share} of everyone who sent to this address. The pattern is done to an address, not by it.`,
+      summaryNone: "No spray of unspendable inbound amounts in the analysed window.",
+      summaryNoPrice:
+        "No price was available for the analysed window, so inbound amounts could not be tested against an economic dust floor.",
+      evSpray: "Spray of unspendable amounts",
+      evSprayDetail: (dust: number, inbound: number, share: string) =>
+        `${dust} of ${inbound} inbound counterparties sent under 1 USD once and never again (${share}).`,
+      evNegligible: "Carrying no value",
+      evNegligibleDetail: (share: string) =>
+        `Those transfers account for ${share} of inbound value, which is what separates dusting from a service handling small payments.`,
+      counterNotConduct:
+        "Receiving dust is not conduct by the holder. A sender needs no permission, and the recipient may never have noticed.",
+      counterInflates:
+        "Dust inflates this subject's counterparty count and fan-in, so degree and any exposure reading above should be read net of it.",
+      counterFaucet:
+        "Faucets, airdrops, refunds and testing traffic produce the same shape without any attribution motive.",
+    },
     serviceDeweighted:
       "The subject is an attributed service, where this structure is the expected operating shape rather than an anomaly.",
   },
