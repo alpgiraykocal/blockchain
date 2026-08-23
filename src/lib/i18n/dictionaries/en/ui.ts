@@ -15,7 +15,7 @@ export const ui = {
     title: "Blockchain Analysis — cryptoasset graph analytics",
     titleTemplate: "%s · Blockchain Analysis",
     description:
-      "Interactive address, entity and transaction-flow analysis for Bitcoin and Ethereum, built on public block explorer data.",
+      "Interactive address, entity and transaction-flow analysis for Bitcoin, Ethereum and TRON, built on public block explorer data.",
   },
 
   nav: {
@@ -28,7 +28,7 @@ export const ui = {
     skipToContent: "Skip to main content",
     liveDataTitle: "Live public data",
     liveDataBody:
-      "Bitcoin via mempool.space, Ethereum via Blockscout. Clustering and risk scoring run locally over a bounded transaction window.",
+      "Bitcoin via mempool.space, Ethereum via Blockscout, TRON via TronGrid. Clustering and risk scoring run locally over a bounded transaction window.",
   },
 
   theme: {
@@ -46,7 +46,7 @@ export const ui = {
   },
 
   search: {
-    placeholder: "Search a BTC or ETH address, or an ENS name",
+    placeholder: "Search a BTC, ETH or TRON address, or an ENS name",
     placeholderShort: "Search address",
     srLabel: "Search address",
     clear: "Clear search",
@@ -152,6 +152,12 @@ export const ui = {
     avgFee: "Avg fee",
     avgFeeHintBtc: "Mean fee per unconfirmed transaction in the mempool",
     avgFeeHintEth: "Cost of a 21,000-gas transfer at the average gas price",
+    seriesTron: "Transactions per day",
+    unitTron: "tx",
+    avgFeeHintTron:
+      "TRON charges bandwidth and energy rather than a per-transaction fee in TRX, so there is no comparable average to show.",
+    accounts: "Accounts",
+    noSeries: "No time series is published for this chain.",
     seriesBtc: "Median fee rate (1w)",
     seriesEth: "Transactions per day",
     unitBtc: "sat/vB",
@@ -482,7 +488,7 @@ export const ui = {
   graph: {
     metaTitle: "Graph explorer",
     metaDescription:
-      "Expand address and entity counterparties one hop at a time and trace transaction flow across Bitcoin and Ethereum.",
+      "Expand address and entity counterparties one hop at a time and trace transaction flow across Bitcoin, Ethereum and TRON.",
     heading: "Graph explorer",
     headingHint:
       "Click to select, double-click to expand. Every expansion pulls one hop of counterparties from live explorer data.",
@@ -539,6 +545,10 @@ export const ui = {
     selectSecondNode: " \u00b7 select a second node",
     truncatedNodes: (count: number) =>
       `${count} node${count > 1 ? "s" : ""} truncated to top counterparties`,
+    expand: "Expand",
+    senders: "Senders",
+    receivers: "Receivers",
+    remove: "Remove",
     attribution: "Attribution",
     noTagMatch: "No TagPack entry matched this address.",
     riskSignals: "Risk signals",

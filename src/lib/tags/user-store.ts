@@ -97,7 +97,7 @@ export function parseTagExport(input: unknown, notJsonObject = "File is not a JS
     if (!tag.label || typeof tag.label !== "string") {
       throw new Error(`Entry ${index + 1} has no \`label\`.`);
     }
-    if (tag.chain !== "btc" && tag.chain !== "eth") {
+    if (tag.chain !== "btc" && tag.chain !== "eth" && tag.chain !== "tron") {
       throw new Error(`Entry ${index + 1} has an unsupported \`chain\`.`);
     }
     return {

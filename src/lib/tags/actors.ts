@@ -71,7 +71,7 @@ const EMPTY: LabelSnapshot = {
   actors: [],
   labels: [],
   counts: { total: 0, byChain: {}, byCategory: {}, skipped: [] },
-  addresses: { btc: {}, eth: {} },
+  addresses: { btc: {}, eth: {}, tron: {} },
 };
 
 let cache: LabelSnapshot | null = null;
@@ -97,7 +97,7 @@ export function labelSnapshot(): LabelSnapshot {
       actors: parsed.actors ?? [],
       labels: parsed.labels ?? [],
       counts: { ...EMPTY.counts, ...parsed.counts },
-      addresses: { btc: {}, eth: {}, ...parsed.addresses },
+      addresses: { btc: {}, eth: {}, tron: {}, ...parsed.addresses },
     };
   } catch (error) {
     loadError = error instanceof Error ? error.message : String(error);
@@ -120,6 +120,8 @@ export function hasLabelSnapshot(): boolean {
 function indexKey(chain: ChainId, address: string): string {
   const value = address.trim();
   if (chain === "eth") return value.toLowerCase();
+  // TRON Base58Check is case-sensitive, like Bitcoin's legacy format.
+  if (chain === "tron") return value;
   if (/^(bc1|tb1)/i.test(value)) return value.toLowerCase();
   return value;
 }

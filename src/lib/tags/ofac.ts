@@ -101,7 +101,7 @@ function toTag(entry: OfacEntry): Tag {
 function buildIndex(): Map<string, Tag[]> {
   const index = new Map<string, Tag[]>();
   for (const entry of OFAC_SNAPSHOT.entries) {
-    if (entry.chain !== "btc" && entry.chain !== "eth") continue;
+    if (!isScreenableChain(entry.chain)) continue;
     const key = indexKey(entry.chain, entry.address);
     const tag = toTag(entry);
     const bucket = index.get(key);
@@ -111,12 +111,21 @@ function buildIndex(): Map<string, Tag[]> {
   return index;
 }
 
+/** Chains this app can screen against. Anything else in the snapshot is kept
+ *  on disk but not indexed, so adding a chain needs no re-sync. */
+function isScreenableChain(chain: string | null): chain is ChainId {
+  return chain === "btc" || chain === "eth" || chain === "tron";
+}
+
 /** Ethereum addresses are hex and case-insensitive (mixed case is a checksum).
  *  Bitcoin bech32 is case-insensitive but never mixed; base58 IS case-sensitive,
  *  so folding it would risk matching an address OFAC never listed. */
 export function indexKey(chain: ChainId, address: string): string {
   const value = address.trim();
   if (chain === "eth") return `eth:${value.toLowerCase()}`;
+  // TRON is Base58Check like Bitcoin's legacy format and is equally
+  // case-sensitive: folding it would risk matching an account never listed.
+  if (chain === "tron") return `tron:${value}`;
   if (/^(bc1|tb1)/i.test(value)) return `btc:${value.toLowerCase()}`;
   return `btc:${value}`;
 }
@@ -194,7 +203,7 @@ export function screenableTable(): OfacTable {
 
   const entries = OFAC_SNAPSHOT.entries.filter(
     (entry): entry is OfacEntry & { chain: ChainId } =>
-      entry.chain === "btc" || entry.chain === "eth",
+      isScreenableChain(entry.chain),
   );
 
   const names = intern(entries.map((e) => e.name), (v) => v);

@@ -47,7 +47,24 @@ const OUT_PATH = join(HERE, "..", "src", "lib", "tags", "generated", "ofac-crypt
 const CURRENCY_TO_CHAIN: Record<string, string> = {
   XBT: "btc",
   ETH: "eth",
+  TRX: "tron",
 };
+
+/**
+ * Chain for one designation.
+ *
+ * Most currency codes name a chain on their own. USDT does not: OFAC lists the
+ * same token on several of them, and in the current file 78 of the USDT entries
+ * are TRON accounts against 8 Ethereum ones. Routing those by code alone would
+ * put three quarters of them on the wrong chain, so the address shape decides.
+ */
+function chainFor(currency: string, address: string): string | null {
+  const direct = CURRENCY_TO_CHAIN[currency];
+  if (direct) return direct;
+  if (/^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(address)) return "tron";
+  if (/^0x[0-9a-fA-F]{40}$/.test(address)) return "eth";
+  return null;
+}
 
 interface SanctionedAddress {
   address: string;
@@ -304,7 +321,7 @@ function parseFile(xml: string, fileName: string): { entries: SanctionedAddress[
         entries.push({
           address,
           currency,
-          chain: CURRENCY_TO_CHAIN[currency] ?? null,
+          chain: chainFor(currency, address),
           fixedRef,
           name,
           partyType: partySubTypes.get(partySubTypeId) ?? "Unknown",

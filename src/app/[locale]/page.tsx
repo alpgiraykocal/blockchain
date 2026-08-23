@@ -44,6 +44,7 @@ export default async function DashboardPage({
           <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-[11px] text-foreground-muted">
             <Badge tone="info">BTC · mempool.space</Badge>
             <Badge tone="info">ETH · Blockscout</Badge>
+            <Badge tone="info">TRON · TronGrid</Badge>
             <Badge tone="neutral">{ui.home.tagsLoaded(formatNumber(totalTags))}</Badge>
             <Badge tone="danger">{ui.home.sanctionsFlagged(formatNumber(abuseTags))}</Badge>
           </div>

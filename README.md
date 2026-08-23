@@ -1,6 +1,6 @@
 # Blockchain Analysis
 
-Cryptoasset graph analytics for Bitcoin and Ethereum — address and entity lookup,
+Cryptoasset graph analytics for Bitcoin, Ethereum and TRON — address and entity lookup,
 transaction-flow exploration, co-spend clustering, attribution TagPacks and an
 explainable risk score.
 
@@ -147,8 +147,13 @@ Why this shape:
   missing the expected sections, a total under 200 addresses, or a drop of more
   than 20% against the previous snapshot. A silently truncated parse produces a
   clean run with zero hits — the worst possible failure mode here.
-* **Currencies beyond BTC and ETH are stored, not discarded.** XMR, TRX, USDT,
-  SOL and the rest sit in the snapshot so adding a chain adapter needs no re-sync.
+* **Currencies beyond the screenable chains are stored, not discarded.** XMR,
+  SOL and the rest sit in the snapshot so adding a chain adapter needs no
+  re-sync — which is exactly how TRON went live: the 276 TRON designations were
+  already on disk and only needed a currency mapped to a chain. USDT is routed by
+  address shape rather than by its currency code, because OFAC lists the same
+  token on several chains and 78 of those entries are TRON accounts against 8
+  Ethereum ones.
 * **Staleness is surfaced, not assumed away.** OFAC publishes on business days;
   the tags screen warns once the snapshot passes seven days.
   [`.github/workflows/sync-ofac.yml`](.github/workflows/sync-ofac.yml) runs the
@@ -185,7 +190,8 @@ npm run sync:labels -- --dry             # parse and report, write nothing
 [`scripts/sync-labels.mts`](scripts/sync-labels.mts) writes
 `data/actor-labels.json.gz`. The current standard snapshot carries **428,452
 addresses across 13,563 labels and 477 named actors** - exchanges, mining pools,
-mixers, gambling, DeFi, tokens and custodial services, on both BTC and ETH.
+mixers, gambling, DeFi, tokens and custodial services, on BTC and ETH. The TRON
+addresses in it are sanctions designations rather than actor labels.
 [`data/actor-labels.summary.md`](data/actor-labels.summary.md) is regenerated
 beside it with the counts, per-source deltas and upstream revisions.
 

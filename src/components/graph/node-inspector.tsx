@@ -80,15 +80,15 @@ export function NodeInspector({
         <div className="mt-2.5 flex flex-wrap gap-1.5">
           <Button size="sm" variant="primary" onClick={() => onExpand(node, "both")}>
             <Maximize2 className="size-3.5" aria-hidden="true" />
-            Expand
+            {t.expand}
           </Button>
           <Button size="sm" onClick={() => onExpand(node, "in")}>
             <ArrowDownLeft className="size-3.5" aria-hidden="true" />
-            Senders
+            {t.senders}
           </Button>
           <Button size="sm" onClick={() => onExpand(node, "out")}>
             <ArrowUpRight className="size-3.5" aria-hidden="true" />
-            Receivers
+            {t.receivers}
           </Button>
           <Button
             size="sm"
@@ -101,7 +101,7 @@ export function NodeInspector({
           </Button>
           <Button size="sm" variant="danger" onClick={() => onRemove(node)}>
             <Trash2 className="size-3.5" aria-hidden="true" />
-            Remove
+            {t.remove}
           </Button>
         </div>
       </div>

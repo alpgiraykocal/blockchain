@@ -129,7 +129,7 @@ export function TagForm({ presetSubject }: { presetSubject?: string }) {
           onBlur={(event) =>
             setErrors((current) => ({ ...current, subject: validateSubject(event.target.value) }))
           }
-          placeholder={chain === "btc" ? "bc1…" : "0x…"}
+          placeholder={chain === "btc" ? "bc1…" : chain === "tron" ? "T…" : "0x…"}
           aria-invalid={errors.subject ? true : undefined}
           className={cn(inputClass, "font-mono", errors.subject && "border-destructive")}
         />

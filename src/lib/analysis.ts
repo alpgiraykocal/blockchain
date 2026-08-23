@@ -274,11 +274,25 @@ export function toGraphFragment(analysis: AddressAnalysis): {
     tags: analysis.address.tags,
   };
 
-  const nodes: GraphNode[] = [root];
+  // A counterparty that both sent and received is two aggregated rows and one
+  // actor, because the adapters key their aggregation on direction. Emitting a
+  // node per row put the same id in the list twice, which React renders as
+  // duplicate keys and the canvas resolves by dropping one of them. Merge the
+  // node, keep both directed edges: which way the value moved is the part an
+  // investigator cannot lose.
+  const byId = new Map<string, GraphNode>([[root.id, root]]);
   const edges: GraphEdge[] = [];
 
   for (const row of analysis.neighbors) {
-    nodes.push(row.node);
+    const existing = byId.get(row.node.id);
+    if (existing) {
+      existing.txCount += row.node.txCount;
+      // Attribution and risk are properties of the address, identical on both
+      // rows; only the per-direction counts need adding.
+    } else {
+      byId.set(row.node.id, { ...row.node });
+    }
+
     const source = nodeId(row.node.chain, row.link.source);
     const target = nodeId(row.node.chain, row.link.target);
     edges.push({
@@ -291,5 +305,5 @@ export function toGraphFragment(analysis: AddressAnalysis): {
     });
   }
 
-  return { nodes, edges };
+  return { nodes: [...byId.values()], edges };
 }

@@ -1,6 +1,6 @@
 /** Domain model. Mirrors the GraphSense concepts: address, entity (cluster), tag, link. */
 
-export type ChainId = "btc" | "eth";
+export type ChainId = "btc" | "eth" | "tron";
 
 export type ChainModel = "utxo" | "account";
 
@@ -20,7 +20,7 @@ export interface ChainMeta {
  *
  * Native assets reuse the chain id so `ChainId` stays assignable to `AssetId`.
  */
-export type AssetId = ChainId | "usdt-eth";
+export type AssetId = ChainId | "usdt-eth" | "usdt-tron";
 
 export interface AssetMeta {
   id: AssetId;
@@ -29,7 +29,7 @@ export interface AssetMeta {
   name: string;
   /** Base units per whole unit, as a power of ten. USDT uses 6, not the chain's 18. */
   decimals: number;
-  kind: "native" | "erc20";
+  kind: "native" | "erc20" | "trc20";
   /** Contract address for a token. The only safe identifier — symbols are forgeable. */
   contract?: string;
 }

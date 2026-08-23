@@ -21,6 +21,16 @@ export const CHAINS: Record<ChainId, ChainMeta> = {
     explorerTxUrl: (hash) => `https://eth.blockscout.com/tx/${hash}`,
     explorerAddressUrl: (address) => `https://eth.blockscout.com/address/${address}`,
   },
+  tron: {
+    id: "tron",
+    name: "TRON",
+    ticker: "TRX",
+    model: "account",
+    decimals: 6,
+    explorerName: "TronGrid",
+    explorerTxUrl: (hash) => `https://tronscan.org/#/transaction/${hash}`,
+    explorerAddressUrl: (address) => `https://tronscan.org/#/address/${address}`,
+  },
 };
 
 export const CHAIN_IDS = Object.keys(CHAINS) as ChainId[];
@@ -32,11 +42,18 @@ export function isChainId(value: string): value is ChainId {
 const BTC_BECH32 = /^(bc1)[0-9ac-hj-np-z]{11,71}$/i;
 const BTC_BASE58 = /^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/;
 const ETH_HEX = /^0x[0-9a-fA-F]{40}$/;
+/** Base58Check, always 34 characters, always leading `T` on mainnet. The
+ *  alphabet excludes 0, O, I and l, which is what keeps it distinguishable
+ *  from a Bitcoin base58 address of similar length. */
+const TRON_BASE58 = /^T[1-9A-HJ-NP-Za-km-z]{33}$/;
 const ETH_ENS = /^[a-z0-9-]+(\.[a-z0-9-]+)*\.eth$/i;
 
 export function detectChain(query: string): ChainId | null {
   const value = query.trim();
   if (ETH_HEX.test(value) || ETH_ENS.test(value)) return "eth";
+  // Tron before Bitcoin: a `T`-leading base58 string is unambiguous, while the
+  // Bitcoin pattern is anchored to 1 or 3 and cannot claim it either way.
+  if (TRON_BASE58.test(value)) return "tron";
   if (BTC_BECH32.test(value) || BTC_BASE58.test(value)) return "btc";
   return null;
 }
@@ -44,6 +61,7 @@ export function detectChain(query: string): ChainId | null {
 export function isValidAddress(chain: ChainId, address: string): boolean {
   const value = address.trim();
   if (chain === "eth") return ETH_HEX.test(value) || ETH_ENS.test(value);
+  if (chain === "tron") return TRON_BASE58.test(value);
   return BTC_BECH32.test(value) || BTC_BASE58.test(value);
 }
 
@@ -72,6 +90,16 @@ export const ASSETS: Record<AssetId, AssetMeta> = {
     decimals: 6,
     kind: "erc20",
     contract: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+  },
+  tron: { id: "tron", chain: "tron", symbol: "TRX", name: "Tronix", decimals: 6, kind: "native" },
+  "usdt-tron": {
+    id: "usdt-tron",
+    chain: "tron",
+    symbol: "USDT",
+    name: "Tether USD",
+    decimals: 6,
+    kind: "trc20",
+    contract: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t",
   },
 };
 

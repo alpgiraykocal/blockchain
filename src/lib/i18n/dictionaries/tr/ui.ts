@@ -13,7 +13,7 @@ export const ui: Dictionary["ui"] = {
     title: "Blockchain Analysis — kripto varlık graf analitiği",
     titleTemplate: "%s · Blockchain Analysis",
     description:
-      "Bitcoin ve Ethereum için adres, varlık ve işlem akışı analizi; açık blok gezgini verileri üzerine kurulu.",
+      "Bitcoin, Ethereum ve TRON için adres, varlık ve işlem akışı analizi; açık blok gezgini verileri üzerine kurulu.",
   },
 
   nav: {
@@ -26,7 +26,7 @@ export const ui: Dictionary["ui"] = {
     skipToContent: "İçeriğe geç",
     liveDataTitle: "Canlı açık veri",
     liveDataBody:
-      "Bitcoin mempool.space, Ethereum Blockscout üzerinden. Kümeleme ve risk puanlaması sınırlı bir işlem penceresi üzerinde yerel olarak çalışır.",
+      "Bitcoin mempool.space, Ethereum Blockscout, TRON TronGrid üzerinden. Kümeleme ve risk puanlaması sınırlı bir işlem penceresi üzerinde yerel olarak çalışır.",
   },
 
   theme: {
@@ -44,7 +44,7 @@ export const ui: Dictionary["ui"] = {
   },
 
   search: {
-    placeholder: "BTC veya ETH adresi ya da ENS adı ara",
+    placeholder: "BTC, ETH veya TRON adresi ya da ENS adı ara",
     placeholderShort: "Adres ara",
     srLabel: "Adres ara",
     clear: "Aramayı temizle",
@@ -150,6 +150,12 @@ export const ui: Dictionary["ui"] = {
     avgFee: "Ort. ücret",
     avgFeeHintBtc: "Mempool'daki onaylanmamış işlem başına ortalama ücret",
     avgFeeHintEth: "Ortalama gas fiyatıyla 21.000 gas'lık bir transferin maliyeti",
+    seriesTron: "Günlük işlem",
+    unitTron: "işlem",
+    avgFeeHintTron:
+      "TRON, TRX cinsinden işlem başı ücret yerine bant genişliği ve enerji tahsil eder; bu yüzden karşılaştırılabilir bir ortalama yok.",
+    accounts: "Hesap",
+    noSeries: "Bu zincir için yayımlanan bir zaman serisi yok.",
     seriesBtc: "Medyan ücret oranı (1h)",
     seriesEth: "Günlük işlem sayısı",
     unitBtc: "sat/vB",
@@ -476,7 +482,7 @@ export const ui: Dictionary["ui"] = {
   graph: {
     metaTitle: "Grafik gezgini",
     metaDescription:
-      "Adres ve varlık karşı taraflarını adım adım genişlet, Bitcoin ve Ethereum genelinde işlem akışını izle.",
+      "Adres ve varlık karşı taraflarını adım adım genişlet, Bitcoin, Ethereum ve TRON genelinde işlem akışını izle.",
     heading: "Grafik gezgini",
     headingHint:
       "Seçmek için tıkla, genişletmek için çift tıkla. Her genişletme, canlı gezgin verisinden bir adım karşı taraf çeker.",
@@ -532,6 +538,10 @@ export const ui: Dictionary["ui"] = {
     noPathInGraph: " \u00b7 mevcut grafikte yol yok",
     selectSecondNode: " \u00b7 ikinci bir düğüm seç",
     truncatedNodes: (count: number) => `${count} düğüm en büyük karşı taraflara kırpıldı`,
+    expand: "Genişlet",
+    senders: "Gönderenler",
+    receivers: "Alıcılar",
+    remove: "Kaldır",
     attribution: "Atıf",
     noTagMatch: "Bu adresle eşleşen bir TagPack kaydı yok.",
     riskSignals: "Risk sinyalleri",

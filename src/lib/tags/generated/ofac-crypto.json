@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "source": "OFAC Sanctions List Service",
-  "retrievedAt": "2026-08-21T10:50:39.701Z",
+  "retrievedAt": "2026-08-23T10:24:32.509Z",
   "files": [
     {
       "name": "SDN_ADVANCED.XML",
@@ -43,15 +43,16 @@
       "BNB": 1
     },
     "byChain": {
+      "tron": 276,
       "btc": 527,
-      "eth": 100
+      "eth": 113
     }
   },
   "entries": [
     {
       "address": "0x4f47bc496083c727c5fbe3ce9cdf2b0f6496270c",
       "currency": "ARB",
-      "chain": null,
+      "chain": "eth",
       "fixedRef": "42498",
       "name": "Sim Hyon Sop",
       "partyType": "Individual",
@@ -175,7 +176,7 @@
     {
       "address": "0x4f47bc496083c727c5fbe3ce9cdf2b0f6496270c",
       "currency": "BSC",
-      "chain": null,
+      "chain": "eth",
       "fixedRef": "42498",
       "name": "Sim Hyon Sop",
       "partyType": "Individual",
@@ -309,7 +310,7 @@
     {
       "address": "0xd882cfc20f52f2599d84b8e8d58c7fb62cfe344b",
       "currency": "ETC",
-      "chain": null,
+      "chain": "eth",
       "fixedRef": "29585",
       "name": "KARASAVIDI Dmitrii",
       "partyType": "Individual",
@@ -1878,7 +1879,7 @@
     {
       "address": "TA3rH2A7iHnm6pKH8gr9cK1EZnShnmZdFg",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -1892,7 +1893,7 @@
     {
       "address": "TA82wQ77kb9DieW4C8q7C4KwMfnCzfziqN",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -1906,7 +1907,7 @@
     {
       "address": "TAgZxxuvfuKYJY5UPC1DXF8NPHbKtTzEGu",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -1920,7 +1921,7 @@
     {
       "address": "TAhHpxPRwo1Bmm1A9m51uZ31tcB7EPq7SY",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "58199",
       "name": "Al-Jebouri Zaid Issam Ahmed",
       "partyType": "Individual",
@@ -1933,7 +1934,7 @@
     {
       "address": "TAhwhFv3JpK39Nc2m8W5LPCcoTisutiRfp",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "4632",
       "name": "BANK MARKAZI JOMHOURI ISLAMI IRAN",
       "partyType": "Entity",
@@ -1949,7 +1950,7 @@
     {
       "address": "TAoLw5yD5XUoHWeBZRSZ1ExK9HMv2CiPvP",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "56357",
       "name": "Wedding Ryan James",
       "partyType": "Individual",
@@ -1962,7 +1963,7 @@
     {
       "address": "TASWbk6X1wiTku5TMmMQYqYFvshVEtfJy8",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "56865",
       "name": "Zedcex Exchange Ltd",
       "partyType": "Entity",
@@ -1977,7 +1978,7 @@
     {
       "address": "TAwNQN5tmzJJ694PPuoFUxQY13quBs8YgA",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -1991,7 +1992,7 @@
     {
       "address": "TAYhjpL8pPs8T84FSM329nffQpc6jD8GBM",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "55045",
       "name": "Grinex",
       "partyType": "Entity",
@@ -2004,7 +2005,7 @@
     {
       "address": "TAyyw6ZoTZexvTcN7WRR9t79JUFgSAvkL8",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2018,7 +2019,7 @@
     {
       "address": "TB1Bcv3x8mg7PVV4nVM48pgHJKcYboTypU",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2032,7 +2033,7 @@
     {
       "address": "TB5J8W166YTUmtpUsy4XnNTKLVtesuE9eV",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2046,7 +2047,7 @@
     {
       "address": "TBcLqqqyZjNj1ptuXFgj5H768NhNU5nDyn",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "56360",
       "name": "Sokolovski Rolan",
       "partyType": "Individual",
@@ -2059,7 +2060,7 @@
     {
       "address": "TBfVDwNS6hC2Ln2qTLTRKMMPddscFEhhrU",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2073,7 +2074,7 @@
     {
       "address": "TBFW9gF4oDX5cG44gS7AoxQeujScmm3z6h",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "57978",
       "name": "Rashevskyi Dmytro",
       "partyType": "Individual",
@@ -2086,7 +2087,7 @@
     {
       "address": "TBhR5MLrTsNZ8FUyKgzdrCjWkYD2orYLdx",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2100,7 +2101,7 @@
     {
       "address": "TBHTJqAy4DhHhmT3dNceJYNRz4SdLofLre",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "43421",
       "name": "Wang Yunhe",
       "partyType": "Individual",
@@ -2113,7 +2114,7 @@
     {
       "address": "TBhTMBAaEWiTtMgMdJ97ZmYotgHeY543cc",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2127,7 +2128,7 @@
     {
       "address": "TBJqexr1FfGxVKhDsKeou6FVLBW1aS1Ny7",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2141,7 +2142,7 @@
     {
       "address": "TBKq3SzXigsGhQNzdCYocpt8RzoMh3uxAr",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2155,7 +2156,7 @@
     {
       "address": "TBmqXsFNYTMkyw9jVGBAecGaLyLwbxFTM1",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2169,7 +2170,7 @@
     {
       "address": "TBtRqkiFzyuwe8nSAGQghxygAfwAF5eERq",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2183,7 +2184,7 @@
     {
       "address": "TBXMiRqUp1XH1zLazWu8cWitMAScv4HsYq",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "57961",
       "name": "Abderrahmane Miloud",
       "partyType": "Individual",
@@ -2196,7 +2197,7 @@
     {
       "address": "TByksCkUtMaYwHCSaetmAGufpeyfdXBrJk",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2210,7 +2211,7 @@
     {
       "address": "TC7vaJsxZteEEnnm2EFm9BRSZvezvsuA86",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2224,7 +2225,7 @@
     {
       "address": "TC8axQvzJEVR3NKN6mZnJtGy7537GEmh38",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "55045",
       "name": "Grinex",
       "partyType": "Entity",
@@ -2237,7 +2238,7 @@
     {
       "address": "TCA9vmjsYw9MtPKEwRBtGhKFRfr4CLxJAv",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "56865",
       "name": "Zedcex Exchange Ltd",
       "partyType": "Entity",
@@ -2252,7 +2253,7 @@
     {
       "address": "TCCryMcQb5A5FSYkmcVy26Nd8J1FWHtfWh",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2266,7 +2267,7 @@
     {
       "address": "TCEe3McjK9FWby8YsNmtRDwJt1x2s5dFTL",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2280,7 +2281,7 @@
     {
       "address": "TCFD8N3vM5b4Gr5f1kkajQsodRVNyyAq1d",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "55046",
       "name": "Old Vector LLC",
       "partyType": "Entity",
@@ -2293,7 +2294,7 @@
     {
       "address": "TCk1g37N3x6PDda63waydNQwqTUzFNpsrR",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2307,7 +2308,7 @@
     {
       "address": "TCn9wM828B1GtsVn8kUaCvoE3RpfCAmtEB",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2321,7 +2322,7 @@
     {
       "address": "TCqKhk7MpPnGH3UfygE1TRzUo92a5tuVy6",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2335,7 +2336,7 @@
     {
       "address": "TCu5onCzXuqxjvVzdB2tR4FLuF66d4yRqf",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "56360",
       "name": "Sokolovski Rolan",
       "partyType": "Individual",
@@ -2348,7 +2349,7 @@
     {
       "address": "TCudJgJ14kk3Ss2PEgsT15frztKpyG7HEh",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2362,7 +2363,7 @@
     {
       "address": "TCUTmWspsaJb3U5JUs5AhVcGwaftyK1qtp",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2376,7 +2377,7 @@
     {
       "address": "TCXihiScsAodR942Xq45df9qQAdr5nhkjQ",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2390,7 +2391,7 @@
     {
       "address": "TCyAE8Lxa1rmTThhE5Z3X95PC9rgMrReMX",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2404,7 +2405,7 @@
     {
       "address": "TCzq6m2zxnQkrZrf8cqYcK6bbXQYAfWYKC",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "56865",
       "name": "Zedcex Exchange Ltd",
       "partyType": "Entity",
@@ -2419,7 +2420,7 @@
     {
       "address": "TD7TXyvmjPfJkfhJuQ58NXA9dX9q81mqAp",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2433,7 +2434,7 @@
     {
       "address": "TDe2UNAvuUnTbbDo7518eMe3TXN5qJW8Ft",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "57056",
       "name": "AMNOKGANG TECHNOLOGY DEVELOPMENT COMPANY",
       "partyType": "Entity",
@@ -2446,7 +2447,7 @@
     {
       "address": "TDFj8tYzfLDkwEMo4MJ2DfrbpMztuCCnan",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "57961",
       "name": "Abderrahmane Miloud",
       "partyType": "Individual",
@@ -2459,7 +2460,7 @@
     {
       "address": "TDFtJtyLPgN3oWUoHh23oJox3T5V5nR11K",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "55447",
       "name": "Sayyed Sadiq Abbas Habib",
       "partyType": "Individual",
@@ -2472,7 +2473,7 @@
     {
       "address": "TDHJNJHosn6xNDxMecFZwXyTzE9bYGXp9L",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2486,7 +2487,7 @@
     {
       "address": "TDhtVUnmYwWfzWVrnzryr3fbQo8VTvj4ji",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2500,7 +2501,7 @@
     {
       "address": "TDi9s3GeAtFBbUvGxqXiZnxiaH9QpqjYFn",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2514,7 +2515,7 @@
     {
       "address": "TDSGtCciE9yFKYzDj1kBBc3F7gosguDqwC",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2528,7 +2529,7 @@
     {
       "address": "TDX3dFNPvJeA9eVLLNqf1ixr4U2ktcDmoD",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2542,7 +2543,7 @@
     {
       "address": "TDXBEozXRJy7eBYNCoqrDMRCx5QBN4jCCt",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2556,7 +2557,7 @@
     {
       "address": "TDxXXmCELgrb5VwYobDMyTKVTTdY9LjEjx",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2570,7 +2571,7 @@
     {
       "address": "TE5paMkU1hPr8BdjkSJLvEyUBxjKKSx1H6",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2584,7 +2585,7 @@
     {
       "address": "TE5R3hJ6REap6vh14YAqjXczKrYaiteTy3",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2598,7 +2599,7 @@
     {
       "address": "TE6VgR7rAuY4kuzCjdSVCZFXPjjzSQYY7X",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2612,7 +2613,7 @@
     {
       "address": "TEBHpD6iiAqhyS4w7zZFmD1rrv65a5HVTD",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2626,7 +2627,7 @@
     {
       "address": "TEcuHDQthTmULe8fFLUccBPpjfXaTmJuuD",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "55045",
       "name": "Grinex",
       "partyType": "Entity",
@@ -2639,7 +2640,7 @@
     {
       "address": "TEEYCuGDyeNkuDj4u6GQRXxXo3Nh29r2vP",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "57056",
       "name": "AMNOKGANG TECHNOLOGY DEVELOPMENT COMPANY",
       "partyType": "Entity",
@@ -2652,7 +2653,7 @@
     {
       "address": "TEKeY9i4CcVySJMmhuh2AxZhtgTmugYUMW",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2666,7 +2667,7 @@
     {
       "address": "TER8k4zWt3byuHyvyBkLstz3QVUUuBs9pt",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2680,7 +2681,7 @@
     {
       "address": "TETfViHWf9ZNB6WJgZBRMB48pTaBFo5Rmd",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2694,7 +2695,7 @@
     {
       "address": "TEtLieZwyjJTth7S5EJqUNjtSbM1ui9toK",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2708,7 +2709,7 @@
     {
       "address": "TFdTr9C3BqQrzKBXqSxJfAZFTh8UwBAfSg",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "48432",
       "name": "OKO DESIGN BUREAU",
       "partyType": "Entity",
@@ -2721,7 +2722,7 @@
     {
       "address": "TFebC149jCDiow1MBphhfpHDLeMAKRNrqJ",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2735,7 +2736,7 @@
     {
       "address": "TFh7Z4qmdiT7opAYYLmNVXQJtVCkAtg7Zh",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2749,7 +2750,7 @@
     {
       "address": "TFQbqaNbmq2xsVor2NbufLkYZvxFC9wC7k",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "4632",
       "name": "BANK MARKAZI JOMHOURI ISLAMI IRAN",
       "partyType": "Entity",
@@ -2765,7 +2766,7 @@
     {
       "address": "TFqo5f16FJfSKesPxtGN4VN5HNZJebqMQX",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2779,7 +2780,7 @@
     {
       "address": "TFS2LHNcrffdAVRHpDUpNvnmCHs78cSNbz",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2793,7 +2794,7 @@
     {
       "address": "TFtz6Ae6NNo9VvhnVrj6V1RyEFMtZQMh3r",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2807,7 +2808,7 @@
     {
       "address": "TFwjPScaJRCbSWVAywE1S1WgaUgSnyYUbD",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "36025",
       "name": "GARANTEX EUROPE OU",
       "partyType": "Entity",
@@ -2821,7 +2822,7 @@
     {
       "address": "TGckaiamj5NzaYx6Qp6Zu7kahuHArzUo99",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "55045",
       "name": "Grinex",
       "partyType": "Entity",
@@ -2834,7 +2835,7 @@
     {
       "address": "TGLrjZc9c48iMFB4ZmDnSjSRMq27MXPg2k",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2848,7 +2849,7 @@
     {
       "address": "TGNwKzHjYvYP2SwsrmCYrRRvCRdxQgLq1w",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2862,7 +2863,7 @@
     {
       "address": "TGr2i8ZQiiMRjP3mWyQUH2MQBfKu8GJNqm",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "58199",
       "name": "Al-Jebouri Zaid Issam Ahmed",
       "partyType": "Individual",
@@ -2875,7 +2876,7 @@
     {
       "address": "TGsNFrgWfbGN2gX25Wcf8oTejtxtQkvmEx",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "56865",
       "name": "Zedcex Exchange Ltd",
       "partyType": "Entity",
@@ -2890,7 +2891,7 @@
     {
       "address": "TGXE9dGWawjfd3xqFSho1h1bRbRv9wUGrF",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "42498",
       "name": "Sim Hyon Sop",
       "partyType": "Individual",
@@ -2903,7 +2904,7 @@
     {
       "address": "THfLaNMBAMz7xXnHoz5BkRMmrwuHKqfAfR",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2917,7 +2918,7 @@
     {
       "address": "THJUJFyTnrBWb1ijWav7qfRBrjUuKgP49Z",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "58199",
       "name": "Al-Jebouri Zaid Issam Ahmed",
       "partyType": "Individual",
@@ -2930,7 +2931,7 @@
     {
       "address": "THPfLwEGvHVgRzi7EMnviAFy5WG1feDH1p",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2944,7 +2945,7 @@
     {
       "address": "THstQuwNidzC4YeJ7uPowf55ZdVZtGcHJ5",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2958,7 +2959,7 @@
     {
       "address": "TJCUwt9EKeTyzDw42658h8aYxQXScLdCZR",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -2972,7 +2973,7 @@
     {
       "address": "TJdgB1k6ot3f2nLuZug6D8eD3HavTmzmSK",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "4632",
       "name": "BANK MARKAZI JOMHOURI ISLAMI IRAN",
       "partyType": "Entity",
@@ -2988,7 +2989,7 @@
     {
       "address": "TJGVHmHVNuU1vsXGGALLoirPwoRZoMUuhg",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3002,7 +3003,7 @@
     {
       "address": "TJkBr9TZ1xBeJoF7RNWqyEMbYqVJ6fXXHR",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "36025",
       "name": "GARANTEX EUROPE OU",
       "partyType": "Entity",
@@ -3016,7 +3017,7 @@
     {
       "address": "TK17wfSPp32RWrnzZPrGpv7TxdNFvvvE2s",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "42498",
       "name": "Sim Hyon Sop",
       "partyType": "Individual",
@@ -3029,7 +3030,7 @@
     {
       "address": "TK7HUNru8YLMz7vv8kzWRPrE2ZSgZeCaHV",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3043,7 +3044,7 @@
     {
       "address": "TKX6rgpGpGrJWzf1qXUUSNL5cYHQt7Z9rY",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3057,7 +3058,7 @@
     {
       "address": "TL1k1U6SHohxBqb68kCodxHc9y2LXoDSep",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "55045",
       "name": "Grinex",
       "partyType": "Entity",
@@ -3070,7 +3071,7 @@
     {
       "address": "TL5WqcFX7XkhVLLwaXrdr57gnjC4stBeSG",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3084,7 +3085,7 @@
     {
       "address": "TLC3piEQ5n4tcULKHqLTGhmYFUyHUVSxck",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3098,7 +3099,7 @@
     {
       "address": "TLDtPq9PQsDuQunME8CSeVdYaLtRdrVgoJ",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3112,7 +3113,7 @@
     {
       "address": "TLFqEhiG7RUSZ9x5iph99Ke5782dkgRnWf",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3126,7 +3127,7 @@
     {
       "address": "TLj5ZRvem4DAdbZLTGU3qAbAdLQug57JVo",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3140,7 +3141,7 @@
     {
       "address": "TLoG3vbjDgqmTD5bM7w9rMgA6ysaNReuRy",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "58199",
       "name": "Al-Jebouri Zaid Issam Ahmed",
       "partyType": "Individual",
@@ -3153,7 +3154,7 @@
     {
       "address": "TLvuvpfBKdxddxSsJefeiGCe9eVY8HUroE",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "56865",
       "name": "Zedcex Exchange Ltd",
       "partyType": "Entity",
@@ -3168,7 +3169,7 @@
     {
       "address": "TMfDhpUqW5W6HcMPXFaJfaiY271CYa51Hs",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3182,7 +3183,7 @@
     {
       "address": "TMocScwSbSn2cqRCHVkzZSEar3Jk5AsXgo",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3196,7 +3197,7 @@
     {
       "address": "TMoMat6oyJLKxSb6SfQWBWc7q5PSm3Gr6U",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3210,7 +3211,7 @@
     {
       "address": "TMRxAJt87MVYnadWne53AxZFG1FPKGfoGz",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3224,7 +3225,7 @@
     {
       "address": "TMStbg5fgb4uTV7fK1gEYF9hKAzP3siPsG",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "45349",
       "name": "Wang Jiantong",
       "partyType": "Individual",
@@ -3237,7 +3238,7 @@
     {
       "address": "TMuBvwcgrTj6JysMmutXWaPjk1kREK2BDe",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3251,7 +3252,7 @@
     {
       "address": "TMuCgBejD5RsNANZdjGtaM3YyKGNgDoy7N",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "55045",
       "name": "Grinex",
       "partyType": "Entity",
@@ -3264,7 +3265,7 @@
     {
       "address": "TN56YaCBymut2xoiRvy3v2qZ2pYgmBAtSo",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3278,7 +3279,7 @@
     {
       "address": "TNDjh6WGLYyWmkh8vfu42bXVHUqFNQ3rDq",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "36025",
       "name": "GARANTEX EUROPE OU",
       "partyType": "Entity",
@@ -3292,7 +3293,7 @@
     {
       "address": "TNHNySUf8LMzhzSiQnHCXCbgatscQbM4ZQ",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3306,7 +3307,7 @@
     {
       "address": "TNiq9AXBp9EjUqhDhrwrfvAA8U3GUQZH81",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "4632",
       "name": "BANK MARKAZI JOMHOURI ISLAMI IRAN",
       "partyType": "Entity",
@@ -3322,7 +3323,7 @@
     {
       "address": "TNKyDgjn2WHZwHhH2Mj5AGMnK4moBX9xQd",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3336,7 +3337,7 @@
     {
       "address": "TNmKrdYLPtFwPNWJUjrXdkQw4gSwpszUJd",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3350,7 +3351,7 @@
     {
       "address": "TNmRfnSUXZoWWzxcDDbf95eGQYXt1mJDt8",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "53953",
       "name": "Funnull Technology Inc",
       "partyType": "Entity",
@@ -3363,7 +3364,7 @@
     {
       "address": "TNrX2FwrHKoo4XACGkmSzqeK4pdnKYn6Z7",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "57056",
       "name": "AMNOKGANG TECHNOLOGY DEVELOPMENT COMPANY",
       "partyType": "Entity",
@@ -3376,7 +3377,7 @@
     {
       "address": "TNsMJKvAtqiWntAnrcS8jkugL37FGzoqss",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3390,7 +3391,7 @@
     {
       "address": "TNTFhgFoKH4srBMiWbfrVFqP2AThSmdwf1",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "42498",
       "name": "Sim Hyon Sop",
       "partyType": "Individual",
@@ -3403,7 +3404,7 @@
     {
       "address": "TNuA5CQ6LB4jTHoNrjEeQZJmcmhQuHMbQ7",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "56865",
       "name": "Zedcex Exchange Ltd",
       "partyType": "Entity",
@@ -3418,7 +3419,7 @@
     {
       "address": "TNVbVXAgUT83Sv7E9oZwWutXqzs13sr6xN",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3432,7 +3433,7 @@
     {
       "address": "TNzvDTvcQTaY9jFrv85JnqibnGcudePj1z",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3446,7 +3447,7 @@
     {
       "address": "TNZxGWCwvsHr6JxQxzoeDXV597Yf7Zb7nV",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "55045",
       "name": "Grinex",
       "partyType": "Entity",
@@ -3459,7 +3460,7 @@
     {
       "address": "TPCnxv28xNbvtAaEppddvnfkjQpaFeAkV3",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3473,7 +3474,7 @@
     {
       "address": "TPcwqbJ3ViWMUQMiKfMjDM7VTiCzdRu1cH",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3487,7 +3488,7 @@
     {
       "address": "TPDLpXxPcaSsupEZ3yrVksmNkYP5SLeKxu",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "42498",
       "name": "Sim Hyon Sop",
       "partyType": "Individual",
@@ -3500,7 +3501,7 @@
     {
       "address": "TPgxjjB6AJeMSQFngbUM6dMMxPHa9GEtYa",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "58284",
       "name": "Kayvanpour Siavash",
       "partyType": "Individual",
@@ -3514,7 +3515,7 @@
     {
       "address": "TPH1ehJuNY8cRuJgWTXoGuzkVpK5ckueLF",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3528,7 +3529,7 @@
     {
       "address": "TPJ1JNX98MJpHueBJeF5SVSg85z8mYg1P1",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "56357",
       "name": "Wedding Ryan James",
       "partyType": "Individual",
@@ -3541,7 +3542,7 @@
     {
       "address": "TPkNp2Z5KiA1sLWpPMWsfNErVo2dHxc4iy",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3555,7 +3556,7 @@
     {
       "address": "TPnUDsrLYZg1UXGkpXSmhFEY5J5etfzE9S",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3569,7 +3570,7 @@
     {
       "address": "TPTFrDhx5tntyp5mRX423DaAe8aLDMUs31",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3583,7 +3584,7 @@
     {
       "address": "TPwjq8YuABThppKM5ppsuagBFwDhzpnY11",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3597,7 +3598,7 @@
     {
       "address": "TPyE2oSoaysrXfLzwf9wetBVr9JudLwjtD",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "58199",
       "name": "Al-Jebouri Zaid Issam Ahmed",
       "partyType": "Individual",
@@ -3610,7 +3611,7 @@
     {
       "address": "TQ5H49Wz3K57zNHmuXVp6uLzFwitxviABs",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "55502",
       "name": "ALIVAND Arash Estaki",
       "partyType": "Individual",
@@ -3624,7 +3625,7 @@
     {
       "address": "TQ8a74SiDig3EDSC14tosLACWLbvaNYwCJ",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3638,7 +3639,7 @@
     {
       "address": "TQb6Pc4PmfUdUokLq5ygNioj4PnodNak9b",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3652,7 +3653,7 @@
     {
       "address": "TQetJ6xMqvv2Fu4ftD9UdBhuaKem5HbMou",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3666,7 +3667,7 @@
     {
       "address": "TQt3dWHiPdaKioG7nwovoTDUtxfimyuxYa",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3680,7 +3681,7 @@
     {
       "address": "TQVZEuLHacexyJX3nZStaPzxceS63C9bax",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3694,7 +3695,7 @@
     {
       "address": "TR3yiEuFrbBnP8X5DKYFjRxCwbxcYyftD4",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3708,7 +3709,7 @@
     {
       "address": "TR83KsDjUKeds62PcAgo7BfhPJPSpMk7Ba",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3722,7 +3723,7 @@
     {
       "address": "TRakpsE1mZjCUMNPyozR4BW2ZtJsF7ZWFN",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "55502",
       "name": "ALIVAND Arash Estaki",
       "partyType": "Individual",
@@ -3736,7 +3737,7 @@
     {
       "address": "TRBACioxdrdsYEZHvJWiUDZcMdBPpEe5Ub",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "45391",
       "name": "Zhang Wei",
       "partyType": "Individual",
@@ -3749,7 +3750,7 @@
     {
       "address": "TRmrnQiUY1ofMcTQUXvgeauKcZPnmwUeUR",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3763,7 +3764,7 @@
     {
       "address": "TRqbVMHWck3j2vKzA16L69v3cwuoyQSY8L",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3777,7 +3778,7 @@
     {
       "address": "TRWDtgCfXzTcMv8W6iJxh6umeqeF3zG7n5",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3791,7 +3792,7 @@
     {
       "address": "TRZvMk2D4fmjGjtuZHRVpgw6yjk8NcjsHV",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3805,7 +3806,7 @@
     {
       "address": "TS729BUXeZWBhJGPKCdK75q7VU4nhkJkYT",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3819,7 +3820,7 @@
     {
       "address": "TSbGiFzG9xFXUYgGA6RwbS3jvKNpeA4c3R",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3833,7 +3834,7 @@
     {
       "address": "TScXZTbDjjZ6a6jiC7dZjgCqfNo4vm7atV",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "58199",
       "name": "Al-Jebouri Zaid Issam Ahmed",
       "partyType": "Individual",
@@ -3846,7 +3847,7 @@
     {
       "address": "TSE5NWTJckiN8hJCUzwB3RgsMbdF4uCrmr",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3860,7 +3861,7 @@
     {
       "address": "TSFCGGbR57b56c4MXdiW5gzpD8j6cmimgo",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3874,7 +3875,7 @@
     {
       "address": "TSi1d66cgg3cPm9L6c2ZD8K1381XusSjkc",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3888,7 +3889,7 @@
     {
       "address": "TSSQDgExKUELagzAKTAcoLMviq4SZ1eTFm",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3902,7 +3903,7 @@
     {
       "address": "TSxAAo67VTDgKT537EVXxdogkJtk9c6ojz",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "55484",
       "name": "DERAKHSHAN Alireza",
       "partyType": "Individual",
@@ -3916,7 +3917,7 @@
     {
       "address": "TTiDLWE6fZK8okMJv6ijg42yrH6W2pjSr9",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "4632",
       "name": "BANK MARKAZI JOMHOURI ISLAMI IRAN",
       "partyType": "Entity",
@@ -3932,7 +3933,7 @@
     {
       "address": "TTKnV2S1295UrPr7N67Tp9ykNL7xX2Z4Uj",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "45350",
       "name": "Xia Fengbing",
       "partyType": "Individual",
@@ -3945,7 +3946,7 @@
     {
       "address": "TTLRNgLpz5H5tLPuNU4FViUs7zmmAtyvzW",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "57978",
       "name": "Rashevskyi Dmytro",
       "partyType": "Individual",
@@ -3958,7 +3959,7 @@
     {
       "address": "TTrJwfL8SCSWBXWAPcZV8Pd5fZf1rznRhz",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3972,7 +3973,7 @@
     {
       "address": "TTs7KRq39547ruAsxb9brAPuTLy7h3U6H1",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -3986,7 +3987,7 @@
     {
       "address": "TTS9o5KkpGgH8cK9LofLmMAPYb5zfQvSNa",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "56865",
       "name": "Zedcex Exchange Ltd",
       "partyType": "Entity",
@@ -4001,7 +4002,7 @@
     {
       "address": "TTuDmNhu8A6koPJRUd8Q5RnsT1FMfrZnoj",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4015,7 +4016,7 @@
     {
       "address": "TTUDyVhhpCC1xJoPmWzdjLAzeoPwbSABdr",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "50641",
       "name": "Cryptex",
       "partyType": "Entity",
@@ -4029,7 +4030,7 @@
     {
       "address": "TTVJuXWCusAURrpNShiypauagEH1N4CrxV",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "58258",
       "name": "CRYPTO HOME DMCC",
       "partyType": "Entity",
@@ -4042,7 +4043,7 @@
     {
       "address": "TU4tDFRvcKhAZ1jdihojmBWZqvJhQCnJ4F",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "54566",
       "name": "Aeza Group LLC",
       "partyType": "Entity",
@@ -4056,7 +4057,7 @@
     {
       "address": "TU8hJXgHdxWuj4DaaBKQFUwDeB8B5Xacke",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4070,7 +4071,7 @@
     {
       "address": "TUa7BcRjT3eT7kPyNWPvHQkz4qF9v68D7A",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4084,7 +4085,7 @@
     {
       "address": "TUcjuVB6RFvsMgE352Kdc3VHvFvteti97B",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4098,7 +4099,7 @@
     {
       "address": "TUcNB6c22JmcwXbbbuv9HVPeVqv5HSiTwQ",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4112,7 +4113,7 @@
     {
       "address": "TUErmQ9GtRDGC4g4L5wjWS55Ju5hYfR3sa",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4126,7 +4127,7 @@
     {
       "address": "TUfq9hfP7qUDMoJbzkjG4GPtNxhZewqk8Z",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4140,7 +4141,7 @@
     {
       "address": "TUoixKFaWVsHxGWgnYyMzpkrT22YqU7VvH",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4154,7 +4155,7 @@
     {
       "address": "TUuaxBAWfA5nmsqNfycxYrzEvz4a5GJMGY",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "57975",
       "name": "First VPN Service",
       "partyType": "Entity",
@@ -4167,7 +4168,7 @@
     {
       "address": "TUyo1Kfnnjr2iMQdZxLWPX1U8Xiy1Wz5z5",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4181,7 +4182,7 @@
     {
       "address": "TV62LkiP1GiNdFCJEdY3xf6GdNLCCi6mfu",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4195,7 +4196,7 @@
     {
       "address": "TV6cvFEMcfxGsWqgxpBrXZ35MkhdtdhT3G",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4209,7 +4210,7 @@
     {
       "address": "TVgJTK9qPg7wGTyeTG2MYF8aKMEx883xYU",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4223,7 +4224,7 @@
     {
       "address": "TVgUsVzA7mpFExP4zS7HHbtKti6UuBDuwZ",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "58199",
       "name": "Al-Jebouri Zaid Issam Ahmed",
       "partyType": "Individual",
@@ -4236,7 +4237,7 @@
     {
       "address": "TVJ4B5R8c8dS65NtUXpZPMGUpCRq8BQUrC",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4250,7 +4251,7 @@
     {
       "address": "TVNyvx2astt2AB1Us67ENjfMZeEXZeiuu6",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "56357",
       "name": "Wedding Ryan James",
       "partyType": "Individual",
@@ -4263,7 +4264,7 @@
     {
       "address": "TVttWTHTCU9kULP51m9BaHpmCW8H1BJJNQ",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4277,7 +4278,7 @@
     {
       "address": "TVUS1CVQnnzoJG8PBWkcWyf7DkLrS8yh5Z",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4291,7 +4292,7 @@
     {
       "address": "TVXHp8bMrpRd5HGy3w1yu9f87qwRrMHFp8",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4305,7 +4306,7 @@
     {
       "address": "TVXP7Aj5KFUPKMQUrsU6F3wUsyiLiUaUje",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4319,7 +4320,7 @@
     {
       "address": "TW9mABkenngQyJBqce5khR9fNCBF5gsBFQ",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4333,7 +4334,7 @@
     {
       "address": "TWAfC6htS1FyFv1r3aKENuD8DQGMzBbP8L",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4347,7 +4348,7 @@
     {
       "address": "TWBqpQLDPCrXgRW1X9yFqR8NFfjyFSq5k4",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4361,7 +4362,7 @@
     {
       "address": "TWdqVcA3NyrNv71NgbMwKv3C5XMxj4XjSp",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4375,7 +4376,7 @@
     {
       "address": "TWoRwYzsifrD79DHDpTHC8fq787MvH9Qro",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4389,7 +4390,7 @@
     {
       "address": "TWumrtaEaPCv8Bs9mXqKkhY5sZVd78QAdS",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4403,7 +4404,7 @@
     {
       "address": "TWxoDF6qvjMUeTYRimaiARGsJTUnjrzZn3",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4417,7 +4418,7 @@
     {
       "address": "TX1zyMrYZNbtQx7yPZp4adZV5NbToGNrkS",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4431,7 +4432,7 @@
     {
       "address": "TXGHxdYbGy574z5hBu4LNzq9NzjZQ9bhUf",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "4632",
       "name": "BANK MARKAZI JOMHOURI ISLAMI IRAN",
       "partyType": "Entity",
@@ -4447,7 +4448,7 @@
     {
       "address": "TXgm2Pej4dHzh6oAJvaxAVFDevgGJqfSKr",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4461,7 +4462,7 @@
     {
       "address": "TXHb3BkGgYmygyS14MJKX8kTcFGT7dXN4r",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4475,7 +4476,7 @@
     {
       "address": "TXhf9nU9bjo1j9z5qEesHdr6gtdndfnA4T",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "42498",
       "name": "Sim Hyon Sop",
       "partyType": "Individual",
@@ -4488,7 +4489,7 @@
     {
       "address": "TXN3hVukebhyYR31YPCYd7aJAvmUeXu1ab",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "58287",
       "name": "SHPS Shelbit",
       "partyType": "Entity",
@@ -4501,7 +4502,7 @@
     {
       "address": "TXoVNrqm11FFVKcF1vEND64gibVkr1HwAR",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4515,7 +4516,7 @@
     {
       "address": "TXR1nhqAek4c5Dq9EfjQLarcBWR9Jp6N7m",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4529,7 +4530,7 @@
     {
       "address": "TXw4d7BseHBn6sneMUzm4nEdfPVjuJGEH9",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4543,7 +4544,7 @@
     {
       "address": "TYAiWf2KhXrGuWxmCPaJgC6zNYwFuKtioi",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4557,7 +4558,7 @@
     {
       "address": "TYDUutYN4YLKUPeT7TG27Yyqw6kNVLq9QZ",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "55502",
       "name": "ALIVAND Arash Estaki",
       "partyType": "Individual",
@@ -4571,7 +4572,7 @@
     {
       "address": "TYeQD2VddTZ9NkFkAnT9DD8cUGetGUQZB2",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "42498",
       "name": "Sim Hyon Sop",
       "partyType": "Individual",
@@ -4584,7 +4585,7 @@
     {
       "address": "TYvR9x3Dqx39s9rooaSAHwVwF8psBrcFBV",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4598,7 +4599,7 @@
     {
       "address": "TYVveapkRkm5RHcDNPU9QnPk8N5RdsS4iY",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "18647",
       "name": "ISIL Khorasan",
       "partyType": "Entity",
@@ -4612,7 +4613,7 @@
     {
       "address": "TZB4NrX7k9ZsV6PRc1GigAztLL8WHpLvwP",
       "currency": "TRX",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "57056",
       "name": "AMNOKGANG TECHNOLOGY DEVELOPMENT COMPANY",
       "partyType": "Entity",
@@ -4625,7 +4626,7 @@
     {
       "address": "0x983a81ca6FB1e441266D2FbcB7D8E530AC2E05A2",
       "currency": "USDC",
-      "chain": null,
+      "chain": "eth",
       "fixedRef": "45314",
       "name": "Valerian Labs, Inc.",
       "partyType": "Entity",
@@ -4638,7 +4639,7 @@
     {
       "address": "0xb6f5ec1a0a9cd1526536d3f0426c429529471f40",
       "currency": "USDC",
-      "chain": null,
+      "chain": "eth",
       "fixedRef": "43377",
       "name": "Kim Sang Man",
       "partyType": "Individual",
@@ -4651,7 +4652,7 @@
     {
       "address": "0x175d44451403Edf28469dF03A9280c1197ADb92c",
       "currency": "USDT",
-      "chain": null,
+      "chain": "eth",
       "fixedRef": "47635",
       "name": "Gaza Now",
       "partyType": "Entity",
@@ -4664,7 +4665,7 @@
     {
       "address": "0x19aa5fe80d33a56d56c78e82ea5e50e5d80b4dff",
       "currency": "USDT",
-      "chain": null,
+      "chain": "eth",
       "fixedRef": "33151",
       "name": "SUEX OTC, S.R.O.",
       "partyType": "Entity",
@@ -4677,7 +4678,7 @@
     {
       "address": "0x2f389ce8bd8ff92de3402ffce4691d17fc4f6535",
       "currency": "USDT",
-      "chain": null,
+      "chain": "eth",
       "fixedRef": "33151",
       "name": "SUEX OTC, S.R.O.",
       "partyType": "Entity",
@@ -4690,7 +4691,7 @@
     {
       "address": "0x38735f03b30FbC022DdD06ABED01F0Ca823C6a94",
       "currency": "USDT",
-      "chain": null,
+      "chain": "eth",
       "fixedRef": "43085",
       "name": "Hanafin John Desmond",
       "partyType": "Individual",
@@ -4703,7 +4704,7 @@
     {
       "address": "0x983a81ca6FB1e441266D2FbcB7D8E530AC2E05A2",
       "currency": "USDT",
-      "chain": null,
+      "chain": "eth",
       "fixedRef": "45314",
       "name": "Valerian Labs, Inc.",
       "partyType": "Entity",
@@ -4716,7 +4717,7 @@
     {
       "address": "0xb6f5ec1a0a9cd1526536d3f0426c429529471f40",
       "currency": "USDT",
-      "chain": null,
+      "chain": "eth",
       "fixedRef": "43377",
       "name": "Kim Sang Man",
       "partyType": "Individual",
@@ -4729,7 +4730,7 @@
     {
       "address": "0xfac583c0cf07ea434052c49115a4682172ab6b4f",
       "currency": "USDT",
-      "chain": null,
+      "chain": "eth",
       "fixedRef": "45404",
       "name": "Wang Mingming",
       "partyType": "Individual",
@@ -4742,7 +4743,7 @@
     {
       "address": "0xfec8a60023265364d066a1212fde3930f6ae8da7",
       "currency": "USDT",
-      "chain": null,
+      "chain": "eth",
       "fixedRef": "33858",
       "name": "Polyanin Yevgeniy Igorevich",
       "partyType": "Individual",
@@ -4847,7 +4848,7 @@
     {
       "address": "TA3941uFAvmVibSkQ6fMJXxmaSNovX86mz",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -4860,7 +4861,7 @@
     {
       "address": "TA39q3p75XRSWYAEaSF7dANtyksoa3sLge",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -4873,7 +4874,7 @@
     {
       "address": "TBATDh41qMQ1yeVYecneEvhpfayYmkAQWS",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -4886,7 +4887,7 @@
     {
       "address": "TBwghbQMsBC5xcUxE7ZpYXhfDMXZAfiFv6",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -4899,7 +4900,7 @@
     {
       "address": "TBWRDpQsW1ZVPGGaBAwVLNb7iqmVBuM1nj",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -4912,7 +4913,7 @@
     {
       "address": "TBYRhsZR7Mdn9ezpGVLwZiNVnGm8wZGLAD",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -4925,7 +4926,7 @@
     {
       "address": "TBZefVsyQpzzxc2WSCLbZBECvxVdzGqdtC",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -4938,7 +4939,7 @@
     {
       "address": "TC4VsFHJdZ66BdwobZxkudVZBVmQZgCP65",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "47664",
       "name": "Ansarallah",
       "partyType": "Entity",
@@ -4952,7 +4953,7 @@
     {
       "address": "TC5UNu3LGrjjVCuLNDdVgjm4oL5cQAyFRZ",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -4965,7 +4966,7 @@
     {
       "address": "TCA7AfTSuDmgYk2VaezfPuZF4Z4X8wxwcQ",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -4978,7 +4979,7 @@
     {
       "address": "TDdbRFoBTEmE3qiR69Y6rKRSG1hoF65QaE",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "52074",
       "name": "Chirkinyan Elena",
       "partyType": "Individual",
@@ -4991,7 +4992,7 @@
     {
       "address": "TDNKsLvsY2iSznyghddXz7ZDRc4X3191Z8",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5004,7 +5005,7 @@
     {
       "address": "TDprk9jeYPVm6khkBp1u7fwuyJcEJFrPWD",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "47664",
       "name": "Ansarallah",
       "partyType": "Entity",
@@ -5018,7 +5019,7 @@
     {
       "address": "TDwN1Eq62bqvVhfGAjdRRJjE46jsi5KNMV",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "47664",
       "name": "Ansarallah",
       "partyType": "Entity",
@@ -5032,7 +5033,7 @@
     {
       "address": "TE3mCcPULjPUE7ykX7RArDPAhyahoy3d2j",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5045,7 +5046,7 @@
     {
       "address": "TEAqwfMhXLaomXhZ8KeMhx3njGmQEDnsUR",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "45312",
       "name": "Shen Xingbiao",
       "partyType": "Individual",
@@ -5058,7 +5059,7 @@
     {
       "address": "TEFph7dZoUN5233cGEzF6XFwRpjPF8fQDS",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "45213",
       "name": "Gambashidze Ilya Andreevich",
       "partyType": "Individual",
@@ -5071,7 +5072,7 @@
     {
       "address": "TF4J8Gp7zbS8NA3HLuxsLdx7Ebzr6weCGn",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5084,7 +5085,7 @@
     {
       "address": "TFdHux43bs21qRsygv5WQWfgtbQeT6nXey",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5097,7 +5098,7 @@
     {
       "address": "TFFvv7NAWmbcVfA7QN81mMvUC25TWj1WJx",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "32171",
       "name": "Al-Jamal Sa'id Ahmad Muhammad",
       "partyType": "Individual",
@@ -5111,7 +5112,7 @@
     {
       "address": "TFrH3dcpnR3tADrAcfyJwiK4brsgf3B7PG",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5124,7 +5125,7 @@
     {
       "address": "TFurWgnyNMq9bhLrLoT9FGnrLfAL2BtR5R",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5137,7 +5138,7 @@
     {
       "address": "TGDaYNWFXi9HJ7NacfETF15vhUH7eRhKzt",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5150,7 +5151,7 @@
     {
       "address": "TGdpkwNVFjw2DnbHBCFKLvCygPVPz9w4iM",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5163,7 +5164,7 @@
     {
       "address": "TGJVc32ig2u8tQsYMLE7KXHT5NDQroaVNU",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "47635",
       "name": "Gaza Now",
       "partyType": "Entity",
@@ -5176,7 +5177,7 @@
     {
       "address": "TGKgLatirRpTugS6wgCUKerjLbzWKXAVqx",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5189,7 +5190,7 @@
     {
       "address": "TGMFaAXH15oaW8MpcNHLid6NbMKWaaNPdC",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5202,7 +5203,7 @@
     {
       "address": "TGpNzk9noyvCCdnFPuSg5cqptPs16LjXZq",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5215,7 +5216,7 @@
     {
       "address": "TGRZZsD8gxahF5oE6C7K8LLRHqQzoPa5bX",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5228,7 +5229,7 @@
     {
       "address": "TGUPpmW2bAnMCLe5ih2CFisfCHk4gTFDsx",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "47664",
       "name": "Ansarallah",
       "partyType": "Entity",
@@ -5242,7 +5243,7 @@
     {
       "address": "TH96tFMn8KGiYSLiwcV3E2UiaJc8jmcbz3",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "47635",
       "name": "Gaza Now",
       "partyType": "Entity",
@@ -5255,7 +5256,7 @@
     {
       "address": "THEQTsqPhRDDfgcfBW5npH5Lr9PZhpthrf",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5268,7 +5269,7 @@
     {
       "address": "THh5woR8qfmDsNknQ3agPYzQSiRtMnKsTh",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "32171",
       "name": "Al-Jamal Sa'id Ahmad Muhammad",
       "partyType": "Individual",
@@ -5282,7 +5283,7 @@
     {
       "address": "THHb5iMAbZgQYY19h6uY66y5xt6e11gcZC",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5295,7 +5296,7 @@
     {
       "address": "THob8vRrpDybXeqZDj8ukQhMjJVJ5nCbTW",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5308,7 +5309,7 @@
     {
       "address": "THUqqeevBQS3EYordDJKwp8DLFknesnfCD",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5321,7 +5322,7 @@
     {
       "address": "TJ812KESWjzJZGEWBPFCu74Js5zQS7jN5A",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5334,7 +5335,7 @@
     {
       "address": "TJBg9SxwiUUoqJGk18vK9avxkuV8GrKMK7",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5347,7 +5348,7 @@
     {
       "address": "TLM3zA3EWycoDX4ZX4gKze7sgfbdkntTum",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "50110",
       "name": "OBSHCHESTVO S OGRANICHENNOI OTVETSTVENNOSTYU KONSTRUKTORSKOE BYURO VOSTOK",
       "partyType": "Entity",
@@ -5360,7 +5361,7 @@
     {
       "address": "TLNRT524dzL5FF1nJHDhYEMFpeWjLjRbz1",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "32171",
       "name": "Al-Jamal Sa'id Ahmad Muhammad",
       "partyType": "Individual",
@@ -5374,7 +5375,7 @@
     {
       "address": "TLRMHPjLGXsVpD9RVzSfat6zDiVDrd4b4w",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5387,7 +5388,7 @@
     {
       "address": "TM6Kix9wH8cYQ4rLpFifsQ4ddH3rPX3f8p",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "47664",
       "name": "Ansarallah",
       "partyType": "Entity",
@@ -5401,7 +5402,7 @@
     {
       "address": "TMECKT19hfumcK3KqQKbhxkn1ohyeR58xu",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5414,7 +5415,7 @@
     {
       "address": "TMGLqRQ4twjW8wJhVH1mQR7nUThpGHUsN3",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "45213",
       "name": "Gambashidze Ilya Andreevich",
       "partyType": "Individual",
@@ -5427,7 +5428,7 @@
     {
       "address": "TMgnRWb9xFMtktny9Lzty21QYLLQD93ft6",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5440,7 +5441,7 @@
     {
       "address": "TMiSGhXXVsvJzqwGbwAsGiFxWg2eALZoM5",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5453,7 +5454,7 @@
     {
       "address": "TPcUZYthDfxNsHQnZZGBM1BDNBeNSjfPZE",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5466,7 +5467,7 @@
     {
       "address": "TPF9UQhqpV18BPWg5xo6MeB3h8t4iEg9gP",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5479,7 +5480,7 @@
     {
       "address": "TPo3JyryRcQ3uhBWexeYhtkpMitsUwY4uB",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5492,7 +5493,7 @@
     {
       "address": "TPPR7e8hGC57dexrE2jy1f94wtuGyVP6Dp",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5505,7 +5506,7 @@
     {
       "address": "TQ5mpZPbQMSq2s1vSM3RJgiB1AsTsiTpFZ",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "47664",
       "name": "Ansarallah",
       "partyType": "Entity",
@@ -5519,7 +5520,7 @@
     {
       "address": "TQKQ4ntejdYYJpuYkFz8oCSDoXW6RKRDdY",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5532,7 +5533,7 @@
     {
       "address": "TQthYM5nLqwAEr6DScC8tRtw29ncEB53mK",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5545,7 +5546,7 @@
     {
       "address": "TR18rEj7gWjKBJLYrowyfnvjWLTTsXGngK",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5558,7 +5559,7 @@
     {
       "address": "TRkGqvaobVp4XDNmSceRo5hDcJYDTFmYjd",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5571,7 +5572,7 @@
     {
       "address": "TTAHMdqoom4f2VTWniroPWQHcTRZ4caoH4",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "32171",
       "name": "Al-Jamal Sa'id Ahmad Muhammad",
       "partyType": "Individual",
@@ -5585,7 +5586,7 @@
     {
       "address": "TTct1DezYvriNWU7Wi3mygLoskkaw61mra",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5598,7 +5599,7 @@
     {
       "address": "TTgcTTNbNuFdbrhvbjMZVrdU5KALyzDaPw",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "47635",
       "name": "Gaza Now",
       "partyType": "Entity",
@@ -5611,7 +5612,7 @@
     {
       "address": "TTUqoT6EAmiM1xLvwVwxhjvjaoEUGtKDdZ",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5624,7 +5625,7 @@
     {
       "address": "TTzMs5AR66jr9mQMkWfCHVwd3AiLLYPepQ",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5637,7 +5638,7 @@
     {
       "address": "TUKsuPVb8kgJVFp5x528KC5HisUVdzxami",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5650,7 +5651,7 @@
     {
       "address": "TV5ZTpKDszLTF6XcMnPongS33pwBgF91by",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "32171",
       "name": "Al-Jamal Sa'id Ahmad Muhammad",
       "partyType": "Individual",
@@ -5664,7 +5665,7 @@
     {
       "address": "TVacWx7F5wgMgn49L5frDf9KLgdYy8nPHL",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "44445",
       "name": "Shafiu Ali",
       "partyType": "Individual",
@@ -5677,7 +5678,7 @@
     {
       "address": "TVDsEFm19zLV8HeXdt6G75rLroxnp6uqpV",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5690,7 +5691,7 @@
     {
       "address": "TVn4q7L4fKEPbygi7UHq1CKfZxtbeuMV5q",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "47664",
       "name": "Ansarallah",
       "partyType": "Entity",
@@ -5704,7 +5705,7 @@
     {
       "address": "TVu2SiQrWSnfwk8quAeDxfiaLy6FHzYkMA",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5717,7 +5718,7 @@
     {
       "address": "TVyiDQ25H6Rx6PcNV1WyjGasGSa8ehj1Uv",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5730,7 +5731,7 @@
     {
       "address": "TW3RgbhYkFEFnmRJ9mE9b83T9XYSMkjwuD",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5743,7 +5744,7 @@
     {
       "address": "TWBAPzpPiZarfVsY2BLXeaLhNHurn4wkWG",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "48302",
       "name": "AL-LAW Tawfiq Muhammad Sa'id",
       "partyType": "Individual",
@@ -5756,7 +5757,7 @@
     {
       "address": "TWwv8FQiES3yHGig7y3zJWYuPaZfSV3vmY",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5769,7 +5770,7 @@
     {
       "address": "TX5GV4DyfxNB3rPkzZJhmqZ1efVmL4rEqG",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "38665",
       "name": "Task Force Rusich",
       "partyType": "Entity",
@@ -5782,7 +5783,7 @@
     {
       "address": "TXc4kRiMEcdXRxWpSKkD5qKaARExN4uxPq",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5795,7 +5796,7 @@
     {
       "address": "TXEaKf4rT3rMoD3Vuqnuhwr6vLq6BL5t33",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "47664",
       "name": "Ansarallah",
       "partyType": "Entity",
@@ -5809,7 +5810,7 @@
     {
       "address": "TXEsK1sEsKjZ1xtHitnyAAoqw3WLdYdRNW",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "47635",
       "name": "Gaza Now",
       "partyType": "Entity",
@@ -5822,7 +5823,7 @@
     {
       "address": "TXFUYHVJMDyKikutvCG6qNgTUS5pxtZhHs",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5835,7 +5836,7 @@
     {
       "address": "TYD6a4PAAfAgegEdDf9oZUnW4DFmS8jeFT",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5848,7 +5849,7 @@
     {
       "address": "TYK29mbyvVxLaLUKdFSTRADMwoxaVbVZQg",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",
@@ -5861,7 +5862,7 @@
     {
       "address": "TYxwUhoLPF7AgfG9GaXFEp8CQi8K8KG1m3",
       "currency": "USDT",
-      "chain": null,
+      "chain": "tron",
       "fixedRef": "22985",
       "name": "CHEIL CREDIT BANK",
       "partyType": "Entity",

@@ -12,11 +12,38 @@ import type { ChainStats } from "@/lib/types";
 export function ChainStatsCard({ stats }: { stats: ChainStats }) {
   const meta = CHAINS[stats.chain];
   const t = useT().ui.dashboard;
-  const isBtc = stats.chain === "btc";
-  // The series is fixed per chain, so it is translated here rather than by
-  // making the cached stats endpoint locale-aware for two labels.
-  const seriesLabel = isBtc ? t.seriesBtc : t.seriesEth;
-  const seriesUnit = isBtc ? t.unitBtc : t.unitEth;
+  // Per-chain copy and colour, in one place. A lookup rather than a chain of
+  // ternaries: the binary form quietly gave every chain that was not Bitcoin
+  // Ethereum's labels, which was correct only while there were two of them.
+  const byChain = {
+    btc: {
+      series: t.seriesBtc,
+      unit: t.unitBtc,
+      throughput: t.mempool,
+      throughputValue: stats.mempoolSize,
+      throughputHint: t.unconfirmedTxs,
+      feeHint: t.avgFeeHintBtc,
+      colour: "var(--accent)",
+    },
+    eth: {
+      series: t.seriesEth,
+      unit: t.unitEth,
+      throughput: t.txsToday,
+      throughputValue: stats.txCount24h,
+      throughputHint: t.last24h,
+      feeHint: t.avgFeeHintEth,
+      colour: "var(--secondary)",
+    },
+    tron: {
+      series: t.seriesTron,
+      unit: t.unitTron,
+      throughput: t.txsToday,
+      throughputValue: stats.txCount24h,
+      throughputHint: t.last24h,
+      feeHint: t.avgFeeHintTron,
+      colour: "var(--primary)",
+    },
+  }[stats.chain];
 
   return (
     <Panel
@@ -47,36 +74,39 @@ export function ChainStatsCard({ stats }: { stats: ChainStats }) {
           value={formatNumber(stats.blockHeight)}
         />
         <StatTile
-          label={isBtc ? t.mempool : t.txsToday}
+          label={byChain.throughput}
           icon={<Activity className="size-3" aria-hidden="true" />}
-          value={formatNumber(
-            stats.chain === "btc" ? stats.mempoolSize : stats.txCount24h,
-            true,
-          )}
-          secondary={isBtc ? t.unconfirmedTxs : t.last24h}
+          value={formatNumber(byChain.throughputValue, true)}
+          secondary={byChain.throughputHint}
         />
         <StatTile
           label={t.avgFee}
           icon={<Fuel className="size-3" aria-hidden="true" />}
           value={stats.avgFee ? formatUsd(stats.avgFee.usd) : "—"}
           secondary={stats.avgFee ? formatCoin(stats.avgFee, stats.chain) : undefined}
-          hint={
-            isBtc ? t.avgFeeHintBtc : t.avgFeeHintEth
-          }
+          hint={byChain.feeHint}
         />
       </div>
 
+      {/* A chain with no published series gets a line saying so rather than an
+          empty chart frame, which reads as a failed fetch. */}
       <div className="mt-4">
         <p className="mb-1 text-[11px] font-medium uppercase tracking-wide text-foreground-muted">
-          {seriesLabel}
+          {byChain.series}
         </p>
-        <TrendChartLazy
-          points={stats.series}
-          label={seriesLabel}
-          unit={seriesUnit}
-          color={stats.chain === "btc" ? "var(--accent)" : "var(--secondary)"}
-          height={180}
-        />
+        {stats.series.length ? (
+          <TrendChartLazy
+            points={stats.series}
+            label={byChain.series}
+            unit={byChain.unit}
+            color={byChain.colour}
+            height={180}
+          />
+        ) : (
+          <p className="flex h-[180px] items-center justify-center text-xs text-foreground-muted">
+            {t.noSeries}
+          </p>
+        )}
       </div>
     </Panel>
   );
