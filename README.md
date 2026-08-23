@@ -190,8 +190,10 @@ npm run sync:labels -- --dry             # parse and report, write nothing
 [`scripts/sync-labels.mts`](scripts/sync-labels.mts) writes
 `data/actor-labels.json.gz`. The current standard snapshot carries **428,452
 addresses across 13,563 labels and 477 named actors** - exchanges, mining pools,
-mixers, gambling, DeFi, tokens and custodial services, on BTC and ETH. The TRON
-addresses in it are sanctions designations rather than actor labels.
+mixers, gambling, DeFi, tokens and custodial services. TRON coverage is thin by
+comparison — 197 addresses, mostly token contracts, with 27 exchange addresses
+and the 12 named super representatives — but it is enough for the service-hub
+suppression and known-service de-weighting to work there.
 [`data/actor-labels.summary.md`](data/actor-labels.summary.md) is regenerated
 beside it with the counts, per-source deltas and upstream revisions.
 

@@ -64,7 +64,7 @@ const TOTAL_LIMIT: Record<Profile, number> = {
   full: Number.POSITIVE_INFINITY,
 };
 
-const SUPPORTED_CHAINS = new Set(["btc", "eth"]);
+const SUPPORTED_CHAINS = new Set(["btc", "eth", "tron"]);
 
 /* ------------------------------------------------------------------ types */
 
@@ -203,6 +203,7 @@ function normaliseCurrency(value: string | undefined): string | null {
   const code = value.trim().toUpperCase();
   if (code === "BTC" || code === "XBT") return "btc";
   if (code === "ETH") return "eth";
+  if (code === "TRX") return "tron";
   return code.toLowerCase();
 }
 
@@ -460,6 +461,103 @@ async function loadTrustWalletTokens(): Promise<{ labels: RawLabel[]; version: s
   };
 }
 
+/* ------------------------------------------------------------ trust wallet tron */
+
+/**
+ * TRON attribution from the same Trust Wallet registry, which covers the chain
+ * in two places the Ethereum token list does not reach.
+ *
+ * `blockchains/tron/assets/<contract>/info.json` holds TRC-20 contracts, keyed
+ * by their Base58 address. Roughly half the folders there are TRC-10 tokens
+ * keyed by a numeric id instead, and those are skipped: a numeric id is not an
+ * address and cannot be screened against one.
+ *
+ * `validators/list.json` names the super representatives. It is a short list,
+ * but the entries are real organisations — Binance and InfStones among them —
+ * and on a chain with no other actor attribution a dozen named entities is
+ * worth more than its size suggests.
+ */
+async function loadTrustWalletTron(): Promise<{ labels: RawLabel[]; version: string | null }> {
+  const labels: RawLabel[] = [];
+  const base = "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/tron";
+
+  /* validators */
+  const validators = await fetch(`${base}/validators/list.json`, {
+    headers: { "user-agent": USER_AGENT },
+  })
+    .then((response) => (response.ok ? response.json() : []))
+    .catch(() => []);
+
+  for (const validator of (validators as { id?: string; name?: string }[]) ?? []) {
+    if (!validator.id || !validator.name) continue;
+    if (!/^T[1-9A-HJ-NP-Za-km-z]{33}$/.test(validator.id)) continue;
+    labels.push({
+      chain: "tron",
+      address: validator.id,
+      label: validator.name,
+      // A super representative produces blocks and is voted for; the closest
+      // category this app renders is the one it uses for block producers.
+      category: "mining-pool",
+      actorId: null,
+      confidence: 0.85,
+      source: "trustwallet-assets",
+      pack: "tron/validators",
+      reference: "https://github.com/trustwallet/assets",
+    });
+  }
+
+  /* TRC-20 contracts, listed through the git tree so the folder names arrive in
+     one request rather than by crawling the directory. */
+  const tree = (await fetch(
+    "https://api.github.com/repos/trustwallet/assets/git/trees/master?recursive=1",
+    { headers: { "user-agent": USER_AGENT, accept: "application/vnd.github+json" } },
+  )
+    .then((response) => (response.ok ? response.json() : null))
+    .catch(() => null)) as { tree?: { path: string }[] } | null;
+
+  const contracts = (tree?.tree ?? [])
+    .map((entry) => entry.path)
+    .filter((path) => /^blockchains\/tron\/assets\/T[1-9A-HJ-NP-Za-km-z]{33}\/info\.json$/.test(path))
+    .map((path) => path.split("/")[3]);
+
+  // Bounded concurrency: one request per contract against a public raw host, so
+  // this stays polite rather than fast.
+  const CONCURRENCY = 8;
+  let cursor = 0;
+  await Promise.all(
+    Array.from({ length: Math.min(CONCURRENCY, contracts.length) }, async () => {
+      while (cursor < contracts.length) {
+        const contract = contracts[cursor++];
+        const info = (await fetch(`${base}/assets/${contract}/info.json`, {
+          headers: { "user-agent": USER_AGENT },
+        })
+          .then((response) => (response.ok ? response.json() : null))
+          .catch(() => null)) as
+          | { name?: string; symbol?: string; type?: string; status?: string }
+          | null;
+        if (!info?.name) continue;
+        // A delisted or abandoned token is still an identifier worth resolving,
+        // but it is not the same claim as an active one.
+        if (info.status && info.status !== "active") continue;
+        labels.push({
+          chain: "tron",
+          address: contract,
+          label:
+            info.symbol && info.symbol !== info.name ? `${info.name} (${info.symbol})` : info.name,
+          category: "token",
+          actorId: null,
+          confidence: 0.85,
+          source: "trustwallet-assets",
+          pack: "tron/assets",
+          reference: "https://github.com/trustwallet/assets",
+        });
+      }
+    }),
+  );
+
+  return { labels, version: null };
+}
+
 /* ------------------------------------------------------ safe deployments */
 
 /** Every Safe proxy on Ethereum is created by these factories and delegates to
@@ -575,11 +673,13 @@ async function loadEthereumLists(
 
 /* ------------------------------------------------------------- assembly */
 
-/** Ethereum hex and Bitcoin bech32 are case-insensitive; Bitcoin base58 is not,
- *  and folding it would key an address the source never published. */
+/** Ethereum hex and Bitcoin bech32 are case-insensitive; Bitcoin base58 and
+ *  TRON Base58Check are not, and folding either would key an address the source
+ *  never published. Must stay identical to `indexKey` in `src/lib/tags/actors.ts`. */
 function indexKey(chain: string, address: string): string {
   const value = address.trim();
   if (chain === "eth") return value.toLowerCase();
+  if (chain === "tron") return value;
   if (/^(bc1|tb1)/i.test(value)) return value.toLowerCase();
   return value;
 }
@@ -603,9 +703,11 @@ function buildSnapshot(
 
   const labelIndex = new Map<string, number>();
   const labels: SnapshotLabel[] = [];
-  const addresses: Record<string, Record<string, number>> = { btc: {}, eth: {} };
+  const addresses: Record<string, Record<string, number>> = { btc: {}, eth: {}, tron: {} };
 
   const byChain: Record<string, number> = {};
+  /** Chains a loader produced that this snapshot has no bucket for. */
+  const unknownChains = new Map<string, number>();
   const byCategory: Record<string, number> = {};
   const sourceCounts = new Map<SourceId, number>();
 
@@ -637,7 +739,14 @@ function buildSnapshot(
       continue;
     }
     const bucket = addresses[raw.chain];
-    if (!bucket) continue;
+    if (!bucket) {
+      // A loader emitted a chain with no bucket. This used to fall through
+      // silently, which is how 167 TRON labels were collected, counted in the
+      // console line and then dropped without a word — exactly the failure this
+      // script's own reporting exists to prevent.
+      unknownChains.set(raw.chain, (unknownChains.get(raw.chain) ?? 0) + 1);
+      continue;
+    }
     const key = indexKey(raw.chain, raw.address);
     if (key in bucket) continue;
 
@@ -688,6 +797,10 @@ function buildSnapshot(
   }
   for (const label of labels) {
     label.actor = label.actor == null ? null : (remap.get(label.actor) ?? null);
+  }
+
+  for (const [chain, dropped] of unknownChains) {
+    skipped.push({ pack: `chain:${chain}`, reason: "no address bucket for this chain", dropped });
   }
 
   return {
@@ -835,6 +948,11 @@ async function main() {
   collect(labels, twTokens.labels);
   versions.set("trustwallet-assets", twTokens.version);
   console.log(`${twTokens.labels.length} labels @ ${twTokens.version ?? "?"}`);
+
+  process.stdout.write("- Trust Wallet TRON ... ");
+  const twTron = await loadTrustWalletTron();
+  collect(labels, twTron.labels);
+  console.log(`${twTron.labels.length} labels`);
 
   process.stdout.write("- Safe deployments ... ");
   const safe = await loadSafeDeployments();

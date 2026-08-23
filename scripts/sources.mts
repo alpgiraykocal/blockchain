@@ -61,6 +61,8 @@ export const SOURCES: Record<SourceId, SourceDefinition> = {
     licence: "MIT",
     attribution: "Trust Wallet contributors, MIT licence",
     redistributable: true,
+    note:
+      "Read for three things: the Ethereum token list, TRC-20 contracts under blockchains/tron/assets, and the TRON super representatives. Half the TRON asset folders are keyed by a numeric TRC-10 id rather than an address and are skipped, since a numeric id cannot be screened against one.",
   },
   "safe-deployments": {
     id: "safe-deployments",

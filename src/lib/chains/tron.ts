@@ -33,6 +33,31 @@ interface TrxAccount {
   address?: string;
   balance?: number;
   trc20?: Record<string, string>[];
+  /** On-chain account name, hex-encoded. Optional and self-declared. */
+  account_name?: string;
+  type?: string;
+}
+
+/**
+ * The name an account set for itself on chain.
+ *
+ * TRON lets an account carry a name in its own state, and the ones that matter
+ * generally use it: the USDT contract answers "TetherToken", Binance's
+ * validator "Binance Staking". It arrives hex-encoded.
+ *
+ * Self-declared, so it is attribution of the weakest kind — anyone may name
+ * their account anything, including someone else's brand. It is surfaced the
+ * same way Blockscout's `name` is on Ethereum, as a low-confidence explorer
+ * label that sits beside the tag packs rather than above them.
+ */
+function accountName(account: TrxAccount | undefined): string | null {
+  const hex = account?.account_name;
+  if (!hex || !/^[0-9a-fA-F]+$/.test(hex) || hex.length % 2) return null;
+  const decoded = Buffer.from(hex, "hex").toString("utf8").trim();
+  // Reject anything with control characters or replacement marks: a field that
+  // did not hold text should produce no label rather than mojibake.
+  if (!decoded || /[\u0000-\u001f\ufffd]/.test(decoded)) return null;
+  return decoded.slice(0, 64);
 }
 
 interface Trc20Transfer {
@@ -268,8 +293,8 @@ export const tronAdapter: ChainAdapter = {
           receivedRaw,
           sentRaw,
           txCount: transfers.length,
-          isContract: false,
-          label: null,
+          isContract: info?.type === "Contract",
+          label: accountName(info),
           publicTags: [],
           firstSeen: timestamps[0] ?? null,
           lastSeen: timestamps[timestamps.length - 1] ?? null,
@@ -331,8 +356,8 @@ export const tronAdapter: ChainAdapter = {
         receivedRaw,
         sentRaw,
         txCount: movements.length,
-        isContract: false,
-        label: null,
+        isContract: info?.type === "Contract",
+        label: accountName(info),
         publicTags: [],
         firstSeen: timestamps[0] ?? null,
         lastSeen: timestamps[timestamps.length - 1] ?? null,
