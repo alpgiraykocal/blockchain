@@ -1,6 +1,7 @@
 import type { NeighborRow } from "../analysis";
 import { formatCoin, formatDate, formatNumber, makeValue } from "../format";
-import type { AddressSummary, ChainId, Tag, Transaction } from "../types";
+import type { Impersonation } from "../chains/homoglyph";
+import type { AddressSummary, AssetId, ChainId, Tag, Transaction } from "../types";
 import type { AmlCopy } from "./copy";
 import { pct } from "./metrics";
 import type { Evidence, EgoMetrics, TypologyFinding, TypologyId } from "./types";
@@ -22,12 +23,16 @@ const DAY_MS = 86_400_000;
 
 export interface TypologyInput {
   chain: ChainId;
+  /** Asset the figures are denominated in; the native coin by default. */
+  asset: AssetId;
   address: AddressSummary;
   transactions: Transaction[];
   neighbors: NeighborRow[];
   metrics: EgoMetrics;
   /** Cluster members that a second hop returned to, when a 2-hop walk ran. */
   returnPaths: { via: string; back: string }[];
+  /** Tokens imitating a known asset's symbol from a different contract. */
+  impersonators: Impersonation[];
   /** True when the subject itself is a tagged exchange, pool, token or bridge. */
   subjectIsKnownService: boolean;
   windowComplete: boolean;
@@ -78,7 +83,7 @@ function sanctionsExposure(input: TypologyInput): TypologyFinding {
 
   for (const row of exposed.slice(0, 5)) {
     const tag = row.node.tags.find((t) => t.abuse === "sanctions")!;
-    const amount = t.amount(formatCoin(row.link.value, input.chain), row.link.txCount);
+    const amount = t.amount(formatCoin(row.link.value, input.asset), row.link.txCount);
     evidence.push(
       attribution(
         row.direction === "out" ? t.evSentTo(tag.label) : t.evReceivedFrom(tag.label),
@@ -149,7 +154,7 @@ function mixerExposure(input: TypologyInput): TypologyFinding {
         row.direction === "in"
           ? t.evReceivedFrom(row.node.label ?? t.fallbackLabel)
           : t.evSentTo(row.node.label ?? t.fallbackLabel),
-        t.evDetail(formatCoin(row.link.value, input.chain), row.link.txCount),
+        t.evDetail(formatCoin(row.link.value, input.asset), row.link.txCount),
       ),
     );
   }
@@ -244,7 +249,7 @@ function rapidPassThrough(input: TypologyInput): TypologyFinding {
         t.evNothingRetained,
         t.evNothingRetainedDetail(
           pct(metrics.passThroughRatio, 1),
-          formatCoin(input.address.balance, input.chain),
+          formatCoin(input.address.balance, input.asset),
         ),
       ),
       derived(t.evShortDwell, t.evShortDwellDetail(dwell!.toFixed(1))),
@@ -490,7 +495,7 @@ function offGraphContinuation(input: TypologyInput): TypologyFinding {
     evidence: exits.slice(0, 5).map((row) =>
       attribution(
         t.evExit(row.node.label ?? t.fallbackLabel),
-        t.evExitDetail(formatCoin(row.link.value, input.chain), row.link.txCount),
+        t.evExitDetail(formatCoin(row.link.value, input.asset), row.link.txCount),
       ),
     ),
     counterIndicators: matched
@@ -603,14 +608,14 @@ function chainHopping(input: TypologyInput): TypologyFinding {
   const evidence: Evidence[] = [];
   if (matched) {
     evidence.push(
-      derived(t.evShare, t.evShareDetail(pct(share), formatCoin(makeValue(bridgeRaw, input.chain, null), input.chain))),
+      derived(t.evShare, t.evShareDetail(pct(share), formatCoin(makeValue(bridgeRaw, input.chain, null), input.asset))),
       derived(t.evVenues, t.evVenuesDetail(venues, transfers)),
     );
     for (const row of bridges.slice(0, 4)) {
       evidence.push(
         attribution(
           t.evBridge(row.node.label ?? t.fallbackLabel),
-          t.evBridgeDetail(formatCoin(row.link.value, input.chain), row.link.txCount),
+          t.evBridgeDetail(formatCoin(row.link.value, input.asset), row.link.txCount),
         ),
       );
     }
@@ -629,6 +634,46 @@ function chainHopping(input: TypologyInput): TypologyFinding {
     counterIndicators: matched
       ? [t.counterOrdinary, t.counterService, t.counterDestination, t.counterCoverage]
       : [],
+  };
+}
+
+/**
+ * Tokens impersonating a known asset.
+ *
+ * A contract's symbol is whatever its deployer typed, and nothing stops one
+ * calling itself USDT. The ones caught here reach for lookalike characters — a
+ * Cyrillic Ѕ, a dotted Ḍ — so they render as the real symbol to a reader and
+ * sort beside it in any list keyed on the symbol rather than the address.
+ *
+ * Like dusting, this is done to an address rather than by it, and it carries no
+ * weight. It is here because it changes how the rest of the page should be
+ * read: a balance or a counterparty that looks like a stablecoin position may
+ * be a worthless token bought for the sole purpose of looking like one, and an
+ * analyst who acts on the symbol will act on the wrong thing.
+ */
+function tokenImpersonation(input: TypologyInput): TypologyFinding {
+  const t = input.copy.typology.impersonation;
+  const found = input.impersonators;
+  const matched = found.length > 0;
+
+  return {
+    id: "token-impersonation",
+    title: t.title,
+    family: t.family,
+    stage: "unclear",
+    matched,
+    strength: "supporting",
+    weight: 0,
+    summary: matched
+      ? t.summaryMatched(found.length, found[0].imitates)
+      : t.summaryNone,
+    evidence: found.slice(0, 5).map((entry) =>
+      observed(
+        t.evToken(entry.symbol, entry.imitates),
+        t.evTokenDetail(entry.contract, entry.transfers),
+      ),
+    ),
+    counterIndicators: matched ? [t.counterNotConduct, t.counterAddressOnly, t.counterCoverage] : [],
   };
 }
 
@@ -669,6 +714,7 @@ export function detectTypologies(input: TypologyInput): TypologyFinding[] {
     offGraphContinuation(input),
     inboundDusting(input),
     chainHopping(input),
+    tokenImpersonation(input),
   ];
 
   // Structural typologies describe the shape of a service as accurately as they

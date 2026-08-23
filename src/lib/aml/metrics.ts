@@ -1,6 +1,6 @@
 import type { NeighborRow } from "../analysis";
 import { makeValue } from "../format";
-import type { ChainId, Transaction } from "../types";
+import type { AssetId, ChainId, Transaction } from "../types";
 import type { EgoMetrics } from "./types";
 
 /**
@@ -67,6 +67,8 @@ function burstScore(transactions: Transaction[]): number {
 
 export interface MetricsInput {
   chain: ChainId;
+  /** Asset the volumes are denominated in; the native coin by default. */
+  asset?: AssetId;
   transactions: Transaction[];
   neighbors: NeighborRow[];
   priceUsd: number | null;
@@ -76,6 +78,7 @@ export interface MetricsInput {
 
 export function computeMetrics(input: MetricsInput): EgoMetrics {
   const { chain, transactions, neighbors, priceUsd } = input;
+  const asset: AssetId = input.asset ?? chain;
 
   const inbound = neighbors.filter((row) => row.direction === "in");
   const outbound = neighbors.filter((row) => row.direction === "out");
@@ -139,8 +142,8 @@ export function computeMetrics(input: MetricsInput): EgoMetrics {
     degree,
     inDegree: inbound.length,
     outDegree: outbound.length,
-    inVolume: makeValue(inRaw, chain, priceUsd),
-    outVolume: makeValue(outRaw, chain, priceUsd),
+    inVolume: makeValue(inRaw, asset, priceUsd),
+    outVolume: makeValue(outRaw, asset, priceUsd),
     fanInRatio: degree ? inbound.length / degree : 0,
     fanOutRatio: degree ? outbound.length / degree : 0,
     passThroughRatio,

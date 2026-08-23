@@ -1,6 +1,6 @@
 import { levelFor } from "../risk";
 import { formatCoin } from "../format";
-import type { AddressSummary, ChainId } from "../types";
+import type { AddressSummary, AssetId, ChainId } from "../types";
 import { pct } from "./metrics";
 import type { AmlCopy } from "./copy";
 import type { Disposition, EgoMetrics, TypologyFinding } from "./types";
@@ -15,6 +15,8 @@ import type { Disposition, EgoMetrics, TypologyFinding } from "./types";
 
 export interface DispositionInput {
   chain: ChainId;
+  /** Asset the amounts quoted in mitigants are denominated in. */
+  asset: AssetId;
   address: AddressSummary;
   metrics: EgoMetrics;
   findings: TypologyFinding[];
@@ -67,7 +69,7 @@ export function decideDisposition(input: DispositionInput): Disposition {
     mitigants.push(t.mitigantAttributed(pct(input.metrics.attributedRatio)));
   }
   if (input.address.balance.coin > 0 && input.metrics.passThroughRatio < 0.6) {
-    mitigants.push(t.mitigantRetains(formatCoin(input.address.balance, input.chain)));
+    mitigants.push(t.mitigantRetains(formatCoin(input.address.balance, input.asset)));
   }
   for (const finding of weighted.slice(0, 3)) {
     for (const counter of finding.counterIndicators.slice(0, 1)) mitigants.push(counter);

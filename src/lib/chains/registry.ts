@@ -1,4 +1,4 @@
-import type { ChainId, ChainMeta } from "../types";
+import type { AssetId, AssetMeta, ChainId, ChainMeta } from "../types";
 
 export const CHAINS: Record<ChainId, ChainMeta> = {
   btc: {
@@ -45,4 +45,50 @@ export function isValidAddress(chain: ChainId, address: string): boolean {
   const value = address.trim();
   if (chain === "eth") return ETH_HEX.test(value) || ETH_ENS.test(value);
   return BTC_BECH32.test(value) || BTC_BASE58.test(value);
+}
+
+/**
+ * Assets an analysis can be run over.
+ *
+ * `AssetId` is deliberately a superset of `ChainId`: a chain's native asset is
+ * keyed by the chain's own id, so anything that already passes a chain where an
+ * asset is wanted keeps working and keeps meaning the same thing. Only the
+ * tokens need new ids.
+ *
+ * A token is identified by its contract address and never by its symbol. On a
+ * single page of Tether's own transfers there were four separate contracts
+ * calling themselves USDT through Unicode lookalikes - Cyrillic Ѕ and Т, an
+ * accented Ú, a dotted Ḍ. Matching on the symbol would merge those scams into
+ * the real balance.
+ */
+export const ASSETS: Record<AssetId, AssetMeta> = {
+  btc: { id: "btc", chain: "btc", symbol: "BTC", name: "Bitcoin", decimals: 8, kind: "native" },
+  eth: { id: "eth", chain: "eth", symbol: "ETH", name: "Ether", decimals: 18, kind: "native" },
+  "usdt-eth": {
+    id: "usdt-eth",
+    chain: "eth",
+    symbol: "USDT",
+    name: "Tether USD",
+    decimals: 6,
+    kind: "erc20",
+    contract: "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+  },
+};
+
+export const ASSET_IDS = Object.keys(ASSETS) as AssetId[];
+
+export function isAssetId(value: string): value is AssetId {
+  return value in ASSETS;
+}
+
+/** Assets that can be analysed on a chain, native first. */
+export function assetsFor(chain: ChainId): AssetMeta[] {
+  return ASSET_IDS.map((id) => ASSETS[id])
+    .filter((asset) => asset.chain === chain)
+    .sort((a, b) => (a.kind === b.kind ? 0 : a.kind === "native" ? -1 : 1));
+}
+
+/** The native asset of a chain — the default subject of any analysis. */
+export function nativeAsset(chain: ChainId): AssetId {
+  return chain;
 }

@@ -453,6 +453,22 @@ export const aml: Dictionary["aml"] = {
         "Bu noktadan öteye gitmek, daha fazla zincir üstü analiz değil, alıcı kuruma yapılacak bir talep gerektirir.",
     },
 
+    impersonation: {
+      title: "Bilinen bir varlığı taklit eden token",
+      family: "Atıf saldırısı / adres zehirleme",
+      summaryMatched: (count: number, imitates: string) =>
+        `Bu adrese ulaşan ${count} token, farklı bir kontrattan çıkmasına rağmen ${imitates} gibi görünüyor. Gerçek sembolle aynı görüntüleniyor ve listelerde onun yanına diziliyor.`,
+      summaryNone: "İncelenen pencerede bilinen bir varlığın sembolünü taklit eden token yok.",
+      evToken: (symbol: string, imitates: string) => `"${symbol}", ${imitates} gibi görünüyor`,
+      evTokenDetail: (contract: string, transfers: number) =>
+        `${contract} tarafından çıkarılmış; bu, gerçek kontrat değil. İncelenen pencerede ${transfers} transfer.`,
+      counterNotConduct:
+        "Böyle bir token almak, adres sahibinin davranışı değildir. Herkes izinsiz olarak herhangi bir adrese herhangi bir token gönderebilir.",
+      counterAddressOnly:
+        "Bu sayfadaki bakiyeler ve bulgular kontrat adresine sabitlenmiştir, yani taklitler onlara dahil değildir. Risk, başka bir yerde sembole göre eşleştirme yapan okuyucu içindir.",
+      counterCoverage:
+        "Yalnız bu uygulamanın tanıdığı varlıklar görülebilir biçimde taklit edilebilir. Yüklü kümenin dışındaki bir şeyi taklit eden token bulgu üretmez.",
+    },
     chainHopping: {
       title: "Köprülerle zincir atlama",
       family: "Zincirler arası katmanlama",

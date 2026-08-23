@@ -1,4 +1,4 @@
-import type { ChainId, RiskLevel, Tag, Value } from "../types";
+import type { AssetId, ChainId, RiskLevel, Tag, Value } from "../types";
 
 /**
  * Types for the AML/CTF investigation layer.
@@ -26,7 +26,8 @@ export type TypologyId =
   | "round-tripping"
   | "off-graph-continuation"
   | "dusting-inbound"
-  | "chain-hopping";
+  | "chain-hopping"
+  | "token-impersonation";
 
 export type FindingStrength = "indicative" | "supporting" | "weak";
 
@@ -202,7 +203,7 @@ export interface EgoNetwork {
 export interface AuditRecord {
   assessmentId: string;
   generatedAt: string;
-  subject: { chain: ChainId; address: string; entityId: string | null };
+  subject: { chain: ChainId; asset: AssetId; address: string; entityId: string | null };
   layoutVersion: string;
   engineVersion: string;
   filters: EgoFilters;
@@ -225,6 +226,8 @@ export interface AuditRecord {
 export interface AmlAssessment {
   subject: {
     chain: ChainId;
+    /** Asset every figure in this assessment is denominated in. */
+    asset: AssetId;
     address: string;
     label: string | null;
     entityId: string | null;

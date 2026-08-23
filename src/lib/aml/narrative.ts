@@ -1,6 +1,6 @@
 import { formatCoin, formatDate, formatNumber, formatUsd, truncateAddress } from "../format";
 import { CHAINS } from "../chains/registry";
-import type { AddressSummary, ChainId, Transaction } from "../types";
+import type { AddressSummary, AssetId, ChainId, Transaction } from "../types";
 import type { AmlCopy } from "./copy";
 import { pct } from "./metrics";
 import type { CaseNarrative, Disposition, EgoMetrics, TypologyFinding } from "./types";
@@ -16,6 +16,8 @@ import type { CaseNarrative, Disposition, EgoMetrics, TypologyFinding } from "./
 
 export interface NarrativeInput {
   chain: ChainId;
+  /** Asset the amounts in the narrative are denominated in. */
+  asset: AssetId;
   address: AddressSummary;
   entityAddressCount: number;
   transactions: Transaction[];
@@ -65,7 +67,7 @@ function buildChronology(input: NarrativeInput): { at: string | null; event: str
       at: tx.timestamp,
       event: t.largestMovement(
         net.coin >= 0 ? t.directionIn : t.directionOut,
-        formatCoin({ ...net, coin: Math.abs(net.coin) }, input.chain),
+        formatCoin({ ...net, coin: Math.abs(net.coin) }, input.asset),
         net.usd != null ? t.atCurrentRate(formatUsd(Math.abs(net.usd), true)) : "",
         truncateAddress(tx.hash, 10, 8),
       ),
@@ -104,9 +106,9 @@ export function buildNarrative(input: NarrativeInput): CaseNarrative {
       formatNumber(input.windowSize),
       formatNumber(input.windowTotal),
       meta.explorerName,
-      formatCoin(input.metrics.inVolume, input.chain),
+      formatCoin(input.metrics.inVolume, input.asset),
       input.metrics.inDegree,
-      formatCoin(input.metrics.outVolume, input.chain),
+      formatCoin(input.metrics.outVolume, input.asset),
       input.metrics.outDegree,
     ),
     input.entityAddressCount > 1
@@ -130,9 +132,9 @@ export function buildNarrative(input: NarrativeInput): CaseNarrative {
       input.address.isContract ? t.isContract : "",
       t.lifetimeFigures(
         meta.explorerName,
-        formatCoin(input.address.totalReceived, input.chain),
-        formatCoin(input.address.totalSent, input.chain),
-        formatCoin(input.address.balance, input.chain),
+        formatCoin(input.address.totalReceived, input.asset),
+        formatCoin(input.address.totalSent, input.asset),
+        formatCoin(input.address.balance, input.asset),
         formatNumber(input.address.txCount),
       ),
       t.windowLine(

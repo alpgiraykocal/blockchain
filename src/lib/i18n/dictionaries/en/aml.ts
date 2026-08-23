@@ -453,6 +453,22 @@ export const aml = {
         "Continuing past this point requires a request to the receiving institution, not further on-chain analysis.",
     },
 
+    impersonation: {
+      title: "Token impersonating a known asset",
+      family: "Attribution attack / address poisoning",
+      summaryMatched: (count: number, imitates: string) =>
+        `${count} token${count === 1 ? "" : "s"} reaching this address present as ${imitates} while being issued by a different contract. They render as the real symbol and sort beside it.`,
+      summaryNone: "No token imitating a known asset's symbol in the analysed window.",
+      evToken: (symbol: string, imitates: string) => `"${symbol}" presents as ${imitates}`,
+      evTokenDetail: (contract: string, transfers: number) =>
+        `Issued by ${contract}, which is not the real contract. ${transfers} transfer${transfers === 1 ? "" : "s"} in the analysed window.`,
+      counterNotConduct:
+        "Receiving one is not conduct by the holder. Anyone can send any token to any address without permission.",
+      counterAddressOnly:
+        "Balances and findings on this page are pinned to contract addresses, so the impersonators are excluded from them. The risk is to a reader who matches on the symbol somewhere else.",
+      counterCoverage:
+        "Only assets this app knows can be impersonated in a way it can see. A token imitating something outside the loaded set produces no finding.",
+    },
     chainHopping: {
       title: "Chain-hopping through bridges",
       family: "Cross-chain layering",

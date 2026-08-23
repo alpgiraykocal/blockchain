@@ -278,6 +278,11 @@ export const ui: Dictionary["ui"] = {
       `${nodes} düğüm · ${edges} bağlantı · ${hop} adım`,
     nothingTimeWindow: (days: number, removed: number) =>
       `Son ${days} günde etkin karşı taraf yok; pencere ${removed} tanesini düşürdü. Yukarıdaki bulgular ve metrikler yine tam dilimi kapsıyor — çizdirmek için pencereyi genişlet.`,
+    assetLabel: "Varlık",
+    assetNative: "yerel coin",
+    assetToken: "token",
+    assetNote: (symbol: string) =>
+      `Bu sayfadaki her rakam ${symbol} cinsindendir. Varlık değiştirmek dedektörleri yalnız o varlığın transferleri üzerinde yeniden çalıştırır.`,
     windowLabel: "Pencere",
     windowFull: "Tam dilim",
     windowDays: (days: number) => `Son ${days}g`,

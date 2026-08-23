@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { CHAINS } from "../chains/registry";
 import { OFAC_SNAPSHOT, isSnapshotStale, snapshotIssuedAt } from "../tags/ofac";
 import { labelSnapshot } from "../tags/actors";
-import type { ChainId } from "../types";
+import type { AssetId, ChainId } from "../types";
 import type { AmlCopy } from "./copy";
 import { decideDisposition } from "./disposition";
 import { ENGINE_VERSION, LAYOUT_VERSION, extractEgoNetwork, type ExtractOptions } from "./ego-network";
@@ -30,6 +30,7 @@ const SERVICE_CATEGORIES = new Set([
 
 function buildAudit(
   chain: ChainId,
+  asset: AssetId,
   address: string,
   entityId: string | null,
   network: EgoNetwork,
@@ -49,6 +50,7 @@ function buildAudit(
       [
         chain,
         address,
+        asset,
         JSON.stringify(network.filters),
         JSON.stringify(network.window),
         OFAC_SNAPSHOT.retrievedAt,
@@ -61,7 +63,7 @@ function buildAudit(
   return {
     assessmentId,
     generatedAt,
-    subject: { chain, address, entityId },
+    subject: { chain, asset, address, entityId },
     layoutVersion: LAYOUT_VERSION,
     engineVersion: ENGINE_VERSION,
     filters: network.filters,
@@ -85,6 +87,7 @@ function buildAudit(
 }
 
 export interface AssessOptions extends ExtractOptions {
+  /** Asset to analyse; the chain's native coin by default. */
   analyst?: string | null;
   /** Copy for the language the assessment is written in. */
   copy: AmlCopy;
@@ -98,9 +101,11 @@ export async function assessAddress(
   options: AssessOptions,
 ): Promise<{ assessment: AmlAssessment; network: EgoNetwork }> {
   const { copy, locale } = options;
+  const asset: AssetId = options.asset ?? chain;
   const { network, analysis, returnPaths } = await extractEgoNetwork(chain, address, {
     ...options,
     copy,
+    asset,
   });
 
   const subjectIsKnownService = analysis.address.tags.some(
@@ -110,6 +115,8 @@ export async function assessAddress(
 
   const findings = detectTypologies({
     chain,
+    asset,
+    impersonators: analysis.impersonators,
     address: analysis.address,
     transactions: analysis.transactions,
     neighbors: analysis.neighbors,
@@ -123,6 +130,7 @@ export async function assessAddress(
 
   const disposition = decideDisposition({
     chain,
+    asset,
     address: analysis.address,
     metrics: network.metrics,
     findings,
@@ -134,6 +142,7 @@ export async function assessAddress(
 
   const narrative = buildNarrative({
     chain,
+    asset,
     address: analysis.address,
     entityAddressCount: analysis.entity.addressCount,
     transactions: analysis.transactions,
@@ -175,6 +184,7 @@ export async function assessAddress(
     assessment: {
       subject: {
         chain,
+        asset,
         address: analysis.address.address,
         label: analysis.entity.label,
         entityId: analysis.address.entityId,
@@ -192,6 +202,7 @@ export async function assessAddress(
       narrative,
       audit: buildAudit(
         chain,
+        asset,
         analysis.address.address,
         analysis.address.entityId,
         network,

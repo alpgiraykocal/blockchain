@@ -254,6 +254,7 @@ export const btcAdapter: ChainAdapter = {
 
       return {
         chain: "btc",
+        asset: "btc",
         address,
         balanceRaw: receivedRaw - sentRaw,
         receivedRaw,
@@ -267,6 +268,7 @@ export const btcAdapter: ChainAdapter = {
         txs: txs.map((tx) => toTransaction(tx, address, members, price)),
         neighbors: aggregateNeighbors(txs, members),
         cluster,
+        tokenImpersonators: [],
         totalsWindowed: false,
         windowSize: txs.length,
         txsUnavailable: txResult.error,

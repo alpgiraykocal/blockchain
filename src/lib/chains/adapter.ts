@@ -1,4 +1,6 @@
+import type { Impersonation } from "./homoglyph";
 import type {
+  AssetId,
   ChainId,
   ChainStats,
   ClusteringMethod,
@@ -26,6 +28,8 @@ export interface ClusterInfo {
 
 export interface AddressBundle {
   chain: ChainId;
+  /** Which asset the figures below are denominated in. */
+  asset: AssetId;
   address: string;
   balanceRaw: bigint;
   receivedRaw: bigint;
@@ -42,6 +46,9 @@ export interface AddressBundle {
   /** received/sent totals cover only the fetched window, not the whole history. */
   totalsWindowed: boolean;
   windowSize: number;
+  /** Tokens seen moving to or from this address whose symbol imitates a known
+   *  asset from a contract that is not it. Empty where the chain has no tokens. */
+  tokenImpersonators: Impersonation[];
   /** Set when the transaction list could not be fetched. The summary figures are
    *  still valid; counterparties, clustering and degrees are not available. */
   txsUnavailable: string | null;
@@ -54,10 +61,13 @@ export interface PriceInfo {
 
 export interface ChainAdapter {
   chain: ChainId;
-  getPrice(): Promise<PriceInfo>;
+  /** Price of an asset on this chain; the native coin when none is named. */
+  getPrice(asset?: AssetId): Promise<PriceInfo>;
   /** Resolves ENS-style names to a canonical address; identity for plain addresses. */
   resolve(query: string): Promise<string | null>;
-  getAddressBundle(address: string, limit: number): Promise<AddressBundle>;
+  /** Analyses one asset. Omitting it analyses the chain's native coin, which is
+   *  what every caller wanted before tokens existed here. */
+  getAddressBundle(address: string, limit: number, asset?: AssetId): Promise<AddressBundle>;
   getStats(): Promise<ChainStats>;
 }
 

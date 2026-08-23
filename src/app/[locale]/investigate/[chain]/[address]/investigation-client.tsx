@@ -26,12 +26,12 @@ import { StatTile } from "@/components/ui/stat-tile";
 import { TagChip } from "@/components/ui/tag-chip";
 import { pct } from "@/lib/aml/metrics";
 import type { AmlAssessment, EgoNetwork, EgoNode } from "@/lib/aml/types";
-import { CHAINS } from "@/lib/chains/registry";
+import { CHAINS, assetsFor } from "@/lib/chains/registry";
 import { jsonFetcher } from "@/lib/fetcher";
 import { useI18n } from "@/lib/i18n/context";
 import type { Dictionary } from "@/lib/i18n/types";
 import { displayName, formatCoin, formatNumber, formatUsd, truncateAddress } from "@/lib/format";
-import type { ChainId } from "@/lib/types";
+import type { AssetId, ChainId } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 interface Payload {
@@ -72,6 +72,10 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
    */
   const [timeWindow, setTimeWindow] = useState<{ days: number; from: string } | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  // Native by default. A token analysis is a different question about the same
+  // address, not a refinement of the coin one, so the two never mix on a page.
+  const [asset, setAsset] = useState<AssetId>(chain);
+  const assets = useMemo(() => assetsFor(chain), [chain]);
 
   const key = useMemo(() => {
     const params = new URLSearchParams({
@@ -85,9 +89,10 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
       locale,
     });
     if (showHubs) params.set("hubs", "all");
+    if (asset !== chain) params.set("asset", asset);
     if (timeWindow) params.set("from", timeWindow.from);
     return `/api/aml/assessment?${params}`;
-  }, [chain, address, hop, topK, direction, showHubs, timeWindow, locale]);
+  }, [chain, address, hop, topK, direction, showHubs, timeWindow, asset, locale]);
 
   const { data, error, isLoading, mutate } = useSWR<Payload>(key, jsonFetcher, {
     revalidateOnFocus: false,
@@ -266,13 +271,13 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
         <StatTile
           label={t.received}
           icon={<ArrowDownLeft className="size-3" aria-hidden="true" />}
-          value={formatCoin(metrics.inVolume, chain)}
+          value={formatCoin(metrics.inVolume, asset)}
           secondary={formatUsd(metrics.inVolume.usd, true)}
         />
         <StatTile
           label={t.sent}
           icon={<ArrowUpRight className="size-3" aria-hidden="true" />}
-          value={formatCoin(metrics.outVolume, chain)}
+          value={formatCoin(metrics.outVolume, asset)}
           secondary={formatUsd(metrics.outVolume.usd, true)}
         />
         <StatTile
@@ -346,6 +351,22 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
             description={t.networkDescription(network.nodes.length, network.edges.length, hop)}
             actions={
               <div className="flex flex-wrap items-center gap-1.5">
+                {assets.length > 1 ? (
+                  <label className="flex items-center gap-1.5 text-[11px] text-foreground-muted">
+                    {t.assetLabel}
+                    <select
+                      value={asset}
+                      onChange={(event) => setAsset(event.target.value as AssetId)}
+                      className="h-9 cursor-pointer rounded border border-border bg-surface px-1.5 text-xs text-foreground"
+                    >
+                      {assets.map((option) => (
+                        <option key={option.id} value={option.id}>
+                          {option.symbol}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                ) : null}
                 <Toggle
                   options={[
                     { value: "1", label: t.hop1 },
@@ -467,7 +488,7 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
                         selected.ring,
                         selected.priority,
                         selected.riskScore,
-                        formatCoin(selected.value, chain),
+                        formatCoin(selected.value, asset),
                         selected.txCount,
                       )}
                     </p>
@@ -534,7 +555,13 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
             title={t.counterparties}
             description={t.counterpartiesDescription}
           >
-            <CounterpartyTable nodes={network.nodes} chain={chain} onSelect={setSelectedId} t={t} />
+            <CounterpartyTable
+              nodes={network.nodes}
+              chain={chain}
+              asset={asset}
+              onSelect={setSelectedId}
+              t={t}
+            />
           </Panel>
         </div>
       </div>
@@ -617,11 +644,14 @@ function Toggle({
 function CounterpartyTable({
   nodes,
   chain,
+  asset,
   onSelect,
   t,
 }: {
   nodes: EgoNode[];
   chain: ChainId;
+  /** Values in this table follow the asset the page is analysing, not the chain's coin. */
+  asset: AssetId;
   onSelect: (id: string) => void;
   t: Copy;
 }) {
@@ -675,7 +705,7 @@ function CounterpartyTable({
       key: "value",
       header: t.colValue,
       align: "right",
-      cell: (node) => formatCoin(node.value, chain),
+      cell: (node) => formatCoin(node.value, asset),
       sortValue: (node) => node.value.coin,
     },
     {

@@ -1,9 +1,9 @@
 import { analyzeAddress, nodeId, type AddressAnalysis, type NeighborRow } from "../analysis";
-import { CHAINS } from "../chains/registry";
+import { ASSETS } from "../chains/registry";
 import { en } from "../i18n/dictionaries/en";
 import { makeValue } from "../format";
 import { levelFor } from "../risk";
-import type { ChainId, RiskLevel } from "../types";
+import type { AssetId, ChainId, RiskLevel } from "../types";
 import type { AmlCopy } from "./copy";
 import { computeMetrics } from "./metrics";
 import type {
@@ -133,6 +133,8 @@ async function mapWithConcurrency<T, R>(
 }
 
 export interface ExtractOptions extends Partial<EgoFilters> {
+  /** Asset to denominate the extraction in; the chain's native coin by default. */
+  asset?: AssetId;
   windowStart?: string | null;
   windowEnd?: string | null;
   /** Reuse an analysis the caller already fetched. */
@@ -161,7 +163,8 @@ export async function extractEgoNetwork(
   // Callers with no locale in hand - internal expansion - get English.
   const copy = (options.copy ?? en.aml).reduction;
 
-  const analysis = options.seed ?? (await analyzeAddress(chain, address, 50, options.copy));
+  const asset: AssetId = options.asset ?? chain;
+  const analysis = options.seed ?? (await analyzeAddress(chain, address, 50, options.copy, asset));
   const centreId = nodeId(chain, analysis.address.address);
 
   const window: EgoTimeWindow = {
@@ -196,7 +199,7 @@ export async function extractEgoNetwork(
       reduction.push({
         rule: "min-value",
         removed: rows.length - kept.length,
-        detail: copy.minValue(filters.minValueCoin, CHAINS[chain].ticker),
+        detail: copy.minValue(filters.minValueCoin, ASSETS[asset].symbol),
       });
     }
     rows = kept;
@@ -292,7 +295,7 @@ export async function extractEgoNetwork(
       existing.txCount += row.link.txCount;
       existing.value = makeValue(
         BigInt(existing.value.raw) + BigInt(row.link.value.raw),
-        chain,
+        asset,
         analysis.priceUsd,
       );
       existing.priority = Math.max(existing.priority, priority);
@@ -348,7 +351,7 @@ export async function extractEgoNetwork(
       HOP2_CONCURRENCY,
       async (parent) => {
         try {
-          const sub = await analyzeAddress(chain, parent.address, 25, options.copy);
+          const sub = await analyzeAddress(chain, parent.address, 25, options.copy, asset);
           return { parent, sub, error: null as string | null };
         } catch (error) {
           return {
@@ -415,6 +418,7 @@ export async function extractEgoNetwork(
   // what is drawn, and must not quietly change what is measured.
   const metrics = computeMetrics({
     chain,
+    asset,
     transactions: analysis.transactions,
     neighbors: analysis.neighbors,
     priceUsd: analysis.priceUsd,

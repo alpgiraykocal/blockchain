@@ -1,13 +1,13 @@
-import type { ChainId, Value } from "./types";
-import { CHAINS } from "./chains/registry";
+import type { AssetId, Value } from "./types";
+import { ASSETS } from "./chains/registry";
 
 export function makeValue(
   raw: bigint | string | number,
-  chain: ChainId,
+  asset: AssetId,
   priceUsd: number | null,
 ): Value {
   const big = typeof raw === "bigint" ? raw : BigInt(Math.trunc(Number(raw) || 0));
-  const decimals = CHAINS[chain].decimals;
+  const decimals = ASSETS[asset].decimals;
   const coin = Number(big) / 10 ** decimals;
   return {
     raw: big.toString(),
@@ -18,8 +18,8 @@ export function makeValue(
 
 export const ZERO_VALUE: Value = { raw: "0", coin: 0, usd: 0 };
 
-export function formatCoin(value: Value, chain: ChainId, maxFrac = 8): string {
-  const ticker = CHAINS[chain].ticker;
+export function formatCoin(value: Value, asset: AssetId, maxFrac = 8): string {
+  const ticker = ASSETS[asset].symbol;
   const abs = Math.abs(value.coin);
   const frac = abs === 0 ? 2 : abs < 0.001 ? maxFrac : abs < 1 ? 6 : 4;
   return `${value.coin.toLocaleString("en-US", {

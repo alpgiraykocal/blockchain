@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { UpstreamError } from "./http";
 import { getAdapter } from "./chains";
-import { isChainId, isValidAddress } from "./chains/registry";
+import { ASSETS, isAssetId, isValidAddress } from "./chains/registry";
+import { isChainId } from "./chains/registry";
 import { type Locale, isLocale } from "./i18n/config";
 import { getDictionary } from "./i18n";
-import type { ChainId } from "./types";
+import type { AssetId, ChainId } from "./types";
 
 export function jsonError(message: string, status: number, detail?: string) {
   return NextResponse.json({ error: message, detail }, { status });
@@ -13,6 +14,21 @@ export function jsonError(message: string, status: number, detail?: string) {
 export function parseChain(value: string | null): ChainId | null {
   if (!value || !isChainId(value)) return null;
   return value;
+}
+
+/**
+ * The asset an analysis runs over.
+ *
+ * Absent means the chain's native coin, which keeps every existing caller
+ * meaning what it always meant. A named asset has to belong to the chain that
+ * was asked for: `?chain=btc&asset=usdt-eth` is a contradiction, not a default,
+ * and answering it with Bitcoin figures under a USDT heading would be worse
+ * than refusing.
+ */
+export function parseAsset(value: string | null, chain: ChainId): AssetId | null {
+  if (!value) return chain;
+  if (!isAssetId(value)) return null;
+  return ASSETS[value].chain === chain ? value : null;
 }
 
 export function parseLimit(value: string | null, fallback = 50, max = 200): number {

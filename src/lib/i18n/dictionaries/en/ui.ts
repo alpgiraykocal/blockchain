@@ -283,6 +283,11 @@ export const ui = {
       `${nodes} nodes · ${edges} links · ${hop} hop`,
     nothingTimeWindow: (days: number, removed: number) =>
       `No counterparty was active in the last ${days} days; the window dropped ${removed}. The findings and metrics above still cover the full slice — widen the window to draw them.`,
+    assetLabel: "Asset",
+    assetNative: "native coin",
+    assetToken: "token",
+    assetNote: (symbol: string) =>
+      `Every figure on this page is denominated in ${symbol}. Switching asset re-runs the detectors over that asset's transfers only.`,
     windowLabel: "Window",
     windowFull: "Full slice",
     windowDays: (days: number) => `Last ${days}d`,

@@ -4,6 +4,7 @@ import { assessAddress } from "@/lib/aml/assess";
 import {
   handleRouteError,
   jsonError,
+  parseAsset,
   parseChain,
   parseLimit,
   parseLocale,
@@ -32,6 +33,10 @@ export async function GET(request: NextRequest) {
   const direction = params.get("direction");
   const minValue = Number(params.get("minValue"));
   const locale = parseLocale(params.get("locale"));
+  const asset = parseAsset(params.get("asset"), chain);
+  if (!asset) {
+    return jsonError(`Unknown asset for ${chain.toUpperCase()}.`, 400);
+  }
 
   try {
     const { address, error: unresolved } = await resolveSubject(chain, raw);
@@ -47,6 +52,7 @@ export async function GET(request: NextRequest) {
       windowEnd: params.get("to"),
       copy: getDictionary(locale).aml,
       locale,
+      asset,
     });
 
     return NextResponse.json({ assessment, network });

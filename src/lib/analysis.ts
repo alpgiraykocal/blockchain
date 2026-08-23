@@ -1,5 +1,6 @@
 import { getAdapter } from "./chains";
 import type { NeighborAgg } from "./chains/adapter";
+import type { Impersonation } from "./chains/homoglyph";
 import { makeValue } from "./format";
 import type { AmlCopy } from "./aml/copy";
 import { en } from "./i18n/dictionaries/en";
@@ -8,6 +9,7 @@ import { assessRisk, nodeKindFor } from "./risk";
 import { builtinTagsFor } from "./tags";
 import type {
   AddressSummary,
+  AssetId,
   ChainId,
   EntitySummary,
   GraphEdge,
@@ -28,6 +30,10 @@ export interface NeighborRow {
 }
 
 export interface AddressAnalysis {
+  /** The asset every figure below is denominated in. */
+  asset: AssetId;
+  /** Tokens imitating a known asset's symbol from another contract. */
+  impersonators: Impersonation[];
   address: AddressSummary;
   entity: EntitySummary;
   transactions: Transaction[];
@@ -102,11 +108,14 @@ export async function analyzeAddress(
   limit = 50,
   /** Copy for the risk signals, which are prose an analyst reads. */
   copy: AmlCopy = defaultCopy,
+  /** Which asset to denominate the analysis in. Defaults to the chain's native
+   *  coin, which is what every caller meant before tokens existed here. */
+  asset: AssetId = chain,
 ): Promise<AddressAnalysis> {
   const adapter = getAdapter(chain);
   const [{ usd: priceUsd }, bundle] = await Promise.all([
-    adapter.getPrice(),
-    adapter.getAddressBundle(address, limit),
+    adapter.getPrice(asset),
+    adapter.getAddressBundle(address, limit, asset),
   ]);
 
   const ownTags = tagsFor(chain, bundle.address, bundle.label, copy);
@@ -122,7 +131,7 @@ export async function analyzeAddress(
   );
 
   const neighbors: NeighborRow[] = bundle.neighbors.map((neighbor) =>
-    toNeighborRow(chain, bundle.address, neighbor, totalNeighborValue, priceUsd, copy),
+    toNeighborRow(chain, bundle.address, neighbor, totalNeighborValue, priceUsd, copy, asset),
   );
 
   const inDegree = neighbors.filter((row) => row.direction === "in").length;
@@ -152,9 +161,9 @@ export async function analyzeAddress(
     chain,
     address: bundle.address,
     entityId: bundle.cluster.id,
-    balance: makeValue(bundle.balanceRaw, chain, priceUsd),
-    totalReceived: makeValue(bundle.receivedRaw, chain, priceUsd),
-    totalSent: makeValue(bundle.sentRaw, chain, priceUsd),
+    balance: makeValue(bundle.balanceRaw, asset, priceUsd),
+    totalReceived: makeValue(bundle.receivedRaw, asset, priceUsd),
+    totalSent: makeValue(bundle.sentRaw, asset, priceUsd),
     txCount: bundle.txCount,
     inDegree,
     outDegree,
@@ -180,6 +189,8 @@ export async function analyzeAddress(
   };
 
   return {
+    asset,
+    impersonators: bundle.tokenImpersonators,
     address: addressSummary,
     entity,
     transactions: bundle.txs,
@@ -202,9 +213,10 @@ function toNeighborRow(
   totalValue: bigint,
   priceUsd: number | null,
   copy: AmlCopy,
+  asset: AssetId,
 ): NeighborRow {
   const tags = tagsFor(chain, neighbor.address, neighbor.label, copy);
-  const value = makeValue(neighbor.valueRaw, chain, priceUsd);
+  const value = makeValue(neighbor.valueRaw, asset, priceUsd);
 
   const risk = assessRisk({
     copy,
@@ -221,7 +233,7 @@ function toNeighborRow(
     kind: nodeKindFor(tags, false),
     address: neighbor.address,
     label: bestLabel(tags),
-    balance: makeValue(0n, chain, priceUsd),
+    balance: makeValue(0n, asset, priceUsd),
     txCount: neighbor.txCount,
     riskScore: risk.score,
     tags,

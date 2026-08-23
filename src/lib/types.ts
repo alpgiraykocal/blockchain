@@ -15,7 +15,26 @@ export interface ChainMeta {
   explorerAddressUrl: (address: string) => string;
 }
 
-/** A value expressed in the chain's base unit (satoshi / wei) plus a fiat estimate. */
+/**
+ * An asset an analysis can run over: a chain's native coin, or a token on it.
+ *
+ * Native assets reuse the chain id so `ChainId` stays assignable to `AssetId`.
+ */
+export type AssetId = ChainId | "usdt-eth";
+
+export interface AssetMeta {
+  id: AssetId;
+  chain: ChainId;
+  symbol: string;
+  name: string;
+  /** Base units per whole unit, as a power of ten. USDT uses 6, not the chain's 18. */
+  decimals: number;
+  kind: "native" | "erc20";
+  /** Contract address for a token. The only safe identifier — symbols are forgeable. */
+  contract?: string;
+}
+
+/** A value expressed in the asset's base unit (satoshi / wei / token unit) plus a fiat estimate. */
 export interface Value {
   /** Base units as a decimal string — BigInt-safe across the wire. */
   raw: string;
