@@ -21,9 +21,27 @@ export const ZERO_VALUE: Value = { raw: "0", coin: 0, usd: 0 };
 export function formatCoin(value: Value, asset: AssetId, maxFrac = 8): string {
   const ticker = ASSETS[asset].symbol;
   const abs = Math.abs(value.coin);
-  const frac = abs === 0 ? 2 : abs < 0.001 ? maxFrac : abs < 1 ? 6 : 4;
+  // Precision follows magnitude. Four decimals is right for a few ETH and
+  // absurd for two billion USDT, where it produced a twenty-digit string that
+  // the stat tiles simply truncated — the leading digits, which are the ones
+  // that matter, got cut along with the noise.
+  const frac =
+    abs === 0
+      ? 2
+      : abs < 0.001
+        ? maxFrac
+        : abs < 1
+          ? 6
+          : abs < 1_000
+            ? 4
+            : abs < 1_000_000
+              ? 2
+              : 0;
   return `${value.coin.toLocaleString("en-US", {
-    minimumFractionDigits: 2,
+    // Intl throws when the minimum exceeds the maximum, and the maximum drops to
+    // zero at a million — so the floor has to follow it down rather than sit at
+    // a constant two.
+    minimumFractionDigits: Math.min(2, frac),
     maximumFractionDigits: frac,
   })} ${ticker}`;
 }

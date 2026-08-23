@@ -58,6 +58,9 @@ export const aml: Dictionary["aml"] = {
     dataLimitations: "Veri sınırlamaları",
     audit: "Denetim",
     generated: "Üretildi",
+    asset: "Varlık",
+    assetValue: (asset: string, chain: string) =>
+      asset === chain ? `${chain.toUpperCase()} (yerel)` : `${chain.toUpperCase()} üzerinde ${asset}`,
     explorer: "Gezgin",
     sanctionsIssued: (source: string, date: string) => `${source}, yayım ${date}`,
     hopTopKValue: (hop: number, topK: number) => `${hop} adım · ilk ${topK}`,

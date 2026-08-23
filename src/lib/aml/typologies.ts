@@ -608,7 +608,7 @@ function chainHopping(input: TypologyInput): TypologyFinding {
   const evidence: Evidence[] = [];
   if (matched) {
     evidence.push(
-      derived(t.evShare, t.evShareDetail(pct(share), formatCoin(makeValue(bridgeRaw, input.chain, null), input.asset))),
+      derived(t.evShare, t.evShareDetail(pct(share), formatCoin(makeValue(bridgeRaw, input.asset, null), input.asset))),
       derived(t.evVenues, t.evVenuesDetail(venues, transfers)),
     );
     for (const row of bridges.slice(0, 4)) {

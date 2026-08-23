@@ -618,6 +618,8 @@ export const ui = {
     notFound: "Not found on the upstream explorer.",
     rateLimited: "Upstream rate limit reached. Wait a few seconds and retry.",
     upstreamFailed: "Upstream explorer request failed.",
+    badUpstreamRequest:
+      "The explorer rejected this request. The address is most likely malformed - a base58 address carries a checksum, and a single mistyped character fails it.",
     timeout: "Upstream request timed out.",
     unexpected: "Unexpected server error.",
     rateLimitTitle: "Rate limit reached.",

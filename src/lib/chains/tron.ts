@@ -3,7 +3,7 @@ import { fetchJson } from "../http";
 import { makeValue } from "../format";
 import type { AssetId, ChainStats, Transaction } from "../types";
 import { ASSETS } from "./registry";
-import { fromHex } from "./tron-address";
+import { fromHex, looksLikeTronAddress } from "./tron-address";
 import type {
   AddressBundle,
   ChainAdapter,
@@ -229,9 +229,19 @@ export const tronAdapter: ChainAdapter = {
     });
   },
 
-  /** TRON has no name service this app reads, so an address is itself. */
+  /**
+   * TRON has no name service this app reads, so an address is itself — but the
+   * checksum is verified before it is returned.
+   *
+   * The registry's `isValidAddress` only checks the shape, because it runs in
+   * the browser too and the checksum needs a hash the client bundle has no
+   * business carrying. Shape alone accepts a single mistyped character, which
+   * Base58Check exists specifically to reject. Returning null here turns that
+   * into a 404 rather than an empty report about an account that cannot exist.
+   */
   async resolve(query: string) {
-    return query.trim();
+    const value = query.trim();
+    return looksLikeTronAddress(value) ? value : null;
   },
 
   async getAddressBundle(

@@ -85,6 +85,13 @@ export function handleRouteError(error: unknown, locale: Locale = "en") {
     if (error.status === 429) {
       return jsonError(t.rateLimited, 429, error.url);
     }
+    // A 4xx from an explorer means it rejected what we asked for, which makes it
+    // the caller's input rather than the explorer's failure. Reporting a
+    // malformed address as "upstream explorer request failed" blames a service
+    // that behaved correctly, and points whoever is debugging at the wrong end.
+    if (error.status >= 400 && error.status < 500) {
+      return jsonError(t.badUpstreamRequest, 400, error.message);
+    }
     return jsonError(t.upstreamFailed, 502, error.message);
   }
   if (error instanceof Error && error.name === "AbortError") {

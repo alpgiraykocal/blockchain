@@ -611,6 +611,8 @@ export const ui: Dictionary["ui"] = {
     notFound: "Üst kaynak gezginde bulunamadı.",
     rateLimited: "Üst kaynak hız sınırına ulaşıldı. Birkaç saniye bekleyip tekrar dene.",
     upstreamFailed: "Üst kaynak gezgin isteği başarısız oldu.",
+    badUpstreamRequest:
+      "Gezgin bu isteği reddetti. Adres büyük olasılıkla hatalı - base58 adresler sağlama taşır ve tek bir yanlış karakter onu bozar.",
     timeout: "Üst kaynak isteği zaman aşımına uğradı.",
     unexpected: "Beklenmeyen sunucu hatası.",
     rateLimitTitle: "Hız sınırına ulaşıldı.",

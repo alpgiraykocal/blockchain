@@ -42,6 +42,18 @@ export async function GET(request: NextRequest) {
     const { address, error: unresolved } = await resolveSubject(chain, raw);
     if (unresolved) return unresolved;
 
+    // A window the engine cannot parse would filter nothing and still be written
+    // into the audit record verbatim, leaving a reproduction key that reads like
+    // a date and is not one.
+    for (const [name, value] of [
+      ["from", params.get("from")],
+      ["to", params.get("to")],
+    ] as const) {
+      if (value && Number.isNaN(new Date(value).getTime())) {
+        return jsonError(`\`${name}\` is not a date this engine can read.`, 400, value);
+      }
+    }
+
     const { assessment, network } = await assessAddress(chain, address, {
       hopDepth: hop as 1 | 2,
       topK,

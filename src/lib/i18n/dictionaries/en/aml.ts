@@ -58,6 +58,9 @@ export const aml = {
     dataLimitations: "Data limitations",
     audit: "Audit",
     generated: "Generated",
+    asset: "Asset",
+    assetValue: (asset: string, chain: string) =>
+      asset === chain ? `${chain.toUpperCase()} (native)` : `${asset} on ${chain.toUpperCase()}`,
     explorer: "Explorer",
     sanctionsIssued: (source: string, date: string) => `${source}, issued ${date}`,
     hopTopKValue: (hop: number, topK: number) => `${hop} hop · top ${topK}`,

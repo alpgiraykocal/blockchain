@@ -26,7 +26,7 @@ import { StatTile } from "@/components/ui/stat-tile";
 import { TagChip } from "@/components/ui/tag-chip";
 import { pct } from "@/lib/aml/metrics";
 import type { AmlAssessment, EgoNetwork, EgoNode } from "@/lib/aml/types";
-import { CHAINS, assetsFor } from "@/lib/chains/registry";
+import { ASSETS, CHAINS, assetsFor } from "@/lib/chains/registry";
 import { jsonFetcher } from "@/lib/fetcher";
 import { useI18n } from "@/lib/i18n/context";
 import type { Dictionary } from "@/lib/i18n/types";
@@ -164,6 +164,10 @@ export function InvestigationClient({ chain, address }: { chain: ChainId; addres
           <div className="min-w-0 flex-1">
             <div className="flex flex-wrap items-center gap-2">
               <Badge tone="info">{meta.ticker}</Badge>
+              {/* Every figure below is denominated in the selected asset, so a
+                  token analysis has to say so here. Showing only the chain's
+                  ticker read as an ETH report on a page of USDT numbers. */}
+              {asset !== chain ? <Badge tone="accent">{ASSETS[asset].symbol}</Badge> : null}
               {subject.isContract ? <Badge tone="accent">{t.contract}</Badge> : null}
               <h1 className="min-w-0 text-lg font-semibold tracking-tight text-heading">
                 {subject.label ? displayName(subject.label) : t.untagged}

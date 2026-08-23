@@ -132,6 +132,7 @@ export function CaseFile({ assessment }: { assessment: AmlAssessment }) {
           <Row label={t.assessmentId} value={audit.assessmentId} mono />
           <Row label={t.generated} value={formatDate(audit.generatedAt, true, locale)} />
           <Row label={t.engineLayout} value={`${audit.engineVersion} · ${audit.layoutVersion}`} />
+          <Row label={t.asset} value={t.assetValue(subject.asset, subject.chain)} />
           <Row label={t.explorer} value={audit.dataSources.explorer} />
           <Row
             label={t.sanctionsList}
