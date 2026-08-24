@@ -109,7 +109,7 @@ export const ui = {
 
   home: {
     heading: "Cryptoasset graph analytics",
-    lede: "Look up any Bitcoin or Ethereum address to see its balance, counterparties, co-spending cluster and attribution-driven risk — then walk the transaction flow hop by hop in the graph explorer.",
+    lede: "Look up any Bitcoin, Ethereum or TRON address to see its balance, counterparties, co-spending cluster and attribution-driven risk — then walk the transaction flow hop by hop in the graph explorer.",
     tagsLoaded: (count: string) => `${count} attribution tags loaded`,
     sanctionsFlagged: (count: string) => `${count} sanctions-flagged`,
     howTitle: "How a review runs",
@@ -232,7 +232,7 @@ export const ui = {
   investigate: {
     metaTitle: "Investigate",
     metaDescription:
-      "Open an AML/CTF investigation on a Bitcoin or Ethereum address: ego-network analysis, typology findings, triage disposition and a draft case file.",
+      "Open an AML/CTF investigation on a Bitcoin, Ethereum or TRON address: ego-network analysis, typology findings, triage disposition and a draft case file.",
     heading: "Investigate",
     lede: "Runs an ego-network extraction around one subject, tests the activity against a set of named money-laundering typologies, and drafts a case file with the evidence and the arguments against it.",
     chooseSubject: "Choose a subject",

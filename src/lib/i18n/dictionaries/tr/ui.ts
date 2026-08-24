@@ -107,7 +107,7 @@ export const ui: Dictionary["ui"] = {
 
   home: {
     heading: "Kripto varlık graf analitiği",
-    lede: "Herhangi bir Bitcoin veya Ethereum adresini ara; bakiyesini, karşı taraflarını, birlikte harcama kümesini ve atıf temelli riskini gör — sonra işlem akışını grafik gezgininde adım adım izle.",
+    lede: "Herhangi bir Bitcoin, Ethereum veya TRON adresini ara; bakiyesini, karşı taraflarını, birlikte harcama kümesini ve atıf temelli riskini gör — sonra işlem akışını grafik gezgininde adım adım izle.",
     tagsLoaded: (count: string) => `${count} atıf etiketi yüklü`,
     sanctionsFlagged: (count: string) => `${count} yaptırım işaretli`,
     howTitle: "İnceleme nasıl yürür",
@@ -228,7 +228,7 @@ export const ui: Dictionary["ui"] = {
   investigate: {
     metaTitle: "Soruşturma",
     metaDescription:
-      "Bir Bitcoin veya Ethereum adresi üzerinde AML/CTF soruşturması aç: ego ağı analizi, tipoloji bulguları, triyaj kararı ve taslak dosya.",
+      "Bir Bitcoin, Ethereum veya TRON adresi üzerinde AML/CTF soruşturması aç: ego ağı analizi, tipoloji bulguları, triyaj kararı ve taslak dosya.",
     heading: "Soruşturma",
     lede: "Tek bir konu etrafında ego ağı çıkarımı yapar, etkinliği adlandırılmış kara para aklama tipolojilerine karşı sınar ve kanıtlarla birlikte karşı argümanları içeren bir dosya taslağı hazırlar.",
     chooseSubject: "Bir konu seç",

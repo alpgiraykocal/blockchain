@@ -53,7 +53,7 @@ npm run sync:labels  # rebuild actor attribution from the open feeds
 ## What it does
 
 ### Dashboard (`/`)
-Live chain tips, spot price, mempool/throughput and fee levels for both chains,
+Live chain tips, spot price, mempool/throughput and fee levels for each chain,
 plus a fee-rate and transaction-count trend. Recent lookups are stored in
 `localStorage` and never leave the browser.
 
