@@ -1,14 +1,14 @@
 {
   "schema": 1,
   "source": "OFAC Sanctions List Service",
-  "retrievedAt": "2026-08-23T10:24:32.509Z",
+  "retrievedAt": "2026-09-11T14:41:40.751Z",
   "files": [
     {
       "name": "SDN_ADVANCED.XML",
-      "dateOfIssue": "2026-08-20",
-      "bytes": 126151493,
-      "sha256": "458e792207c48a21dfca0bcce8a5af19bd780e3a99e7c378793ca15cffd145de",
-      "addresses": 974
+      "dateOfIssue": "2026-09-10",
+      "bytes": 127023009,
+      "sha256": "a1b8f07ec5b08700e006c2aaf7fd942d78123deab7bb07360bb3ee3ec733d0d9",
+      "addresses": 1056
     },
     {
       "name": "CONS_ADVANCED.XML",
@@ -19,14 +19,14 @@
     }
   ],
   "counts": {
-    "total": 974,
+    "total": 1056,
     "byCurrency": {
-      "TRX": 198,
+      "TRX": 254,
       "XMR": 11,
-      "USDT": 93,
-      "XBT": 527,
+      "USDT": 94,
+      "XBT": 532,
+      "ETH": 120,
       "LTC": 13,
-      "ETH": 100,
       "ETC": 1,
       "ZEC": 4,
       "DASH": 5,
@@ -43,9 +43,9 @@
       "BNB": 1
     },
     "byChain": {
-      "tron": 276,
-      "btc": 527,
-      "eth": 113
+      "tron": 333,
+      "btc": 532,
+      "eth": 133
     }
   },
   "entries": [
@@ -506,6 +506,33 @@
       "designatedAt": "2024-05-01"
     },
     {
+      "address": "0x1b8579cf6ab12ea6b74ac5fa41f3829a3cb61e6e",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "57064",
+      "name": "Ghal'eh-Kuhi Mojtaba",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER4"
+      ],
+      "designatedAt": "2026-08-24"
+    },
+    {
+      "address": "0x1CAb8177ACe78b1B6B1c393371F4f2dCAE40CbEB",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "24003",
+      "name": "MESRI Behzad",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER2",
+        "HRIT-IR"
+      ],
+      "designatedAt": "2018-03-23"
+    },
+    {
       "address": "0x1d19b52b54e7ef5ea1a4b40b616165e798eac9f8",
       "currency": "ETH",
       "chain": "eth",
@@ -544,6 +571,20 @@
         "SDGT"
       ],
       "designatedAt": "2024-03-27"
+    },
+    {
+      "address": "0x252a8bd2319d8a555b872990601221b3a2053bce",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "24003",
+      "name": "MESRI Behzad",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER2",
+        "HRIT-IR"
+      ],
+      "designatedAt": "2018-03-23"
     },
     {
       "address": "0x2711d73d559f62f4f855ee21f38378f528e07985",
@@ -692,6 +733,19 @@
       "designatedAt": "2019-09-13"
     },
     {
+      "address": "0x4060cbf80734193f521a3cc6fd4e985df2825279",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "57061",
+      "name": "Blagh Keyvan Fayyaz Gareh",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER4"
+      ],
+      "designatedAt": "2026-08-24"
+    },
+    {
       "address": "0x43fa21d92141BA9db43052492E0DeEE5aa5f0A93",
       "currency": "ETH",
       "chain": "eth",
@@ -811,6 +865,19 @@
       "designatedAt": "2021-11-08"
     },
     {
+      "address": "0x56de1527136f76a809e5b14ded6103eecd072ba7",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "57061",
+      "name": "Blagh Keyvan Fayyaz Gareh",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER4"
+      ],
+      "designatedAt": "2026-08-24"
+    },
+    {
       "address": "0x57EC89A0C056163A0314e413320f9B3ABe761259",
       "currency": "ETH",
       "chain": "eth",
@@ -890,6 +957,20 @@
       "designatedAt": "2021-11-08"
     },
     {
+      "address": "0x6B0736Fed0634e15E19CC57fBA19cd179c13AbCA",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "24003",
+      "name": "MESRI Behzad",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER2",
+        "HRIT-IR"
+      ],
+      "designatedAt": "2018-03-23"
+    },
+    {
       "address": "0x6b69e2a7545c166417a80c61a77562052bffa9c5",
       "currency": "ETH",
       "chain": "eth",
@@ -927,6 +1008,20 @@
         "CYBER2"
       ],
       "designatedAt": "2021-11-08"
+    },
+    {
+      "address": "0x6Fac4D18c912343BF86fa7049364Dd4E424Ab9C0",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "24003",
+      "name": "MESRI Behzad",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER2",
+        "HRIT-IR"
+      ],
+      "designatedAt": "2018-03-23"
     },
     {
       "address": "0x72a5843cc08275C8171E582972Aa4fDa8C397B2A",
@@ -1010,6 +1105,20 @@
       "designatedAt": "2021-04-15"
     },
     {
+      "address": "0x7F03679B56d8772530EFA516b58Bb83d4829E881",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "24003",
+      "name": "MESRI Behzad",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER2",
+        "HRIT-IR"
+      ],
+      "designatedAt": "2018-03-23"
+    },
+    {
       "address": "0x7F19720A857F834887FC9A7bC0a0fBe7Fc7f8102",
       "currency": "ETH",
       "chain": "eth",
@@ -1076,6 +1185,33 @@
         "ELECTION-EO13848"
       ],
       "designatedAt": "2020-09-10"
+    },
+    {
+      "address": "0x8694ed130432be2cd3efff2e4d9dc52351dc7423",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "57061",
+      "name": "Blagh Keyvan Fayyaz Gareh",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER4"
+      ],
+      "designatedAt": "2026-08-24"
+    },
+    {
+      "address": "0x8ac5381FCD9e7395D14e02986c344aADA84B4bC6",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "24003",
+      "name": "MESRI Behzad",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER2",
+        "HRIT-IR"
+      ],
+      "designatedAt": "2018-03-23"
     },
     {
       "address": "0x8d79c73daae8630c88de372ba8f57592fa987607",
@@ -1159,6 +1295,20 @@
       "designatedAt": "2023-10-03"
     },
     {
+      "address": "0x9697749A9e8D6C119D8EEb0d6268a1b99C40684c",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "24003",
+      "name": "MESRI Behzad",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER2",
+        "HRIT-IR"
+      ],
+      "designatedAt": "2018-03-23"
+    },
+    {
       "address": "0x97b1043abd9e6fc31681635166d430a458d14f9c",
       "currency": "ETH",
       "chain": "eth",
@@ -1211,6 +1361,20 @@
       "designatedAt": "2023-09-26"
     },
     {
+      "address": "0x9DD7fA4B4950154F7e75BdD8A77266B99b94Ec08",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "24003",
+      "name": "MESRI Behzad",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER2",
+        "HRIT-IR"
+      ],
+      "designatedAt": "2018-03-23"
+    },
+    {
       "address": "0x9f4cda013e354b8fc285bf4b9a60460cee7f7ea9",
       "currency": "ETH",
       "chain": "eth",
@@ -1237,6 +1401,20 @@
         "DPRK3"
       ],
       "designatedAt": "2019-09-13"
+    },
+    {
+      "address": "0xA40cFBFc8534FFC84E20a7d8bBC3729B26a35F6f",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "24003",
+      "name": "MESRI Behzad",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER2",
+        "HRIT-IR"
+      ],
+      "designatedAt": "2018-03-23"
     },
     {
       "address": "0xa7e5d5a720f06526557c513402f2e6b5fa20b008",
@@ -1280,6 +1458,20 @@
       "designatedAt": "2022-04-05"
     },
     {
+      "address": "0xb5A69Da691670F62510793F79a9B36c7db1A7b7c",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "24003",
+      "name": "MESRI Behzad",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER2",
+        "HRIT-IR"
+      ],
+      "designatedAt": "2018-03-23"
+    },
+    {
       "address": "0xb637f84b66876ebf609c2a4208905f9ddac9d075",
       "currency": "ETH",
       "chain": "eth",
@@ -1317,6 +1509,19 @@
         "SDGT"
       ],
       "designatedAt": "2026-08-07"
+    },
+    {
+      "address": "0xbd3276f265b83b5e828c05f46cde9d10a1521a24",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "57061",
+      "name": "Blagh Keyvan Fayyaz Gareh",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER4"
+      ],
+      "designatedAt": "2026-08-24"
     },
     {
       "address": "0xc103b7dc095c904b92081eef0c1640081ec01c10",
@@ -1408,6 +1613,20 @@
         "CYBER3"
       ],
       "designatedAt": "2025-05-29"
+    },
+    {
+      "address": "0xd81414ABc631C6CADAe1C6198b0c2b15a9B4fDe5",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "24003",
+      "name": "MESRI Behzad",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER2",
+        "HRIT-IR"
+      ],
+      "designatedAt": "2018-03-23"
     },
     {
       "address": "0xD8500C631dC32FA18645B7436344a99E4825e10e",
@@ -1543,6 +1762,19 @@
       "designatedAt": "2024-03-27"
     },
     {
+      "address": "0xeb507efa9ee692a4c774ad1de9f3cb26fc459da3",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "57065",
+      "name": "Kahzadian Arman",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER4"
+      ],
+      "designatedAt": "2026-08-24"
+    },
+    {
       "address": "0xed6e0a7e4ac94d976eebfb82ccf777a3c6bad921",
       "currency": "ETH",
       "chain": "eth",
@@ -1556,6 +1788,19 @@
       "designatedAt": "2023-08-23"
     },
     {
+      "address": "0xef85a6fafa5942a964dc618e94e230881d29ce2a",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "57065",
+      "name": "Kahzadian Arman",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER4"
+      ],
+      "designatedAt": "2026-08-24"
+    },
+    {
       "address": "0xEFE301d259F525cA1ba74A7977b80D5b060B3ccA",
       "currency": "ETH",
       "chain": "eth",
@@ -1567,6 +1812,19 @@
         "ILLICIT-DRUGS-EO14059"
       ],
       "designatedAt": "2022-11-09"
+    },
+    {
+      "address": "0xf1c4c44d2dcbcfa704349e3b57628dbd8404e597",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "57061",
+      "name": "Blagh Keyvan Fayyaz Gareh",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER4"
+      ],
+      "designatedAt": "2026-08-24"
     },
     {
       "address": "0xf2235d55b2950a0b1317469d72d07ae65b2e27cb",
@@ -1608,6 +1866,20 @@
         "RUSSIA-EO14024"
       ],
       "designatedAt": "2022-04-05"
+    },
+    {
+      "address": "0xF45Ecc3a59C7911181C659cE9115854c6175Be91",
+      "currency": "ETH",
+      "chain": "eth",
+      "fixedRef": "24003",
+      "name": "MESRI Behzad",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER2",
+        "HRIT-IR"
+      ],
+      "designatedAt": "2018-03-23"
     },
     {
       "address": "0xF7B31119c2682c88d88D455dBb9d5932c65Cf1bE",
@@ -1905,6 +2177,20 @@
       "designatedAt": "2015-09-29"
     },
     {
+      "address": "TAbbVaBKgH4VBLXgWqACuwoKF4cH1HinQh",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "24003",
+      "name": "MESRI Behzad",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER2",
+        "HRIT-IR"
+      ],
+      "designatedAt": "2018-03-23"
+    },
+    {
       "address": "TAgZxxuvfuKYJY5UPC1DXF8NPHbKtTzEGu",
       "currency": "TRX",
       "chain": "tron",
@@ -1948,6 +2234,19 @@
       "designatedAt": "2010-06-16"
     },
     {
+      "address": "TAkpWPt2JZdiLSkG7ZX2VAQkZQsnGZ1nqh",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TAoLw5yD5XUoHWeBZRSZ1ExK9HMv2CiPvP",
       "currency": "TRX",
       "chain": "tron",
@@ -1959,6 +2258,19 @@
         "ILLICIT-DRUGS-EO14059"
       ],
       "designatedAt": "2025-11-19"
+    },
+    {
+      "address": "TAQPzv9941nVuTj4ng2vd6L11Re57r42pW",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TASWbk6X1wiTku5TMmMQYqYFvshVEtfJy8",
@@ -2058,6 +2370,19 @@
       "designatedAt": "2025-11-19"
     },
     {
+      "address": "TBEqQGTxXRWXXeqe7ZwmSB6hc5MMMMMMMM",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TBfVDwNS6hC2Ln2qTLTRKMMPddscFEhhrU",
       "currency": "TRX",
       "chain": "tron",
@@ -2140,6 +2465,19 @@
       "designatedAt": "2015-09-29"
     },
     {
+      "address": "TBKpozurdWLrbKkxtDqkveeq1dSB8Axj3V",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TBKq3SzXigsGhQNzdCYocpt8RzoMh3uxAr",
       "currency": "TRX",
       "chain": "tron",
@@ -2166,6 +2504,19 @@
         "SDGT"
       ],
       "designatedAt": "2015-09-29"
+    },
+    {
+      "address": "TBNjCi1d5Ns6ec5aMp28LpfKcX7xTpykAN",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TBtRqkiFzyuwe8nSAGQghxygAfwAF5eERq",
@@ -2318,6 +2669,19 @@
         "SDGT"
       ],
       "designatedAt": "2015-09-29"
+    },
+    {
+      "address": "TCoKgVdQbSyPnJnf9oNUNQn3dWMDD9wbQL",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TCqKhk7MpPnGH3UfygE1TRzUo92a5tuVy6",
@@ -2527,6 +2891,19 @@
       "designatedAt": "2015-09-29"
     },
     {
+      "address": "TDU61o35UEe5hdB3R16c116DrPSV4kiyKz",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TDX3dFNPvJeA9eVLLNqf1ixr4U2ktcDmoD",
       "currency": "TRX",
       "chain": "tron",
@@ -2638,6 +3015,19 @@
       "designatedAt": "2025-08-14"
     },
     {
+      "address": "TEECjwHqVG8sDmM3VtscjuCaRe5p351MU7",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TEEYCuGDyeNkuDj4u6GQRXxXo3Nh29r2vP",
       "currency": "TRX",
       "chain": "tron",
@@ -2679,6 +3069,20 @@
       "designatedAt": "2015-09-29"
     },
     {
+      "address": "TEsxMcVocweTM82Mdmc5diKC6qyCWqSpPv",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "24003",
+      "name": "MESRI Behzad",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER2",
+        "HRIT-IR"
+      ],
+      "designatedAt": "2018-03-23"
+    },
+    {
       "address": "TETfViHWf9ZNB6WJgZBRMB48pTaBFo5Rmd",
       "currency": "TRX",
       "chain": "tron",
@@ -2705,6 +3109,19 @@
         "SDGT"
       ],
       "designatedAt": "2015-09-29"
+    },
+    {
+      "address": "TF7LUSoZQyDFxTFzCL11saBHAqMAyPh8dK",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TFdTr9C3BqQrzKBXqSxJfAZFTh8UwBAfSg",
@@ -2820,6 +3237,32 @@
       "designatedAt": "2022-04-05"
     },
     {
+      "address": "TG83Fk56S2mycAUMYHZyZp9wMg6DCf4bUn",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
+      "address": "TGcewGsDLy7Fzc66kXXEB8Kh2b6u2XCvnV",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TGckaiamj5NzaYx6Qp6Zu7kahuHArzUo99",
       "currency": "TRX",
       "chain": "tron",
@@ -2831,6 +3274,19 @@
         "CYBER4"
       ],
       "designatedAt": "2025-08-14"
+    },
+    {
+      "address": "TGjYoJLhfAiD2BRV9hwCeuHhZ54D3gLKTd",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TGLrjZc9c48iMFB4ZmDnSjSRMq27MXPg2k",
@@ -2874,6 +3330,19 @@
       "designatedAt": "2026-07-23"
     },
     {
+      "address": "TGSGw4aUeAMNCfD8WqLRLe8ErQiJ1vqghj",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TGsNFrgWfbGN2gX25Wcf8oTejtxtQkvmEx",
       "currency": "TRX",
       "chain": "tron",
@@ -2889,6 +3358,19 @@
       "designatedAt": "2026-01-30"
     },
     {
+      "address": "TGu8xk3u1QcA9FNCQZ4RUTvniiCjNkjXkA",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TGXE9dGWawjfd3xqFSho1h1bRbRv9wUGrF",
       "currency": "TRX",
       "chain": "tron",
@@ -2900,6 +3382,19 @@
         "NPWMD"
       ],
       "designatedAt": "2023-04-24"
+    },
+    {
+      "address": "TH1yknksde3pBY3oWVhUxVTbWbLqdafqYT",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "THfLaNMBAMz7xXnHoz5BkRMmrwuHKqfAfR",
@@ -2914,6 +3409,32 @@
         "SDGT"
       ],
       "designatedAt": "2015-09-29"
+    },
+    {
+      "address": "THH9JJNbLDN7qs1CyTxJQEjhC9y5FnZUhU",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
+      "address": "THifikwE6RtxYNWdcP9CWUjXS8Gh1xBCoa",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "THJUJFyTnrBWb1ijWav7qfRBrjUuKgP49Z",
@@ -2955,6 +3476,19 @@
         "SDGT"
       ],
       "designatedAt": "2015-09-29"
+    },
+    {
+      "address": "TJ6NznpBV5uUpp5uZGDub9zD1999999999",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TJCUwt9EKeTyzDw42658h8aYxQXScLdCZR",
@@ -3028,6 +3562,19 @@
       "designatedAt": "2023-04-24"
     },
     {
+      "address": "TK3n8pGHvDTcK53mpfeDAMzdwjb22qvFU3",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TK7HUNru8YLMz7vv8kzWRPrE2ZSgZeCaHV",
       "currency": "TRX",
       "chain": "tron",
@@ -3040,6 +3587,19 @@
         "SDGT"
       ],
       "designatedAt": "2015-09-29"
+    },
+    {
+      "address": "TKRNCETxbiMmyyMraCkgdXKdLr1ZkmKxV5",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TKX6rgpGpGrJWzf1qXUUSNL5cYHQt7Z9rY",
@@ -3125,6 +3685,19 @@
       "designatedAt": "2015-09-29"
     },
     {
+      "address": "TLHWeZcDmXk6idnaGwsQ9CEmK24KpoGgRM",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TLj5ZRvem4DAdbZLTGU3qAbAdLQug57JVo",
       "currency": "TRX",
       "chain": "tron",
@@ -3165,6 +3738,32 @@
         "IFSR"
       ],
       "designatedAt": "2026-01-30"
+    },
+    {
+      "address": "TM9c5uR2UKwd5fMySgaoYSjphRyi3AjAtc",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
+      "address": "TMdZfVVAsxKsbXGmV3kBnEgM69z3QHH3kz",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TMfDhpUqW5W6HcMPXFaJfaiY271CYa51Hs",
@@ -3417,6 +4016,19 @@
       "designatedAt": "2026-01-30"
     },
     {
+      "address": "TNUQ2rZSRjZaGhtbwaFZEvuaemMj5z5Fnm",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TNVbVXAgUT83Sv7E9oZwWutXqzs13sr6xN",
       "currency": "TRX",
       "chain": "tron",
@@ -3429,6 +4041,19 @@
         "SDGT"
       ],
       "designatedAt": "2015-09-29"
+    },
+    {
+      "address": "TNwe3WoEX6XrQ5NPAeWPkvpTtdaf27XYxK",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TNzvDTvcQTaY9jFrv85JnqibnGcudePj1z",
@@ -3458,6 +4083,19 @@
       "designatedAt": "2025-08-14"
     },
     {
+      "address": "TP3kVtnFgDSoSqzw178nLJtGWNjrbKNgB6",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "57061",
+      "name": "Blagh Keyvan Fayyaz Gareh",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER4"
+      ],
+      "designatedAt": "2026-08-24"
+    },
+    {
       "address": "TPCnxv28xNbvtAaEppddvnfkjQpaFeAkV3",
       "currency": "TRX",
       "chain": "tron",
@@ -3484,6 +4122,19 @@
         "SDGT"
       ],
       "designatedAt": "2015-09-29"
+    },
+    {
+      "address": "TPD4pmojFA2f2RvgnSDa7YCuGJ4BeS9yK2",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TPDLpXxPcaSsupEZ3yrVksmNkYP5SLeKxu",
@@ -3665,6 +4316,19 @@
       "designatedAt": "2015-09-29"
     },
     {
+      "address": "TQhT3QWAbFiy6GEYuBrbK97uP3XVmTpRD8",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TQt3dWHiPdaKioG7nwovoTDUtxfimyuxYa",
       "currency": "TRX",
       "chain": "tron",
@@ -3719,6 +4383,19 @@
         "SDGT"
       ],
       "designatedAt": "2015-09-29"
+    },
+    {
+      "address": "TR983hNyUNgrNSB1xncG9thZNhgYpbNvSh",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TRakpsE1mZjCUMNPyozR4BW2ZtJsF7ZWFN",
@@ -3788,6 +4465,19 @@
         "SDGT"
       ],
       "designatedAt": "2015-09-29"
+    },
+    {
+      "address": "TRyQivSkQChryfnYnE1bUmJhnL3TvKUpvS",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TRZvMk2D4fmjGjtuZHRVpgw6yjk8NcjsHV",
@@ -3887,6 +4577,19 @@
       "designatedAt": "2015-09-29"
     },
     {
+      "address": "TSmcHwvTR27Ao4NN8HhPFCVcPU5aTEqLDt",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TSSQDgExKUELagzAKTAcoLMviq4SZ1eTFm",
       "currency": "TRX",
       "chain": "tron",
@@ -3915,6 +4618,32 @@
       "designatedAt": "2025-09-16"
     },
     {
+      "address": "TT4WKPQscK7fkxrPj1E9PjZp1HTVBUpoTm",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
+      "address": "TThRMUSidD4gQeCnu56cFfCmqS421Nmbu7",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TTiDLWE6fZK8okMJv6ijg42yrH6W2pjSr9",
       "currency": "TRX",
       "chain": "tron",
@@ -3929,6 +4658,19 @@
         "SDGT"
       ],
       "designatedAt": "2010-06-16"
+    },
+    {
+      "address": "TTjHn8qNVxazB3UroiekGRPuM2w2GwvNbn",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TTKnV2S1295UrPr7N67Tp9ykNL7xX2Z4Uj",
@@ -3955,6 +4697,32 @@
         "CYBER4"
       ],
       "designatedAt": "2026-07-13"
+    },
+    {
+      "address": "TTmvr41Fa9LeWJQ8NKQ5t4wFUspgEA1mJF",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
+      "address": "TTrHak4biV5ZtNwN1K8oi7916CjmeVVeH8",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TTrJwfL8SCSWBXWAPcZV8Pd5fZf1rznRhz",
@@ -4039,6 +4807,45 @@
         "SDGT"
       ],
       "designatedAt": "2026-08-07"
+    },
+    {
+      "address": "TTWBrNgoooSs9HQQKMty3ZQDbS9LzgjNiH",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
+      "address": "TTWRf2MD6zJ26bS4uKCNrcp84aAr7AmTjm",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
+      "address": "TTYf9kcvABTSizXsdbC2E5co6jx9jvJ111",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TU4tDFRvcKhAZ1jdihojmBWZqvJhQCnJ4F",
@@ -4318,6 +5125,19 @@
       "designatedAt": "2015-09-29"
     },
     {
+      "address": "TW5tokvhEfrb77z98Rc8HqbkzQJ6sxYtGX",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TW9mABkenngQyJBqce5khR9fNCBF5gsBFQ",
       "currency": "TRX",
       "chain": "tron",
@@ -4374,6 +5194,19 @@
       "designatedAt": "2015-09-29"
     },
     {
+      "address": "TWHwre81Mv4hvupNdHnsYX9FPocm29dQQQ",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TWoRwYzsifrD79DHDpTHC8fq787MvH9Qro",
       "currency": "TRX",
       "chain": "tron",
@@ -4386,6 +5219,32 @@
         "SDGT"
       ],
       "designatedAt": "2015-09-29"
+    },
+    {
+      "address": "TWPma8xH48AEN93x2krdukV9e1j6sPsBeS",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
+      "address": "TWqcMjV7Wq2RHe2CSiKQHpkn6A7B2AWUPe",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TWumrtaEaPCv8Bs9mXqKkhY5sZVd78QAdS",
@@ -4487,6 +5346,32 @@
       "designatedAt": "2023-04-24"
     },
     {
+      "address": "TXHX2NUvcgft4zs6MkkUtdNVERPTavHDWN",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
+      "address": "TXka5xc6mEkcoVXR7F2TFDKernyLt3XyW4",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TXN3hVukebhyYR31YPCYd7aJAvmUeXu1ab",
       "currency": "TRX",
       "chain": "tron",
@@ -4526,6 +5411,45 @@
         "SDGT"
       ],
       "designatedAt": "2015-09-29"
+    },
+    {
+      "address": "TXR4FDAZZLDSvuRxveW9aBMybbaS12WWHk",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "57061",
+      "name": "Blagh Keyvan Fayyaz Gareh",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER4"
+      ],
+      "designatedAt": "2026-08-24"
+    },
+    {
+      "address": "TXT9atp8qBMXKbFYnRyWkM88UXYyobQNLP",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
+      "address": "TXtH3iUipk6DZnYNu3kgjDsnSSLHLz8ZZU",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TXw4d7BseHBn6sneMUzm4nEdfPVjuJGEH9",
@@ -4583,6 +5507,45 @@
       "designatedAt": "2023-04-24"
     },
     {
+      "address": "TYkE8VwX1SGHM3Q2CA29nka5U2F2khKAj5",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
+      "address": "TYq3iRujcBELXX89i9JY32UmLxcyZAJe7E",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
+      "address": "TYvjt4ZKfsipHjA52nzgjUjDBF622SLCih",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
       "address": "TYvR9x3Dqx39s9rooaSAHwVwF8psBrcFBV",
       "currency": "TRX",
       "chain": "tron",
@@ -4609,6 +5572,45 @@
         "SDGT"
       ],
       "designatedAt": "2015-09-29"
+    },
+    {
+      "address": "TYZKYK2fbvw3EAPES2daFvoV4DqPna43Jd",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
+      "address": "TZ42sU5kQ2n5rLZ6PhEGkmfLtmHjoi2vpr",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
+    },
+    {
+      "address": "TZ8zsUe9M9tkhrFtfE7vMMmEwgVEF3n2UN",
+      "currency": "TRX",
+      "chain": "tron",
+      "fixedRef": "58361",
+      "name": "Xinbi Guarantee",
+      "partyType": "Entity",
+      "list": "SDN List",
+      "programs": [
+        "TCO"
+      ],
+      "designatedAt": "2026-09-09"
     },
     {
       "address": "TZB4NrX7k9ZsV6PRc1GigAztLL8WHpLvwP",
@@ -5346,6 +6348,19 @@
       "designatedAt": "2017-09-26"
     },
     {
+      "address": "TJCBpxZ3yC7C7oegSRZMFxBcscmUVeSA36",
+      "currency": "USDT",
+      "chain": "tron",
+      "fixedRef": "58409",
+      "name": "Tsoris Almpertos",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "IRAN-EO13902"
+      ],
+      "designatedAt": "2026-08-24"
+    },
+    {
       "address": "TLM3zA3EWycoDX4ZX4gKze7sgfbdkntTum",
       "currency": "USDT",
       "chain": "tron",
@@ -5923,6 +6938,20 @@
         "ILLICIT-DRUGS-EO14059"
       ],
       "designatedAt": "2022-11-09"
+    },
+    {
+      "address": "12aNKp2iDKuhEde2YfPdd4DFGenRUTKupL",
+      "currency": "XBT",
+      "chain": "btc",
+      "fixedRef": "24003",
+      "name": "MESRI Behzad",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER2",
+        "HRIT-IR"
+      ],
+      "designatedAt": "2018-03-23"
     },
     {
       "address": "12HQDsicffSBaYdJ6BhnE22sfjTESmmzKx",
@@ -6504,19 +7533,6 @@
         "CYBER2"
       ],
       "designatedAt": "2022-04-05"
-    },
-    {
-      "address": "17a5bpKvEp1j1Trs4qTbcNZrby53JbaS9C",
-      "currency": "XBT",
-      "chain": "btc",
-      "fixedRef": "31811",
-      "name": "FAYZIMATOV Farrukh Furkatovitch",
-      "partyType": "Individual",
-      "list": "SDN List",
-      "programs": [
-        "SDGT"
-      ],
-      "designatedAt": "2021-07-28"
     },
     {
       "address": "17ezuJoT3XBbdcwFZbkTnrXbup11F4uhiy",
@@ -7659,6 +8675,19 @@
       "designatedAt": "2021-04-15"
     },
     {
+      "address": "1GXeCkFQq7SYo6B7wdLAPkkri6NFTFB7No",
+      "currency": "XBT",
+      "chain": "btc",
+      "fixedRef": "57064",
+      "name": "Ghal'eh-Kuhi Mojtaba",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER4"
+      ],
+      "designatedAt": "2026-08-24"
+    },
+    {
       "address": "1GYuu9d5HPikafbys3k5Q3DRJq6debGsoB",
       "currency": "XBT",
       "chain": "btc",
@@ -7829,6 +8858,19 @@
         "CYBER2"
       ],
       "designatedAt": "2022-04-05"
+    },
+    {
+      "address": "1JGPiQGK78xTxAVoxA1MjK3Z15M84Rj6BL",
+      "currency": "XBT",
+      "chain": "btc",
+      "fixedRef": "57065",
+      "name": "Kahzadian Arman",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER4"
+      ],
+      "designatedAt": "2026-08-24"
     },
     {
       "address": "1JHdQHkBZiim1cb4hyUh2PbzEbbg6z2TrF",
@@ -11106,6 +12148,19 @@
       "designatedAt": "2024-05-28"
     },
     {
+      "address": "bc1q4ktvxxhhvf8qhs9qkdsm9arcxfmmeex6rl7n50",
+      "currency": "XBT",
+      "chain": "btc",
+      "fixedRef": "57061",
+      "name": "Blagh Keyvan Fayyaz Gareh",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER4"
+      ],
+      "designatedAt": "2026-08-24"
+    },
+    {
       "address": "bc1q4namcagg5wljs0u20z6h2sqgsq4q5lts8rt2rr",
       "currency": "XBT",
       "chain": "btc",
@@ -11797,6 +12852,19 @@
       "designatedAt": "2025-03-04"
     },
     {
+      "address": "bc1qf6zxs4lkp9umh6hf087mh70w0ymcyt8cunp58r",
+      "currency": "XBT",
+      "chain": "btc",
+      "fixedRef": "57061",
+      "name": "Blagh Keyvan Fayyaz Gareh",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER4"
+      ],
+      "designatedAt": "2026-08-24"
+    },
+    {
       "address": "bc1qfg4gfg0y6t6xjnpmlhuwx5k0wlw6nmfzxn2psc",
       "currency": "XBT",
       "chain": "btc",
@@ -12188,6 +13256,19 @@
         "CYBER2"
       ],
       "designatedAt": "2022-04-05"
+    },
+    {
+      "address": "bc1qr2pwmvkpq5tc5um2g9uh34yyu6wepwx89rts70",
+      "currency": "XBT",
+      "chain": "btc",
+      "fixedRef": "57061",
+      "name": "Blagh Keyvan Fayyaz Gareh",
+      "partyType": "Individual",
+      "list": "SDN List",
+      "programs": [
+        "CYBER4"
+      ],
+      "designatedAt": "2026-08-24"
     },
     {
       "address": "bc1qr2tgu4almsw9ajqfwz93qw0xc8w2g72xpyzqvn",
@@ -12810,7 +13891,7 @@
       "designatedAt": "2015-09-29"
     },
     {
-      "address": "45ezvPejNsKYntjhyyeb7fbfzilsxYQozc5Ffseh8jPGW4JZQQVXykNTfK5uGFiij7Hp3qPv3T5HCR7F3Fnmz2mzE1aKQwo",
+      "address": "45ezvPejNsKYntjhyyeb7fbfzi1sxYQozc5Ffseh8jPGW4JZQQVXykNTfK5uGFiij7Hp3qPv3T5HCR7F3Fnmz2mzE1aKQwo",
       "currency": "XMR",
       "chain": null,
       "fixedRef": "18647",
